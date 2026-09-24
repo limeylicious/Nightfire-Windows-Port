@@ -1,0 +1,8 @@
+#ifndef NIGHTFIRE_PAL_H
+#define NIGHTFIRE_PAL_H
+/* Profile for the PAL XBE used throughout this project. */
+#define NIGHTFIRE_AV_REGION (AV_REFRESH_50Hz | (AV_STANDARD_PAL_I << AV_STANDARD_SHIFT))
+#define NIGHTFIRE_AV_PACK AV_PACK_STANDARD
+#define NIGHTFIRE_VIDEO_USER_FLAGS 0u /* 4:3; PAL60 and HDTV user flags off */
+#define NIGHTFIRE_AV_CAPS (AV_FLAGS_HDTV_480i | AV_FLAGS_50Hz | AV_FLAGS_INTERLACED)
+#endif

@@ -1,0 +1,2 @@
+# Preserve the audited source bytes and manifest hashes across checkouts.
+* -text
