@@ -49,6 +49,22 @@ vertex and pixel programs as generated HLSL.
 - Rifle shots from the helicopter do not damage the cars.
 - In the vehicle tutorial the red car can follow the wrong route and stall.
 
+## Tutorial AI route fix (described, not shipped)
+
+The vehicle-tutorial route fix is a hand edit to generated translation unit
+`src/recomp/gen/recomp_0007.c`, so it is not in this repository. Where the
+lifter emitted a conditional jump reading its never-assigned `_flags`
+fallback, the edit evaluates the preceding `test`/`cmp` instead:
+
+- `je` at guest address 0xCB003: taken when the 8-bit `test` result is zero.
+- `jne` at 0xCC01C (to 0xCC0C5): it has two predecessors. The fall-through
+  path from the 8-bit `test` at 0xCC01A uses not-zero; the `cmp` path that
+  jumps there is evaluated in place as not-equal, then continues at 0xCC022.
+
+Before the fix, route-locked road segments were never skipped. Whoever
+regenerates the translation needs the lifter to emit real flag tests for
+these sites (or re-apply the edit). It is awaiting the owner's in-game test.
+
 ## Not included
 
 This is documentary source, not a standalone build. Runtime files the lean
