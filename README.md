@@ -21,4 +21,4 @@ The existing `nightfire-port/` and `nightfire-driving/` roots retain the normal 
 
 ## Repository description
 
-> AI-developed standalone Windows static recompilation of PAL Xbox 007 Nightfire. Source snapshot only; no game files or generated translations.
+> Native Windows static recompilation of PAL Xbox 007 Nightfire, built on xboxrecomp. Source only: bring your own copy of the game. No game files or generated code included.
