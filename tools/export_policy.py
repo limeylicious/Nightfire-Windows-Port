@@ -12,6 +12,7 @@ MANUAL_FILES = {
     'tools/export_policy.py', 'tools/source_allowlist.json', 'tools/test_export_policy.py',
     'licenses/xboxrecomp-MIT.txt', 'licenses/xboxrecomp-NOTICE.txt',
     'licenses/LGPL-2.1.txt', 'docs/STATUS-510.md', 'experiments/driving-510/README.md',
+    'experiments/driving-lean/README.md',
 }
 DENIED_NAMES = {
     'recomp_manual.c', 'driving_native247.h', 'driving_admission283.h',
@@ -22,7 +23,7 @@ DENIED_PARTS = {
     'game_files', 'recomp', 'gen', 'analysis', 'captures', 'logs', 'recovery',
     'cache', 'releases', 'generic263', 'packaging', 'node_modules', '__pycache__',
 }
-ALLOWED_SUFFIXES = {'.c', '.h', '.py', '.cmd', '.txt', '.md', '.json'}
+ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json'}
 SECRET = re.compile(
     rb'[A-Z]:[\\/]+Users[\\/]+|/' rb'Users/[^/\s]+/|/' rb'home/[^/\s]+/|'
     rb'-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|'
@@ -94,6 +95,12 @@ def read_allowlist(data: bytes) -> list[dict]:
             if (not source.startswith(prefix) or '/' in suffix or not suffix.endswith('.py')
                     or destination != 'experiments/driving-510/tools/' + suffix):
                 raise ValueError(f'invalid tool mapping: {destination}')
+        elif group == 'driving-lean':
+            prefix = 'nightfire-driving-lean/'
+            suffix = source.removeprefix(prefix)
+            if not source.startswith(prefix) or destination != 'experiments/driving-lean/' + suffix:
+                raise ValueError(f'invalid lean mapping: {destination}')
+            check_destination(source)
         else:
             raise ValueError(f'unknown source group: {group}')
     return config['files']

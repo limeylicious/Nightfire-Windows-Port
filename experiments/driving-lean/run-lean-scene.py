@@ -1,0 +1,90 @@
+"""Run one lean scene with the clean comparison profile (perf501 config501 OFF list).
+
+Usage: python run-lean-scene.py vehicle|paris [--seconds 120]
+Writes everything under nightfire-driving-lean/runs/<stamp>-<scene>.
+Refuses to launch when any nightfire* process is already running.
+"""
+from pathlib import Path
+import argparse, datetime, json, os, re, shutil, subprocess, time
+
+LEAN = Path(__file__).resolve().parent
+GAME = LEAN.parent / 'nightfire-driving'
+EXES = {'base': LEAN / 'build/RelWithDebInfo/nightfire_driving.exe',
+        'lean': LEAN / 'build-lean/RelWithDebInfo/nightfire_driving_lean.exe'}
+SOURCES = {
+    'vehicle': '20260927-174445-vehicle439-cpu-profile',
+    'paris': '20260927-174835-vehicle439-paris-regression',
+}
+# Copied from nightfire-driving/analysis/perf501/config501.py (accepted 491 profile).
+OFF = (
+    'PC450', 'PC451', 'PC452', 'PC453', 'ACK457', 'FOG455', 'SUBMIT456',
+    'CLEAR461', 'COLOR462', 'CAPTURE_EXTRA453', 'QUERY464', 'HINT465',
+    'PROOF466', 'FONT469', 'COMMAND_SNAPSHOT471', 'REFUSE472', 'OBSERVE454',
+    'PRESENT458', 'TIMING250', 'QUEUE_TIMING251', 'BATCH_TIMING244',
+    'READ_SAMPLE326', 'METHOD_TIMING327', 'GPU_SAMPLE297', 'GPU_SAMPLE254',
+    'NATIVE_TIMING247', 'GENERIC_TIMING326', 'HUD_COST397', 'SPRITE_COST399',
+    'PAIR_COLOR_CENSUS401', 'BEGIN_PROBE334', 'IMPORT_PROBE335', 'OPENGL493',
+    'OPENGL494', 'READBACK_ROWS495', 'API_CENSUS496', 'GRAPH_JOURNAL498',
+    'WRITER_JOURNAL499', 'FONT_JOURNAL501',
+)
+
+def settings(scene):
+    env = json.loads((GAME / 'analysis/runs' / SOURCES[scene] / 'environment.json').read_text())
+    env.update({f'DRIVING_{k}': '0' for k in OFF})
+    env.update(DRIVING_REGION_CACHE445='1', DRIVING_CPU448='1', DRIVING_COLOR_SEED276='1',
+               DRIVING_RESOLVE459='1', DRIVING_ASYNC_TAIL295='0')
+    return env
+
+def running():
+    q = subprocess.run(['powershell', '-NoProfile', '-Command',
+                        '@(Get-Process nightfire* -ErrorAction SilentlyContinue).Count'],
+                       capture_output=True, text=True)
+    return q.stdout.strip()
+
+def main():
+    p = argparse.ArgumentParser()
+    p.add_argument('scene', choices=sorted(SOURCES))
+    p.add_argument('--seconds', type=int, default=120)
+    p.add_argument('--build', choices=sorted(EXES), default='base')
+    p.add_argument('--env', action='append', default=[], help='extra NAME=VALUE')
+    a = p.parse_args()
+    assert running() == '0', 'A nightfire game is already running; not launching.'
+    env = {k.upper(): v for k, v in os.environ.items()
+           if not k.upper().startswith(('DRIVING_', 'NIGHTFIRE_', 'RECOMP_', 'LEAN_'))}
+    env.update(settings(a.scene))
+    stamp = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    run = LEAN / 'runs' / f'{stamp}-{a.build}-{a.scene}'
+    run.mkdir(parents=True)
+    for kv in a.env:
+        k, v = kv.split('=', 1); env[k] = v
+    env.update(DRIVING_EXECUTABLE=str(EXES[a.build]), DRIVING_CAPTURE_DIR=str(run),
+               RECOMP_WATCHDOG_SECS=str(a.seconds))
+    (run / 'environment.json').write_text(json.dumps(
+        {k: v for k, v in env.items() if k.startswith(('DRIVING_', 'NIGHTFIRE_', 'RECOMP_', 'LEAN_'))}, indent=2))
+    start = time.monotonic()
+    with (run / 'launcher.log').open('w') as log:
+        proc = subprocess.Popen([env['COMSPEC'], '/d', '/c', str(LEAN / 'run-windows.cmd')],
+                                cwd=LEAN, env=env, stdout=log, stderr=subprocess.STDOUT,
+                                creationflags=subprocess.CREATE_NO_WINDOW)
+        try:
+            code = proc.wait(timeout=a.seconds + 60)
+        except subprocess.TimeoutExpired:
+            subprocess.run(['taskkill', '/F', '/T', '/PID', str(proc.pid)], capture_output=True)
+            code = 'killed-by-outer-guard'
+    elapsed = time.monotonic() - start
+    for name in ('driving-startup.log', 'xbox_kernel.log'):
+        if (LEAN / 'logs' / name).exists():
+            shutil.copy2(LEAN / 'logs' / name, run / name)
+    text = (run / 'driving-startup.log').read_text(errors='replace') if (run / 'driving-startup.log').exists() else ''
+    pres = [tuple(map(int, m)) for m in re.findall(r'\[PRESENT227\] frame=(\d+) elapsed_ms=(\d+) last30_ms=(\d+)', text)]
+    batch = re.findall(r'\[BATCH236-TIME\] (.*)', text)
+    result = dict(build=a.build, scene=a.scene, exit=code, wall_seconds=round(elapsed, 1), presents=len(pres),
+                  last_present=pres[-1] if pres else None,
+                  mean_ms_per_present=round(pres[-1][1] / pres[-1][0], 1) if pres else None,
+                  last5_windows_ms_per_present=[round(x[2] / 30, 1) for x in pres[-5:]],
+                  batch236_last=batch[-1] if batch else None, run=str(run))
+    (run / 'result.json').write_text(json.dumps(result, indent=2))
+    print(json.dumps(result, indent=2))
+
+if __name__ == '__main__':
+    main()
