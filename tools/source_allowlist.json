@@ -2948,6 +2948,150 @@
       "source": "nightfire-port/src/nightfire_diagnostics.h",
       "group": "normal-source",
       "reviewed_sha256": "c87f098a34190def0cda5363ab1efc46e2fc034488996289c4fc262f720a76e9"
+    },
+    {
+      "path": "experiments/driving-lean/CMakeLists.txt",
+      "source": "nightfire-driving-lean/CMakeLists.txt",
+      "group": "driving-lean",
+      "reviewed_sha256": "a94109f8dd7d4964958b0d09861ebc9d4ec8a40ac45835b27173cea21682ba10"
+    },
+    {
+      "path": "experiments/driving-lean/LEAN-TASK1-REPORT.md",
+      "source": "nightfire-driving-lean/LEAN-TASK1-REPORT.md",
+      "group": "driving-lean",
+      "reviewed_sha256": "7cae59847cb5c7d12666cb04e43850c2214e226c3ac5c38e10b79e4dc6598071"
+    },
+    {
+      "path": "experiments/driving-lean/LEAN-TASK2-REPORT.md",
+      "source": "nightfire-driving-lean/LEAN-TASK2-REPORT.md",
+      "group": "driving-lean",
+      "reviewed_sha256": "92f2a7c3060925f2dcab206b25f55518478a42c56955d505f845dddbd5d01161"
+    },
+    {
+      "path": "experiments/driving-lean/play-lean-paris.cmd",
+      "source": "nightfire-driving-lean/play-lean-paris.cmd",
+      "group": "driving-lean",
+      "reviewed_sha256": "c6f06c11410613c8b0be146619c614324a2017707f7df8ac6cee4a7ba4e1f26f"
+    },
+    {
+      "path": "experiments/driving-lean/play-lean-vehicle.cmd",
+      "source": "nightfire-driving-lean/play-lean-vehicle.cmd",
+      "group": "driving-lean",
+      "reviewed_sha256": "fb70d0b0054c7236a14afa67fb11e34adfc7c21d7fb55861d8f07aeae31d7a38"
+    },
+    {
+      "path": "experiments/driving-lean/run-lean-scene.py",
+      "source": "nightfire-driving-lean/run-lean-scene.py",
+      "group": "driving-lean",
+      "reviewed_sha256": "3c8e7477dc5082d76ebed417be5a0a564e834cf435b756159bceb04cf28b3dbb"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/driving_dsp149.c",
+      "source": "nightfire-driving-lean/runtime/driving_dsp149.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "d9322780452f85800db90500f3477e6d9a26dfa6ccabf53049038d500be4cc49"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/driving_flip204.c",
+      "source": "nightfire-driving-lean/runtime/driving_flip204.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "710201955cbdc8d80a57e8da0aacbdbdd0e4cc75b2fd12d52d526b6689890fff"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/driving_present201.c",
+      "source": "nightfire-driving-lean/runtime/driving_present201.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "6cadc2df3ea0df5c0a192fe8d9acfcf9cf0252108d185a0dbdc770f5ca9d4612"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/kernel_bridge.c",
+      "source": "nightfire-driving-lean/runtime/kernel_bridge.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "25ce2aa31514d4d9a0a5e793e8b661611e8717a489cc26e5315921304fcc7b85"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/apu/apu_core.c",
+      "source": "nightfire-driving-lean/runtime/lean/apu/apu_core.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "96363cf715cf5dbce5ba7e70079c4608900bbe7584d17cf02d351ab556ee48ff"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/apu/apu_dsp.c",
+      "source": "nightfire-driving-lean/runtime/lean/apu/apu_dsp.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "58c931563136cdc05e7542e773f05748ed88df26a945ffc8e61d6f0905852c29"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/apu/apu_vp.c",
+      "source": "nightfire-driving-lean/runtime/lean/apu/apu_vp.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "5b18f3ffda93720ed68d8bcd76b571e80c0c32130391699d95a1af5193a05b95"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/apu/apu_xaudio2.c",
+      "source": "nightfire-driving-lean/runtime/lean/apu/apu_xaudio2.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "836bb3cde26982e77dd97ff7a373141ae75c1ff3f9e01d9273a7b9600e061547"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_d3d.c",
+      "source": "nightfire-driving-lean/runtime/lean/lean_d3d.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "0dbad02aaa574713c726d1979eaf02d85bfa8995daa5e87af6127cb708965d4c"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_d3d.h",
+      "source": "nightfire-driving-lean/runtime/lean/lean_d3d.h",
+      "group": "driving-lean",
+      "reviewed_sha256": "4b8c68d17902cd0231b3469c2cba3dcddce0fe5115b4f95e594f1a9ec194aba8"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_flags.c",
+      "source": "nightfire-driving-lean/runtime/lean/lean_flags.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "9c3ce24bcd37d00c6e62ca051fff12c287a5d33e4787b9124e0c6992b9e27208"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_gpu.c",
+      "source": "nightfire-driving-lean/runtime/lean/lean_gpu.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "d745b689c21c795438d8266fea1d9130bc6b872a8a0da1af029f44c139046638"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_present.inc",
+      "source": "nightfire-driving-lean/runtime/lean/lean_present.inc",
+      "group": "driving-lean",
+      "reviewed_sha256": "bba4d69324e0bee9d13e8f6645b729f9b2570b0d323e0eedcdbc4774f2fbf9cb"
+    },
+    {
+      "path": "experiments/driving-lean/runtime/lean/lean_sampler.c",
+      "source": "nightfire-driving-lean/runtime/lean/lean_sampler.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "21272b5f0c67af954f5404294b79745bfe4a57f1ed06e7352e0d2b96e47276ed"
+    },
+    {
+      "path": "experiments/driving-lean/scripts/lean_img.py",
+      "source": "nightfire-driving-lean/scripts/lean_img.py",
+      "group": "driving-lean",
+      "reviewed_sha256": "7482f53aa71ad40245080881b95255ab7e3cde72ca5762a70cbfb7a1dee653d0"
+    },
+    {
+      "path": "experiments/driving-lean/scripts/wav_check.py",
+      "source": "nightfire-driving-lean/scripts/wav_check.py",
+      "group": "driving-lean",
+      "reviewed_sha256": "6e5c87a6f7135d567f12d50729e684b3d684636e9b445dfed5a54b7ecc4f8591"
+    },
+    {
+      "path": "experiments/driving-lean/scripts/window_poke.py",
+      "source": "nightfire-driving-lean/scripts/window_poke.py",
+      "group": "driving-lean",
+      "reviewed_sha256": "131da546c86f77760bb7b05c7eb1d3a1f8f2fdec5bac698b7380c44f7d83be99"
+    },
+    {
+      "path": "experiments/driving-lean/src/main.c",
+      "source": "nightfire-driving-lean/src/main.c",
+      "group": "driving-lean",
+      "reviewed_sha256": "33e1ac9a8d0d891de27750a95e1f57dc368f7dee2796d54d0cf2eb8c9022a38e"
     }
   ]
 }

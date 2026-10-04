@@ -1,10 +1,10 @@
-# Scope of this private source snapshot
+# Scope of this source snapshot
 
 This tree is produced from the **explicit, hash-pinned allowlist** in `tools/source_allowlist.json`, applied by `tools/export_source.py`. It contains selected project runtime, build, entry-point and diagnostic-parser files. It is not a copy of the development workspace and must never be populated by a blanket `git add` from that workspace. New files cannot enter through a discovery glob.
 
 The export excludes `game_files`, every `.xbe`, all game media and extracted graphics, executables/DLLs, builds, releases, caches, logs, screenshots, videos, raw captures, memory dumps, analysis archives, recovery ZIPs, `src/recomp/gen`, `recomp_manual.c`, and larger PAL-derived shader/program tables. This includes `driving_contract*`, `driving_native247.h`, `driving_admission283.h`, `driving_native_effects350.h`, `driving_native_remaining352.h`, `driving_sprite_contract396.h`, `driving_font_plan348.h`, and conservatively `driving_fog455.h`. The `generic263` copied executor and the `xboxrecomp` checkout remain excluded; acquire upstream dependencies separately and retain their component licences.
 
-The project cannot be built directly from this snapshot because generated translated game code and a few PAL-derived tables are intentionally absent. The owner's local development workspace remains the buildable source of truth. Before any wider source release, review every included file, test fixture and upstream licence again; privacy alone is not a redistribution licence.
+The project cannot be built directly from this snapshot because generated translated game code and a few PAL-derived tables are intentionally absent. The owner's local development workspace remains the buildable source of truth. The repository is public. Review every newly included file, test fixture and upstream licence before adding it; publishing source is not a licence to redistribute the game or third-party components.
 
 The original PAL executable and assets are **never** copied by the export script. It refuses changed/unreviewed inputs, links and path escapes, rejects executable/media signatures, and scans text for private paths and credential patterns. The verifier requires an exact inventory and checks both source hashes and the proposed Git index. These automated checks supplement source review; they are not a universal secret or copyright detector.
 
@@ -14,7 +14,9 @@ Some previously exported bridge sources contain short shader/state admission fin
 
 Current local references: frozen Action241 and normal Driving321; the last verified cumulative non-OpenGL game baseline is491. Checkpoint510 is a separate diagnostic layer on508, whose residency profile has **not** been promoted. The normal source roots are refreshed independently of the experimental snapshot; no local player binary is changed by this export.
 
-`experiments/driving-510/` records reviewed source from the actual510 build plus selected parser scripts. Its CMake file is intentionally absent because the private build configuration contains local absolute paths and depends on excluded generated files. This directory is documentary source, not a standalone build or enabled feature. Source-relative origins, exact hashes and export groups are in the manifest. No source bytes are redacted or rewritten during copying; missing inputs are explicitly excluded.
+`experiments/driving-510/` records reviewed source from the actual510 build plus selected parser scripts. Its CMake file is intentionally absent because the private build configuration contains local absolute paths and depends on excluded generated files. This directory is documentary source, not a standalone build or enabled feature. Source-relative origins, exact hashes and export groups are in the manifest.
+
+`experiments/driving-lean/` (group `driving-lean`) records the new and changed files of the lean GPU-resident Driving renderer, copied byte for byte from the owner's `nightfire-driving-lean` workspace on 2026-10-04. Like the 510 snapshot it is documentary: its CMake file references unchanged runtime files, generated game translations and the pinned toolkit, none of which are copied here. The workspace's own `lean-source-manifest.json` is excluded because it lists local absolute paths. No source bytes are redacted or rewritten during copying; missing inputs are explicitly excluded.
 
 Run from this repository using Python3.9 or newer:
 

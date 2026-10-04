@@ -51,6 +51,18 @@ class ExportPolicyTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             read_allowlist(data([row]))
 
+    def test_lean_mapping(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        row = dict(source='nightfire-driving-lean/runtime/lean/lean_gpu.c',
+                   path='experiments/driving-lean/runtime/lean/lean_gpu.c', group='driving-lean')
+        read_allowlist(data(row))
+        for source, path in (('nightfire-driving-lean/runtime/lean/lean_gpu.c', 'experiments/driving-lean/runtime/other.c'),
+                             ('nightfire-driving-lean/src/recomp/gen/recomp_0007.c', 'experiments/driving-lean/src/recomp/gen/recomp_0007.c'),
+                             ('nightfire-driving/runtime/kernel_bridge.c', 'experiments/driving-lean/runtime/kernel_bridge.c')):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                read_allowlist(data(dict(row, source=source, path=path)))
+
 
 if __name__ == '__main__':
     unittest.main()
