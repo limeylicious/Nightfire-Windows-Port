@@ -95,7 +95,8 @@ static int nf_hw_material_batch_impl261(const NFHardwareBatchDraw248 *list,unsig
  ID3D11Texture2D *saved_target256=quant256_target;ID3D11ShaderResourceView *saved_srv256=quant256_selected_srv;
  gt254_begin(dev,ctx,batch_calls248,count);
  gt297_begin(dev,ctx,batch_calls248,count,(reuse272?1u:0u)|(depth278_current?2u:0u)|(use291?4u:0u)|(use294?8u:0u)|(use302?16u:0u));
- tx339_enter(list,count,reuse272&&!use302&&!use291&&!use294&&!late329&&!color276_current&&!depth278_current&&!reuse269&&!depth268_enabled()&&!quant256_enabled());
+ tx341_enter(list,count,reuse272&&!use302&&!use291&&!use294&&!late329&&!color276_current&&!depth278_current&&!reuse269&&!depth268_enabled()&&!quant256_enabled());
+ if(!backing341_active)tx339_enter(list,count,reuse272&&!use302&&!use291&&!use294&&!late329&&!color276_current&&!depth278_current&&!reuse269&&!depth268_enabled()&&!quant256_enabled());
  for(unsigned lane=0;lane<2;lane++){
   NFPairSurface234 selected302=pair_surfaces234[lane];
   if(use302){selected302.depth=native302_sets[lane].texture;selected302.depth_transfer=native302_sets[lane].transfer;selected302.dsv=native302_sets[lane].view;
@@ -103,11 +104,12 @@ static int nf_hw_material_batch_impl261(const NFHardwareBatchDraw248 *list,unsig
    selected302.depth_srv256=NULL;
 #endif
   }
+  backing341_select(&selected302,lane);
   pair_select234(&selected302,640,480);
   if(use302){scope302.texture=depth;scope302.transfer=depth_transfer;scope302.view=dsv;scope302.imported=scope302.drawn=0;}
   if(use291){scope291.texture=depth;scope291.view=dsv;scope291.imported=scope291.drawn=0;}
   if(reuse269)depth269_lane(&proof269,depth);
-  if(reuse272){memset(&scope272,0,sizeof scope272);scope272.private331=1;scope272.slots[0]=(NFDepthSlot272){depth,dsv,pair_surfaces234[lane].depth_srv256};scope272.slots[1]=depth272_alternate[lane];scope272.at=0;
+  if(reuse272){memset(&scope272,0,sizeof scope272);scope272.private331=1;scope272.slots[0]=(NFDepthSlot272){depth,dsv,selected302.depth_srv256};scope272.slots[1]=depth272_alternate[lane];scope272.at=0;
    if(depth278_current)depth278_select(&seed278,lane,&scope272);
   }
   depth268_target=depth268_enabled()?depth:NULL;
@@ -145,8 +147,8 @@ static int nf_hw_material_batch_impl261(const NFHardwareBatchDraw248 *list,unsig
   gt254_copies(ctx,lane,0);gt297_op(ctx,GT297_FINAL,0,use294?294:0);
   if(use294){if((_mm_getcsr()&~0x3fu)!=control294||!read_dispatch294(lane,color,depth))goto done;}
   else{
-  tx339_copy((ID3D11Resource*)color_read,(ID3D11Resource*)color);
-  tx339_copy((ID3D11Resource*)depth_transfer,(ID3D11Resource*)depth);
+  backing341_copy((ID3D11Resource*)color_read,(ID3D11Resource*)color);
+  backing341_copy((ID3D11Resource*)depth_transfer,(ID3D11Resource*)depth);
   }
   gt297_op(ctx,GT297_FINAL,1,0);gt254_copies(ctx,lane,1);
   }
@@ -194,6 +196,7 @@ static int nf_hw_material_batch_impl261(const NFHardwareBatchDraw248 *list,unsig
  transfers+=2;ok=1;batch_calls248++;batch_draws248+=count;
  if(batch_calls248==1||!(batch_calls248%120))fprintf(stderr,"[PAIR-BATCH248] batches=%llu original_draws=%llu refused=%llu failed=%llu\n",(unsigned long long)batch_calls248,(unsigned long long)batch_draws248,(unsigned long long)batch_refused248,(unsigned long long)batch_failed248);
 done:
+ tx341_leave(ok);
  tx339_leave(ok);
  gt254_finish(ctx,ok);gt297_finish(ctx,ok);
  for(unsigned i=0;i<4;i++)if(mapped&(1u<<i))ID3D11DeviceContext_Unmap(ctx,resources[i],0);

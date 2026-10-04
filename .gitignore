@@ -13,6 +13,13 @@
 **/driving_contract*.h
 **/driving_native247.h
 **/driving_admission283.h
+**/driving_native_effects350.h
+**/driving_native_remaining352.h
+**/driving_sprite_contract396.h
+**/driving_font_plan348.h
+**/driving_fog455.h
+**/__pycache__/
+*.pyc
 *.xbe
 *.exe
 *.dll
@@ -42,3 +49,7 @@
 *.bik
 *.pss
 *.pak
+*.etl
+*.dmp
+*.jsonl
+*.csv

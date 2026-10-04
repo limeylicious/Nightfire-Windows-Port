@@ -1,52 +1,66 @@
-"""Fail closed if a source export contains a game file or an unlisted source file."""
-
+"""Verify all working files, or the complete proposed Git index with --staged."""
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
-import re
+import subprocess
+import sys
 from pathlib import Path
 
-repo = Path(__file__).resolve().parents[1]
-manifest = json.loads((repo / 'SOURCE-MANIFEST.json').read_text(encoding='utf-8'))
-assert manifest['scope'].startswith('strict source-only')
-listed = {item['path']: item for item in manifest['files']}
-assert len(listed) == manifest['file_count'] == 257
+sys.dont_write_bytecode = True
+from export_policy import MANUAL_FILES, check_text, read_allowlist
 
-manually_reviewed = {
-    '.gitignore', '.gitattributes', 'README.md', 'CREDITS.md', 'SOURCE-EXPORT.md',
-    'SOURCE-MANIFEST.json', 'tools/export_source.py', 'tools/verify_export.py',
-    'licenses/xboxrecomp-MIT.txt', 'licenses/xboxrecomp-NOTICE.txt',
-    'licenses/LGPL-2.1.txt',
-}
-tracked_candidates = {}
-for file in repo.rglob('*'):
-    if '.git' in file.relative_to(repo).parts:
-        continue
-    if file.is_symlink():
-        raise ValueError(f'symlink: {file}')
-    if not file.is_file():
-        continue
-    relative = file.relative_to(repo).as_posix()
-    tracked_candidates[relative] = file
-    if relative not in listed and relative not in manually_reviewed:
-        raise ValueError(f'unlisted file: {relative}')
-    if any(part in {'game_files', 'recomp', 'gen', 'analysis', 'recovery',
-                    'captures', 'logs', 'cache', 'build-windows'}
-           for part in file.relative_to(repo).parts):
-        raise ValueError(f'forbidden path: {relative}')
-    data = file.read_bytes()
-    if b'\x00' in data or data.startswith((b'MZ', b'BM', b'PK\x03\x04')):
-        raise ValueError(f'binary content: {relative}')
-    if re.search(rb'C:[\\/]Users[\\/]|-----BEGIN [A-Z ]*PRIVATE KEY-----|'
-                 rb'\b(?:ghp_|github_pat_|AIza)[A-Za-z0-9_-]{15,}', data, re.I):
-        raise ValueError(f'private path or credential pattern: {relative}')
-    if relative in listed:
-        item = listed[relative]
-        assert len(data) == item['bytes'] and hashlib.sha256(data).hexdigest() == item['sha256'], relative
 
-assert set(tracked_candidates) == set(listed) | manually_reviewed
-assert not any(p.suffix.lower() in {'.xbe', '.exe', '.dll', '.pdb', '.bmp',
-                                    '.png', '.jpg', '.mp4', '.raw', '.bin', '.zip'}
-               for p in tracked_candidates.values())
-print(f'PASS: {len(tracked_candidates)} text files; {len(listed)} source files match manifest; no forbidden paths/signatures')
+def verify(files: dict[str, bytes]) -> tuple[int, int]:
+    entries = read_allowlist(files['tools/source_allowlist.json'])
+    allow = {entry['path']: entry for entry in entries}
+    manifest = json.loads(files['SOURCE-MANIFEST.json'])
+    if manifest.get('schema') != 'reviewed-source-export-v2' or not manifest['scope'].startswith('strict source-only'):
+        raise ValueError('unexpected manifest scope/schema')
+    listed = {entry['path']: entry for entry in manifest['files']}
+    if len(listed) != len(manifest['files']) or len(listed) != manifest['file_count']:
+        raise ValueError('duplicate entries or incorrect manifest count')
+    if set(listed) != set(allow) or set(files) != set(allow) | MANUAL_FILES:
+        raise ValueError('file inventory differs from reviewed allowlist/manual files')
+    for name, data in files.items():
+        check_text(name, data)
+        if name in listed:
+            entry, approved = listed[name], allow[name]
+            digest = hashlib.sha256(data).hexdigest()
+            if (len(data) != entry['bytes'] or digest != entry['sha256']
+                    or digest != approved['reviewed_sha256']
+                    or entry['source'] != approved['source'] or entry['group'] != approved['group']):
+                raise ValueError(f'export provenance mismatch: {name}')
+    return len(files), len(listed)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--staged', action='store_true', help='check Git blobs, not just working-tree files')
+    args = parser.parse_args()
+    repo = Path(__file__).resolve().parents[1]
+    files = {}
+    if args.staged:
+        rows = subprocess.check_output(['git', 'ls-files', '--stage', '-z'], cwd=repo).split(b'\0')
+        for row in filter(None, rows):
+            metadata, path = row.split(b'\t', 1)
+            mode, oid, stage = metadata.split()
+            if mode not in {b'100644', b'100755'} or stage != b'0':
+                raise ValueError('linked/submodule/unmerged index entry')
+            files[path.decode('utf-8')] = subprocess.check_output(['git', 'cat-file', 'blob', oid.decode()], cwd=repo)
+    else:
+        for file in repo.rglob('*'):
+            relative = file.relative_to(repo)
+            if '.git' in relative.parts:
+                continue
+            if file.is_symlink() or (hasattr(file, 'is_junction') and file.is_junction()):
+                raise ValueError(f'linked export path: {relative.as_posix()}')
+            if file.is_file():
+                files[relative.as_posix()] = file.read_bytes()
+    total, sources = verify(files)
+    print(f'PASS ({"Git index" if args.staged else "working tree"}): {total} text files; {sources} reviewed source mappings; hashes and exclusion checks match.')
+
+
+if __name__ == '__main__':
+    main()

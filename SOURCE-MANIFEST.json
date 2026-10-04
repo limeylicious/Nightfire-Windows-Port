@@ -1,1289 +1,3443 @@
 {
-  "scope": "strict source-only export; no game or generated files",
-  "file_count": 257,
+  "scope": "strict source-only export; no game assets or generated game translations",
+  "schema": "reviewed-source-export-v2",
+  "through_checkpoint": 510,
+  "file_count": 491,
   "files": [
     {
-      "path": "nightfire-driving/build-windows.cmd",
-      "bytes": 597,
-      "sha256": "5b571dba1a502dc6e38b55a739204130259b266c67f76e048ecf7fbd24230329"
+      "path": "experiments/driving-510/runtime/compile_compat.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/compile_compat.h",
+      "group": "driving-510-bridge",
+      "bytes": 336,
+      "sha256": "fdb5100ea5e41330e850b27287b77f265c70a9e8c7fdec323fdbff691bb18d2e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_ac97148.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_ac97148.c",
+      "group": "driving-510-bridge",
+      "bytes": 1163,
+      "sha256": "c3bf4adfd4492201bacae0e3771dbfc0bf7608744d9d8f348d25e276885bc4a9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_ac97_reset148.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_ac97_reset148.h",
+      "group": "driving-510-bridge",
+      "bytes": 1253,
+      "sha256": "0ffb185134dddbe8dc8af531643040c5e30a47214f20d51511746bc5ce365835"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_access321.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_access321.c",
+      "group": "driving-510-bridge",
+      "bytes": 6836,
+      "sha256": "dd6fd75d7356be86d025e84f95e50558dde894d6ead22612c1c59bf86c2bc22a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_access321.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_access321.h",
+      "group": "driving-510-bridge",
+      "bytes": 1592,
+      "sha256": "f39e8b9aa8e3542dcb989a91d481242f9f049dd35b2b851532877e59b2ab785f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_access321_hooks.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_access321_hooks.h",
+      "group": "driving-510-bridge",
+      "bytes": 1300,
+      "sha256": "320bbe532abc235723c0231f6649af0df2ac88a862960e0c1a92309d73b59482"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_access453.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_access453.h",
+      "group": "driving-510-bridge",
+      "bytes": 1014,
+      "sha256": "a2b74b7ef571fbf79aaec33612c77b79b088d0241a8981ac1e38d9cbfd0295c3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_ack457.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_ack457.h",
+      "group": "driving-510-bridge",
+      "bytes": 5530,
+      "sha256": "76a364e60390a7b098bb24522beac9a97d0419f916009c892fffe7db7f7ee723"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_async295.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_async295.c",
+      "group": "driving-510-bridge",
+      "bytes": 7984,
+      "sha256": "ac5a1018af2bc9421e2296404931777517efec120a22378fb3ea1aa7d2d90307"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_async295.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_async295.h",
+      "group": "driving-510-bridge",
+      "bytes": 1169,
+      "sha256": "399e2216c66964f38bc9c333bf5e854f7e1595d205d39554a16baf6fdb16ed16"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_barrier242.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_barrier242.h",
+      "group": "driving-510-bridge",
+      "bytes": 1052,
+      "sha256": "799f5dc5aa13f7068998e029b446447e8efd83e921a63bcba4f85b97b62e214b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_batchmap264.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_batchmap264.h",
+      "group": "driving-510-bridge",
+      "bytes": 11910,
+      "sha256": "412a6bae356c8fd93df6d67fed436735545e3631ec683d5cd3486899b31a5f3b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_begin280.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_begin280.h",
+      "group": "driving-510-bridge",
+      "bytes": 8757,
+      "sha256": "9008abd92277addde42ab92905003032282386ae49f6d300a2f826b30ca36c8d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_blit143.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_blit143.h",
+      "group": "driving-510-bridge",
+      "bytes": 3938,
+      "sha256": "165022af9690e7e207171a27aae94e95c72e8a3984eb2ce2ca597c9d5e5d9687"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_capture223.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_capture223.h",
+      "group": "driving-510-bridge",
+      "bytes": 6825,
+      "sha256": "5cbd70d7f7463775f588986d56d6f7533e19f2df94c6b6d76f4a15a5d632e309"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_census255.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_census255.h",
+      "group": "driving-510-bridge",
+      "bytes": 4964,
+      "sha256": "89bfe282fede1aac74e366a8b014a3134e862c1860fe47fba847661f1ca4b7b4"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_clear461.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_clear461.h",
+      "group": "driving-510-bridge",
+      "bytes": 2687,
+      "sha256": "81c4fa83dd8910159573e2505c06da9ccab4f8dbb90e2f1ace1e744eb99d4c24"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_collect214.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_collect214.h",
+      "group": "driving-510-bridge",
+      "bytes": 4474,
+      "sha256": "e4a44be48ffa5d087eea69fdd083205762552b7bd9f2db14696d91f360cd88be"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_collect350.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_collect350.h",
+      "group": "driving-510-bridge",
+      "bytes": 3856,
+      "sha256": "eac6c1a5dba0c51d5ddbff297c25dcfa0ca49ea7ca67f09b7ac8cf8e7835cf9a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_color462.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_color462.h",
+      "group": "driving-510-bridge",
+      "bytes": 613,
+      "sha256": "df3988a3fd76b9e3ed28075cb9e6b8b98fc28e4cfb4334525ca9169cb71e1cb0"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_command245.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_command245.h",
+      "group": "driving-510-bridge",
+      "bytes": 1361,
+      "sha256": "d8ca3f0a8084a1c1f8b4ec27564caa103ce9a1bd11482c5a4717ae9d0cb59b01"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_command262.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_command262.h",
+      "group": "driving-510-bridge",
+      "bytes": 1162,
+      "sha256": "71a03acc68c06247ea22bd367fafd016e6670c72ac33619b0151104ee637bc6c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_command_read265.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_command_read265.h",
+      "group": "driving-510-bridge",
+      "bytes": 4446,
+      "sha256": "45ae1d0064e8d7e0c797faf3830a4fafedb75c865794e6a36828dd00387bc47c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_contig_reuse237.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_contig_reuse237.h",
+      "group": "driving-510-bridge",
+      "bytes": 4886,
+      "sha256": "f282937f82eb6a4c034b51c286830c37adbcb3fefb0c4cedd10466f080f6f350"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_copy211_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_copy211_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 1671,
+      "sha256": "ca9926a20a366c1651defb4f7f3c4cfdba5c7710fc0c7ae104f3378982996d39"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_cpu320.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_cpu320.c",
+      "group": "driving-510-bridge",
+      "bytes": 5842,
+      "sha256": "4df09a1fe61e48e892378645ac828a7d176f54895eb9e91eedc09a9b86bd912a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_cpu320.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_cpu320.h",
+      "group": "driving-510-bridge",
+      "bytes": 2267,
+      "sha256": "75aed743465af3dcfae9b432ba34cdacc8ed243a48fc3633138826a2996ad053"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_cpu448.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_cpu448.h",
+      "group": "driving-510-bridge",
+      "bytes": 5552,
+      "sha256": "f42b6b5a094e7f53f7f609c6b6cb6c60953e42f7f98930d1c1747b76cfc86cf3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_depth202.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_depth202.h",
+      "group": "driving-510-bridge",
+      "bytes": 1693,
+      "sha256": "06468d737104ddaac598aa7db75e973b7edd79a91d49e5b82b272f730229b4d3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_depth291.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_depth291.h",
+      "group": "driving-510-bridge",
+      "bytes": 961,
+      "sha256": "faa5b84d7fcf872a06e3cb9e1c60dd212ea92c49a0a6e5ecf8eabdbbd95cda8f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_depth302.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_depth302.h",
+      "group": "driving-510-bridge",
+      "bytes": 873,
+      "sha256": "f205768cfe51e7336e370c0d313971f2ca62268baea17bdcd9f698eba77ae637"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_descriptor252.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_descriptor252.h",
+      "group": "driving-510-bridge",
+      "bytes": 1714,
+      "sha256": "bc60b86fb79c63bf8352b91243913c705d7c1c30eeb77c5c181a5d2db0a85c9f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_descriptor252_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_descriptor252_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 990,
+      "sha256": "384b8da5eef48c924f002d11597cf2c97058b6e0bddcf45275c6d4b438017cc6"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_diag510.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_diag510.c",
+      "group": "driving-510-bridge",
+      "bytes": 9950,
+      "sha256": "37a3686acd7a49e72058f859615445322b2ec7238c8552cc572689ebcc163791"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_diag510.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_diag510.h",
+      "group": "driving-510-bridge",
+      "bytes": 2712,
+      "sha256": "84c706b98ae709e03df3def0f81a0d84c385128c8ee4c5672dc755ad0a897886"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_directmap410.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_directmap410.h",
+      "group": "driving-510-bridge",
+      "bytes": 2392,
+      "sha256": "78fa6a9fd77bdfbe817eaea8180494a62de8a29f1682a08cce4bba6ea65284b2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dispatcher143.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dispatcher143.c",
+      "group": "driving-510-bridge",
+      "bytes": 5637,
+      "sha256": "40fa15727ade8b3f87f763ef26eb65bbaafcbd2afd0bfa27f39220b06e4611e9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dispatcher143.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dispatcher143.h",
+      "group": "driving-510-bridge",
+      "bytes": 930,
+      "sha256": "130543fcc5a000446143f85de0f4ff0e3a2f94bb720690f6f0f4b1a833c92701"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dispatcher143_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dispatcher143_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 4543,
+      "sha256": "8a3c9f329d7b83f0ee5c1e93087465db00a9e9d807cacbcf357e995b5172637d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dma183.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dma183.h",
+      "group": "driving-510-bridge",
+      "bytes": 3331,
+      "sha256": "d02d8b4ba62615753a752ce1c0ec92b3166a2b2303b38cfba938e0ebc0bc6dc4"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dsp149.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dsp149.c",
+      "group": "driving-510-bridge",
+      "bytes": 1701,
+      "sha256": "9df8661607c108529a246d18d7880bdd878dfd8937c514cf3cd73f3ab4ad43ec"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_dsp_policy149.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_dsp_policy149.h",
+      "group": "driving-510-bridge",
+      "bytes": 1805,
+      "sha256": "589d293f1b4e5fb37e34b09e52aab3ca6624161cc0db46cab9cd8211e6b16242"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_extramap419.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_extramap419.h",
+      "group": "driving-510-bridge",
+      "bytes": 3283,
+      "sha256": "8e1088d4cebc45ac93c5b61aace4deab34a1d2e5590f1d7aca473cf46b8ceb3f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_finite328.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_finite328.h",
+      "group": "driving-510-bridge",
+      "bytes": 999,
+      "sha256": "6dc635a9872a88a9c78e1192ac14d214535a1917e6dfed2de030e54ea9dff71c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_flip204.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_flip204.c",
+      "group": "driving-510-bridge",
+      "bytes": 5897,
+      "sha256": "e0442473fa8eeefc6b17e79550189c3263e2bb0706dea09e815c7e429b8b0e94"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_fog217.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_fog217.h",
+      "group": "driving-510-bridge",
+      "bytes": 502,
+      "sha256": "9c9558aa0056812902f286dd1bdef30806153763e13c15524e7f07caacdefa88"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_font_collect348.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_font_collect348.h",
+      "group": "driving-510-bridge",
+      "bytes": 3349,
+      "sha256": "05bbc196ea133ba28e03a1c78491a954935199e239db54ac1ae3aa1d4b3231f7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_font_live348.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_font_live348.h",
+      "group": "driving-510-bridge",
+      "bytes": 3451,
+      "sha256": "17d40506db241a10601b6c0c55a3747e5e24f17b69feda76c034509f6c8a0fd2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_font_submit348.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_font_submit348.h",
+      "group": "driving-510-bridge",
+      "bytes": 9024,
+      "sha256": "c7dbd90c36309832225fd4d0bb24403ced12330daf89a53850099b6e9a525b67"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_geometry350.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_geometry350.h",
+      "group": "driving-510-bridge",
+      "bytes": 1750,
+      "sha256": "bfa3f900d3e2a221f11d1926855ef0cf268cd87bd3c780dd6f042e8d25ab98dd"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_gpu143.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_gpu143.c",
+      "group": "driving-510-bridge",
+      "bytes": 39187,
+      "sha256": "8938db83c462d8f1e27399b9209ec070259d96aeca43c8b425255cf0d22c6553"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_gpu143_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_gpu143_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 5105,
+      "sha256": "46b5dbb510f9815b2432b6dceadd0a4b4903e5f957c08e0e710af3f14f8387d2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_gpu_trace143.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_gpu_trace143.h",
+      "group": "driving-510-bridge",
+      "bytes": 2536,
+      "sha256": "a818bf9bc420755c7265e3e9dff83b06cfdd855f51885149f9ef04b2bce17855"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_hint465.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_hint465.h",
+      "group": "driving-510-bridge",
+      "bytes": 3575,
+      "sha256": "acc76e9f2ff2bdc1c271906a86c9b424aff223ec03e2fcd7427aad8e97806a66"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_hud_cost397.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_hud_cost397.h",
+      "group": "driving-510-bridge",
+      "bytes": 3221,
+      "sha256": "381884a1e9b6ce04d849fb13c3a6fc9e966499ae8bae672764b2d5ad0447723f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_inactive306.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_inactive306.h",
+      "group": "driving-510-bridge",
+      "bytes": 1177,
+      "sha256": "2cd863f4af1abdce3a895fab0050917dc4122cb496ac6058a7a345f29e4929ba"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_input224.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_input224.c",
+      "group": "driving-510-bridge",
+      "bytes": 8643,
+      "sha256": "644fcde0bb287ba0872499fec60db89cd74c2f5e756c05b7a612d674dffb5b2e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_input224.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_input224.h",
+      "group": "driving-510-bridge",
+      "bytes": 401,
+      "sha256": "ea6f024dc5e1b9a5c3a83d05b24d61fb8a3de8c6c62dee85213986278a58cb65"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_input352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_input352.h",
+      "group": "driving-510-bridge",
+      "bytes": 6891,
+      "sha256": "9b7526343929b06e7bcee886f87bd90e9a8a37c45ce93e0bfde71f4489e0f91a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_lanes227.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_lanes227.h",
+      "group": "driving-510-bridge",
+      "bytes": 3189,
+      "sha256": "0fc9b7b7a4590a3598a79d19a59e8dad4d1b14187dd84c6c767ea7919bee1f48"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_launch144.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_launch144.c",
+      "group": "driving-510-bridge",
+      "bytes": 1484,
+      "sha256": "4593d0070c71848d2a746a20fb5c9f7de5c86253239ee1cd72dc437fc7ec8f80"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_launch144_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_launch144_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 1033,
+      "sha256": "7d4f79af485531ab590c0f10bd93f29b9decab871602ace30ed5c3d49c8e1bb7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_lease322.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_lease322.h",
+      "group": "driving-510-bridge",
+      "bytes": 876,
+      "sha256": "6df3458433964149feb8ac87ff209b62488243ff739297dd222f660b991cdcda"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_lease322_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_lease322_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 3557,
+      "sha256": "69a27dd68bf01761bfd06303e7a51a53daad0cf5e77e94591884a3b35baa1276"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_lighting301.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_lighting301.h",
+      "group": "driving-510-bridge",
+      "bytes": 1114,
+      "sha256": "441ad39f53df322c7ab63305ab1a2bd7e660583bfc36c5802260321f183ee9f3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_lighting304.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_lighting304.h",
+      "group": "driving-510-bridge",
+      "bytes": 1714,
+      "sha256": "6049fef59294ea27394e029e423e374ecbdfe78e8b1a1e428416e88a9263e898"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_live201.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_live201.h",
+      "group": "driving-510-bridge",
+      "bytes": 6372,
+      "sha256": "cd9412e98e96ea779b100d18613d0feba462cace240dc8c430c856e067c21da6"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_live214.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_live214.h",
+      "group": "driving-510-bridge",
+      "bytes": 5398,
+      "sha256": "86f1c56e399c4304b4e41bc0ab6dc83d61a14770f3062fa83a9a85457ef12199"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_live350.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_live350.h",
+      "group": "driving-510-bridge",
+      "bytes": 4810,
+      "sha256": "f14cb527b443d432259ff297302c7323843435f789e771f34342c32f5942f09a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_live352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_live352.h",
+      "group": "driving-510-bridge",
+      "bytes": 3886,
+      "sha256": "b866e148859a7c8c9934191f5d80debde5289c6fe41150421d7bf6f33c58876e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_mapping230.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_mapping230.h",
+      "group": "driving-510-bridge",
+      "bytes": 4070,
+      "sha256": "07fe4cc1595891869280de590a24bc5e3df74477f2efb91e8c66093aa5a0367b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_mapping259.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_mapping259.h",
+      "group": "driving-510-bridge",
+      "bytes": 5359,
+      "sha256": "e8f6fb0580700ab942ecf22939befaef1d2f207d514facecc40d2363cdb4b48e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_material292.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_material292.h",
+      "group": "driving-510-bridge",
+      "bytes": 429,
+      "sha256": "0a8960863591325ed9754b8d8606f84c438c156d03c423fe74bd6619ba0330a5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_method_timing327.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_method_timing327.h",
+      "group": "driving-510-bridge",
+      "bytes": 2473,
+      "sha256": "4dc08dd8cbf5a8f661e3f253e32cb8903c6331dc2bfdb00a2322da5a7690b7fe"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_movie198.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_movie198.h",
+      "group": "driving-510-bridge",
+      "bytes": 4674,
+      "sha256": "f12e11f3c0c90f81ae56615599d0bd28ce8c1f15b6ac3389233dbc6cebc77d98"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_object227.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_object227.h",
+      "group": "driving-510-bridge",
+      "bytes": 888,
+      "sha256": "ee864eb7ad1d5532899ff6ea01d08678227c446c3d38f1c8318eba09cb9b1805"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_observe454.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_observe454.h",
+      "group": "driving-510-bridge",
+      "bytes": 6450,
+      "sha256": "a84b5deb409dcc9f03d02d565081b745b1c009205747bb540b9d35d0609471ea"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_ownership309.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_ownership309.c",
+      "group": "driving-510-bridge",
+      "bytes": 10386,
+      "sha256": "d65eed2d03221460fdb0814dac2b702797da621d862e3ef9a9b6a2ab30c0e089"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_ownership309.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_ownership309.h",
+      "group": "driving-510-bridge",
+      "bytes": 636,
+      "sha256": "0512b7bc346de9c86e13a5bcf078629fdc2ab5d2d630471f8146622ef65a5e08"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_packets236.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_packets236.h",
+      "group": "driving-510-bridge",
+      "bytes": 29417,
+      "sha256": "c661532424b5e67b693eaac757f2923417ce0ff42542a54c15155a2ce65eb720"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_palette287.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_palette287.h",
+      "group": "driving-510-bridge",
+      "bytes": 1985,
+      "sha256": "95eaee2fda0b4a04478375e5d000196af31823a0876bef5d4c4daf058a5619c9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pb_exec231.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pb_exec231.c",
+      "group": "driving-510-bridge",
+      "bytes": 813,
+      "sha256": "65740e7effee2480facd4c8a08599ef3da44b2b06ad23acb415bc2aaaf61ff7f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pc450.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pc450.h",
+      "group": "driving-510-bridge",
+      "bytes": 27273,
+      "sha256": "49b8c9bd6f7e0bfc5d30011e33aab788e7d2f22656d92272409f5fa9e2b4f40d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pc508.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pc508.h",
+      "group": "driving-510-bridge",
+      "bytes": 600,
+      "sha256": "806fa29ab839d36fce2a1ed5f936cfb15cb450e0cb37ae48948e930f58e41586"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pc508_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pc508_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 8361,
+      "sha256": "80b8bff0f14cb779787276a8348988fcc5a893394b911aa28616eeaa9ae2e802"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pc508_guards.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pc508_guards.h",
+      "group": "driving-510-bridge",
+      "bytes": 790,
+      "sha256": "52fc954b9ffae889ada94823b0d3b0878c4851ac77c88567e15b0490529c15ec"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_pc508_state.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_pc508_state.h",
+      "group": "driving-510-bridge",
+      "bytes": 981,
+      "sha256": "45dcdb57a458ddc1135828a95ac97081e7a4fa41e750b67e1a688504337da714"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_permissions264.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_permissions264.c",
+      "group": "driving-510-bridge",
+      "bytes": 2841,
+      "sha256": "3ca55644202ce15921da49aa95d5955b6c63d4d761c7788668f65c0649b986e7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_permissions264.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_permissions264.h",
+      "group": "driving-510-bridge",
+      "bytes": 730,
+      "sha256": "01485e311b105a251ce98307f79b05c08afa979eddf4fde435f2d05d283d2c13"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan201.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan201.h",
+      "group": "driving-510-bridge",
+      "bytes": 4463,
+      "sha256": "0fdd724d3624999aa2bc0a53aa659c7df36c918d626e56f7fc619c043ff711c2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan214.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan214.h",
+      "group": "driving-510-bridge",
+      "bytes": 1426,
+      "sha256": "bdba9faee9b847b6e1cee68a1db8443ffc7e9dccbbb97a95bce0f64818306660"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan216.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan216.h",
+      "group": "driving-510-bridge",
+      "bytes": 1316,
+      "sha256": "a8313ebfdb5eac4826090489c505f12a513ea7e81bdcccb38af178bec68562c3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan220.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan220.h",
+      "group": "driving-510-bridge",
+      "bytes": 1345,
+      "sha256": "fadf87710ca50c353b7eace7a370abf6af191789d0d2bb92b5e6216366ab3177"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan221.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan221.h",
+      "group": "driving-510-bridge",
+      "bytes": 6395,
+      "sha256": "91a9df7158548908411c34be379a063648b00dafac396715a4559866616c1563"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan243.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan243.h",
+      "group": "driving-510-bridge",
+      "bytes": 5641,
+      "sha256": "7efc24c0bd2df7457411d221b84b16978840c8fe19fcc724e971ea9d039ff7bb"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan350.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan350.h",
+      "group": "driving-510-bridge",
+      "bytes": 3584,
+      "sha256": "26cb0d9a2c6009222d7a7a17718df1c7eb8311f559b9177a24fb36892d5c151c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_plan352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_plan352.h",
+      "group": "driving-510-bridge",
+      "bytes": 1039,
+      "sha256": "829ea82c1ebdea899ffbbf1c948f5d80d7cd0054198caa6e1cf162a4a65767ed"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_present201.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_present201.c",
+      "group": "driving-510-bridge",
+      "bytes": 5767,
+      "sha256": "8158c54038b8c8b4937fbb01f96932588f664b9aa312c9dbb5cab94ce4215556"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_present458.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_present458.h",
+      "group": "driving-510-bridge",
+      "bytes": 2722,
+      "sha256": "581ad21ca3959f058fb75f4db5218785a5deb97ac2005a6c1d320285f88cbcf9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_producer235.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_producer235.h",
+      "group": "driving-510-bridge",
+      "bytes": 4205,
+      "sha256": "3c84b92386f11c5d0ee13b1fcb7a810c9c47b19a9c0812de702b4f8e92687558"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_proof466.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_proof466.h",
+      "group": "driving-510-bridge",
+      "bytes": 5880,
+      "sha256": "c5a24ad4bc1054984b9f91dbc49f4610df30446ff8efda01c9a5b647adbfe1d9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_protection452.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_protection452.h",
+      "group": "driving-510-bridge",
+      "bytes": 1415,
+      "sha256": "35522d54c9fe652c6925838d4da07a21b408c71296efdeefd6ed5abb853b2ed2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_publication324.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_publication324.h",
+      "group": "driving-510-bridge",
+      "bytes": 842,
+      "sha256": "0a1e1e02932974f5d65c271c0501104f887b19aa5ca9e85aebfe24f0442c69b2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_publication324_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_publication324_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 3214,
+      "sha256": "8f263369b06170aba4aed39a79323b6751b7fe97feb035afccd5582c87892658"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_query464.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_query464.h",
+      "group": "driving-510-bridge",
+      "bytes": 3709,
+      "sha256": "18c5ebb1e836b54c1c800496971d420e498d0e8083de5afb443d863e7b509aa5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_queue251.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_queue251.h",
+      "group": "driving-510-bridge",
+      "bytes": 3857,
+      "sha256": "cc7731afdac1d4f9246d0a7a8ed0e5d6724b733e26f1bb20a77672cc54262324"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_region445.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_region445.c",
+      "group": "driving-510-bridge",
+      "bytes": 6584,
+      "sha256": "bf79139f6bade00da5f1d2e253992197ea357b58a193165c310bfa895d27a4f5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_region445.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_region445.h",
+      "group": "driving-510-bridge",
+      "bytes": 1403,
+      "sha256": "b4f17ea3406ab87c69a68c5ee4b9d2643a6e437c514eaa9ad9c3e80f048d6ecb"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_region445_core.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_region445_core.h",
+      "group": "driving-510-bridge",
+      "bytes": 4490,
+      "sha256": "b9a4d39d3d42a0d64c2f8f575eae0b900349872ba785747224c6b6f8853943f9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_residency236.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_residency236.h",
+      "group": "driving-510-bridge",
+      "bytes": 8095,
+      "sha256": "5d1c9545433d2b8a7854051d93e9d5db6a7151fc1657675187ef15b73ce6f672"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_resolve_capture222.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_resolve_capture222.h",
+      "group": "driving-510-bridge",
+      "bytes": 2424,
+      "sha256": "1b14adcf013922c23972273146c8548911200196c812bf9f519ac8e41d48664f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_road242.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_road242.h",
+      "group": "driving-510-bridge",
+      "bytes": 1637,
+      "sha256": "f075b720dc5475dc61713179cb46537b1ebed755db0cfb5a4667d917f89cbbaf"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_scanout152.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_scanout152.c",
+      "group": "driving-510-bridge",
+      "bytes": 10077,
+      "sha256": "c4f6d99ad08bc33a333f00ce2290071af58058c70b419f5b6dc9d9f4f51f6750"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_scanout152.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_scanout152.h",
+      "group": "driving-510-bridge",
+      "bytes": 1580,
+      "sha256": "4fb93e413f015261838768e4fd62080cdba44f12971a27d44b444b0774fefa6a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_scene240.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_scene240.h",
+      "group": "driving-510-bridge",
+      "bytes": 882,
+      "sha256": "15f764daa6ae90cae44b62af29d5fd9eef6cff94eea1ea1abdfce6d20013cd5e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_semaphore281.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_semaphore281.h",
+      "group": "driving-510-bridge",
+      "bytes": 4328,
+      "sha256": "262eee0948ec342b4d195f0a20d425138840ad21ccd099c037c4feec7564cbff"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_sprite_plan396.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_sprite_plan396.h",
+      "group": "driving-510-bridge",
+      "bytes": 1765,
+      "sha256": "3a4052b039689533153a68d6151bf5c027086ab4e4e5d7c33244dd18f7538319"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_stall510_impl.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_stall510_impl.h",
+      "group": "driving-510-bridge",
+      "bytes": 13088,
+      "sha256": "f3f8b9b73e5488e01f1c9eecd345e323b6c5d45e89096b1c6d2c21fb29eaa836"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_storage228.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_storage228.h",
+      "group": "driving-510-bridge",
+      "bytes": 1082,
+      "sha256": "e0bd670c4fcd584f957883070a22acd532ae88851d8b10102b865c1daf3d03e5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit214.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit214.h",
+      "group": "driving-510-bridge",
+      "bytes": 4993,
+      "sha256": "deb4ea113c0b90448a6032aa0321dd1f6ae813f4b00728c98975c8d1a32b2983"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit216.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit216.h",
+      "group": "driving-510-bridge",
+      "bytes": 5376,
+      "sha256": "74904162a941bd446315264713fa3941def21dbb41667f2c16a711ca9cd4be98"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit220.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit220.h",
+      "group": "driving-510-bridge",
+      "bytes": 5334,
+      "sha256": "13c4aa1c35d4fcd766542f0d4ac732d6999e4ac1af166a63c6c3ac377fc4483a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit221.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit221.h",
+      "group": "driving-510-bridge",
+      "bytes": 12467,
+      "sha256": "b71c602505531a9a5a601b9869346bfc117b8684075d55e48d7d640171aae624"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit243.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit243.h",
+      "group": "driving-510-bridge",
+      "bytes": 9014,
+      "sha256": "b1ec0afd1d8af34293c05ded59557d5dd7cd860bbe45cf141d29b5e0fb6a0b5a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit350.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit350.h",
+      "group": "driving-510-bridge",
+      "bytes": 12709,
+      "sha256": "f04e263bfa0fcf0bf2cd18ab4dadd9df36954f6fe1c3f7fbc179ada0502dc247"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit352.h",
+      "group": "driving-510-bridge",
+      "bytes": 13137,
+      "sha256": "f73310a0d088426f2a6b838c4ff2a824886dd7658c21b7b2d3a671bff9c0632e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_submit456.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_submit456.h",
+      "group": "driving-510-bridge",
+      "bytes": 3640,
+      "sha256": "b6f4f6732ce027b10e6c502fe6fdc89c4ba0ed3aa5052522340a1ed51beb8f8f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_surface145.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_surface145.h",
+      "group": "driving-510-bridge",
+      "bytes": 3400,
+      "sha256": "12c59c36a4d62f92435953adf70716af6a9027aa42c39d16aa8bcf872c796057"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_text510_material.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_text510_material.h",
+      "group": "driving-510-bridge",
+      "bytes": 3876,
+      "sha256": "ad9b505bd148972aa8385f4217e52cf13228aeea01a9a8af0b39ffb2277a281e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_timing227.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_timing227.h",
+      "group": "driving-510-bridge",
+      "bytes": 766,
+      "sha256": "a738998de303989abe20d1836aa640cc868d4871ea19be8e5669e1528bea537a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_timing250.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_timing250.h",
+      "group": "driving-510-bridge",
+      "bytes": 6617,
+      "sha256": "ceef4c103c6d7efc5241ac9427a1288693493ae65f94300db051176370341a83"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_transform352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_transform352.h",
+      "group": "driving-510-bridge",
+      "bytes": 2165,
+      "sha256": "7ca33ea1c45fab21fb817d759b422bb3043f18bed3c61c2f30d921b41cb2028e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_vblank143.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_vblank143.c",
+      "group": "driving-510-bridge",
+      "bytes": 2092,
+      "sha256": "a97146a6dc38339847f343a879603c461ff9225eacc0d2f672570134a24b08c8"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_vehicle439.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_vehicle439.h",
+      "group": "driving-510-bridge",
+      "bytes": 1619,
+      "sha256": "9b5d63e7678e483ba7a589651579f285cbc2ecd7f6e38d42f7d81cc0e33356fc"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_vertex212.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_vertex212.h",
+      "group": "driving-510-bridge",
+      "bytes": 1375,
+      "sha256": "1035c718ca71c1c0a77c185b460d4921e8de8921e72f8be19e02473a41279e41"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_vertex218.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_vertex218.h",
+      "group": "driving-510-bridge",
+      "bytes": 1158,
+      "sha256": "90546d0af9605d8a0e8ae4bdfd8cd91df9d9fd28bb5c68596eb204a92aa85cb9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_world210.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_world210.h",
+      "group": "driving-510-bridge",
+      "bytes": 9716,
+      "sha256": "80b5604a97e2c3371abd33dde4b08a9f0dcf3a60258d21ebc00536e0d79b315c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/driving_writeguard270.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/driving_writeguard270.h",
+      "group": "driving-510-bridge",
+      "bytes": 1057,
+      "sha256": "0b743480938bb251c6305b43fbac80c93847891df418d6b475c2899ba994f2e7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/linear_rgba189.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/linear_rgba189.h",
+      "group": "driving-510-bridge",
+      "bytes": 3532,
+      "sha256": "4ed5c23753ab584a6afdaec4f9b7baa1c6f9f4c82028a976873da851d2028bfe"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/movie_rgb232.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/movie_rgb232.h",
+      "group": "driving-510-bridge",
+      "bytes": 4370,
+      "sha256": "59143f6afc85e0f3a0447f5012eaf4f3a7ee0f469025ea0d6b0f6c45f0a28ac9"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nf_pixel221.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nf_pixel221.h",
+      "group": "driving-510-bridge",
+      "bytes": 6870,
+      "sha256": "4dbf6d2bda3096282d3fe2b3884fe0a6cc2bb04e60e7c226b1f0d7a1239ca0f7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_batch234.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_batch234.h",
+      "group": "driving-510-bridge",
+      "bytes": 3208,
+      "sha256": "9a1ef9b30604ca8586a870abf2f077ef77742d9c1dc937919d896de1b4b85a66"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_batch_limit260.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_batch_limit260.h",
+      "group": "driving-510-bridge",
+      "bytes": 1053,
+      "sha256": "1d73288dac73e11756da338d86d20d724ef5198a978017303497d74fcd61f082"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_batch_timing244.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_batch_timing244.h",
+      "group": "driving-510-bridge",
+      "bytes": 3388,
+      "sha256": "762df252abc5d64747cf8943458aa7c1ea9eef5496809b2dd689de213a0a3eaf"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_begin_probe334.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_begin_probe334.h",
+      "group": "driving-510-bridge",
+      "bytes": 3285,
+      "sha256": "e93009211c0cc12f5777fa2508552a2c66c44046b3753f5157f62c578de2da95"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_blend285.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_blend285.h",
+      "group": "driving-510-bridge",
+      "bytes": 362,
+      "sha256": "0f8fa02592ecd287c707c56d3de8c2c89360deae2200ab90af4c7c842af66db7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_bytes_equal.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_bytes_equal.h",
+      "group": "driving-510-bridge",
+      "bytes": 1389,
+      "sha256": "d493ec2013a3f303b9f61632235b6481441d408aeb0913bbcd7c1c83728fa629"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_color_api276.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_color_api276.h",
+      "group": "driving-510-bridge",
+      "bytes": 1706,
+      "sha256": "bacf2772fe1ef16161b87b1ebfd0dbba363b521046e6b7f1aaef8d720d745978"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_color_rect406.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_color_rect406.h",
+      "group": "driving-510-bridge",
+      "bytes": 4097,
+      "sha256": "a821124c1b4462282d13921fc263f587ba3e8c93dbfc98ea987273ce279cbd44"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_color_seed276.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_color_seed276.h",
+      "group": "driving-510-bridge",
+      "bytes": 5458,
+      "sha256": "070e801507149a0bd2b9e52050026ccd67d997ac6573a31b294d9fe4c3a6d4cc"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_compute352.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_compute352.h",
+      "group": "driving-510-bridge",
+      "bytes": 10018,
+      "sha256": "681902cd1440dc6474b23473fbda8eb5630bab34c2bd5a45062a2b66123547c5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_constant_mask.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_constant_mask.h",
+      "group": "driving-510-bridge",
+      "bytes": 833,
+      "sha256": "c99dcdc317d8ad4f11e67912ab83d7718493ddce30e29e979cc65530024f6427"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth.h",
+      "group": "driving-510-bridge",
+      "bytes": 1124,
+      "sha256": "8fefe8c4c37e4b1a41c0014d9ba874b027928c3f5108ea8f7d4d4103f2ec2ddc"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_api278.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_api278.h",
+      "group": "driving-510-bridge",
+      "bytes": 1934,
+      "sha256": "193a99d9754157bf24c14d791a24818d9a60a672381c6f14dd7c5a1f86f4f2c3"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_clean269.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_clean269.h",
+      "group": "driving-510-bridge",
+      "bytes": 3094,
+      "sha256": "d1f2126a7959c0b9f1afedfb1d00260b242b9654fcbc2a51dca832dcd6787b35"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_import268.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_import268.h",
+      "group": "driving-510-bridge",
+      "bytes": 4073,
+      "sha256": "225a4f2389051db38ebcace4cdc1df6f769947f8632b93852aa0013b36b8a9c5"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_observe83.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_observe83.h",
+      "group": "driving-510-bridge",
+      "bytes": 2106,
+      "sha256": "fd83edb50372114ac320f6b5f7c0d129417b9962f037491dd96611c235b73066"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_ping272.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_ping272.h",
+      "group": "driving-510-bridge",
+      "bytes": 19133,
+      "sha256": "abc7449aa35ac23f6af19ea5e8548810c7f05bfd185c7d7a5039b96f527033c0"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_roundtrip130.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_roundtrip130.h",
+      "group": "driving-510-bridge",
+      "bytes": 4103,
+      "sha256": "b040fa31f176b462ab8f2f9a72c0acb7db057a66fcba9051f31b8ff20954c7bf"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_seed278.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_seed278.h",
+      "group": "driving-510-bridge",
+      "bytes": 5051,
+      "sha256": "3825ba3366d2bce580a6f40a237dc6c84b4cb081627bd9654b93b17b5ebb302f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_srv256.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_srv256.h",
+      "group": "driving-510-bridge",
+      "bytes": 3622,
+      "sha256": "7444605bb0131b5c4d03a13173b91fcb91a06ba6ae64c61d30eaecd804940c8d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_transfer.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_transfer.h",
+      "group": "driving-510-bridge",
+      "bytes": 2319,
+      "sha256": "19ec913742a7e09926484c6406ac46097043e7d52c95172411d95d99683f3346"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_depth_unpack335.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_depth_unpack335.h",
+      "group": "driving-510-bridge",
+      "bytes": 2380,
+      "sha256": "6499a485b5fbea66837085db160cc0992b99d9671862227c1fe9ac741ea39ba6"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_finite357.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_finite357.h",
+      "group": "driving-510-bridge",
+      "bytes": 1063,
+      "sha256": "9e3bcff415c12058df70ed8c7b9fca3b401c21028c25c1f5c60652695ba0e457"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_fog.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_fog.h",
+      "group": "driving-510-bridge",
+      "bytes": 891,
+      "sha256": "23845866e87644ab1e41029e3f18171e04f7b3630434d7660236847df535ef9e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_font469.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_font469.h",
+      "group": "driving-510-bridge",
+      "bytes": 3986,
+      "sha256": "b084cfcb80d4d52eaa7d2f85647e65d838093d0b0f96e988ed648b7a9754baf4"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_fragment_depth291.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_fragment_depth291.h",
+      "group": "driving-510-bridge",
+      "bytes": 3387,
+      "sha256": "4b10d9e05cf8fdedf44cafb800773b9082018163329f2bdbbca3d2b9784031f4"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_gpu_sample254.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_gpu_sample254.h",
+      "group": "driving-510-bridge",
+      "bytes": 7435,
+      "sha256": "bcc0b619b252aecfa42a79c95bdf1412452c2fff0c630f02273bd1b488d88213"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_gpu_sample297.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_gpu_sample297.h",
+      "group": "driving-510-bridge",
+      "bytes": 11061,
+      "sha256": "a85fd5ffc0fdc70084cf22afd6f75e51cf35faebe567c8d7e6dc7c8e7c38d6e4"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_gpu_timing84.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_gpu_timing84.h",
+      "group": "driving-510-bridge",
+      "bytes": 11588,
+      "sha256": "8d38e8f85562218e509dd49677654f6c9a8f79c92bbb7f12678f08786e41f1be"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_hardware.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_hardware.c",
+      "group": "driving-510-bridge",
+      "bytes": 172325,
+      "sha256": "bd519411b9973b7b83933188c0ac43afc8cdcb65844a4fc222ded100532f467d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_hardware.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_hardware.h",
+      "group": "driving-510-bridge",
+      "bytes": 13608,
+      "sha256": "cd53a6dbd70a003110e45cb133cb42dd25aa61fb5312c4ec934b90d37067c55b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_host_spans261.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_host_spans261.h",
+      "group": "driving-510-bridge",
+      "bytes": 3844,
+      "sha256": "f43a056f7a09e434c2ecb1ee0036f69a100095ae058a29ea61780b8c8b4ff8b1"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_import422.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_import422.h",
+      "group": "driving-510-bridge",
+      "bytes": 2769,
+      "sha256": "cd6f9199d661e7094053b6184fa67f940bb8363810b173dec5825c981540341a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_import_probe335.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_import_probe335.h",
+      "group": "driving-510-bridge",
+      "bytes": 3396,
+      "sha256": "5e4d871a1e7a30b3da6d908a004efd557792851d23399a1ae3412d05e628f07f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_index_guard120.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_index_guard120.h",
+      "group": "driving-510-bridge",
+      "bytes": 5378,
+      "sha256": "d5bd4a0fbbc9d5742615b1a65ce4c4d3132b27582f3b72e163fbf0abfeac33ba"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_lane_flush275.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_lane_flush275.h",
+      "group": "driving-510-bridge",
+      "bytes": 590,
+      "sha256": "da27a7a9a07a688e51454c570aba208ac5fcdb1730fa43c4e440f08c7ff25c2a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_layout417.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_layout417.h",
+      "group": "driving-510-bridge",
+      "bytes": 3277,
+      "sha256": "91a5fe4874582db9c5370864a0bdd93deb8521855a84e7d8bb850e5f23d11a4b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_map_wait412.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_map_wait412.h",
+      "group": "driving-510-bridge",
+      "bytes": 2265,
+      "sha256": "b0a749e6afb0c0214c209222d67351910bc54e685671f7783469587d004d4c2a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_native_depth302.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_native_depth302.h",
+      "group": "driving-510-bridge",
+      "bytes": 4990,
+      "sha256": "0b624cbbff3e5c2327ecc30cc3c216553fb6001278e53bbdba5f3b73511f87ff"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_native_pair302.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_native_pair302.h",
+      "group": "driving-510-bridge",
+      "bytes": 2576,
+      "sha256": "d91f2b890b33768a633538e1ee787aab38a82b9ef4561793ae70f29bacd0dfad"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pack418.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pack418.h",
+      "group": "driving-510-bridge",
+      "bytes": 2381,
+      "sha256": "1f172620066a40bc6af7dc421dec80262950dcfcd34e838dd36b73ab9185aec7"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pair234.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pair234.h",
+      "group": "driving-510-bridge",
+      "bytes": 9101,
+      "sha256": "50173325da2b8a9a967ed22ad5e29d8dc32859a75a03250ec12b552bd1544dda"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pair235.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pair235.h",
+      "group": "driving-510-bridge",
+      "bytes": 19147,
+      "sha256": "3ee29116cc7b1ed30b19ae005e2f022ecb2285fcbdf8b162f2e8a14a93a2e14f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pair_color401.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pair_color401.h",
+      "group": "driving-510-bridge",
+      "bytes": 6062,
+      "sha256": "3f86c1726a0eed633589eda545af6c3123fa76d6bb99621207c8a0b5a4c34d3d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pair_cost399.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pair_cost399.h",
+      "group": "driving-510-bridge",
+      "bytes": 4138,
+      "sha256": "95581573f9c4e4f056de13f6a17e5e554c585c637fbbb0853889ab884026f005"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pair_import400.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pair_import400.h",
+      "group": "driving-510-bridge",
+      "bytes": 878,
+      "sha256": "1834e4fffc2ba32c16a946fdd7d97aa6a94967539372b926047271db92ad90a8"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pairbatch248.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pairbatch248.h",
+      "group": "driving-510-bridge",
+      "bytes": 18922,
+      "sha256": "0f7386bd0d1d592ca8b83e08dc5eb09ece600e6f1f5a9fd14b490892fba85d7c"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pairblend359.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pairblend359.h",
+      "group": "driving-510-bridge",
+      "bytes": 518,
+      "sha256": "5c1ff6304e2c159ba4103d92701f74c590ee8f7f82a7a73af308adf4e3a18041"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_partial_depth413.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_partial_depth413.h",
+      "group": "driving-510-bridge",
+      "bytes": 3155,
+      "sha256": "db53ff2142ce02ef8c1a55d5ea30de4fd05b496b2e740e28d015f87a9552eeb2"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_pc450.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_pc450.h",
+      "group": "driving-510-bridge",
+      "bytes": 10983,
+      "sha256": "78994a456fa6078e507cb1674250d3f725e084b8f8665b2158235a34eb35f05f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_readback294.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_readback294.h",
+      "group": "driving-510-bridge",
+      "bytes": 5867,
+      "sha256": "132f98447c3b2b0bb262c7138f63dd4ae8224d5ddf0b086452de8abdd05a654a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_resident315.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_resident315.h",
+      "group": "driving-510-bridge",
+      "bytes": 16284,
+      "sha256": "5eb73a8ad0d1a23b3501e65f95c6bd1dcd77c9f5ac7b4d8fe1235bfbbd38fa97"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_rgba_mips129.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_rgba_mips129.h",
+      "group": "driving-510-bridge",
+      "bytes": 830,
+      "sha256": "7fc36ed20691e33b9218e9aff35abe9ca322429c15ba4681cbf40d0a59e1eaee"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_scope_depth411.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_scope_depth411.h",
+      "group": "driving-510-bridge",
+      "bytes": 7844,
+      "sha256": "a456dfd2e1d6fa674ce8a0b71d6a8436c31aabcd11be5aa2bbe378308065f9f8"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_shader_cache99.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_shader_cache99.h",
+      "group": "driving-510-bridge",
+      "bytes": 11075,
+      "sha256": "d5f8c5477f495d31857459326e472e0742f187ad3e6a3e5effc1ba5c0ee0fa83"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_shared339.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_shared339.h",
+      "group": "driving-510-bridge",
+      "bytes": 10106,
+      "sha256": "6146a2a51138e90ff615b2a481c0dc4f1edf7e6f2110e10851e550375ad7b7af"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_shared341.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_shared341.h",
+      "group": "driving-510-bridge",
+      "bytes": 13310,
+      "sha256": "cce40fd76ab5ff609780dbe860e64649d07d29ddfbc5f95cda1761db6e7c829a"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_surface_probe83.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_surface_probe83.h",
+      "group": "driving-510-bridge",
+      "bytes": 3495,
+      "sha256": "4b5977a0d4fb89e6d4916d303829d75c0703e53b5aaab3f6fc47a166d97cfb7f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_swizzled_shadow131.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_swizzled_shadow131.h",
+      "group": "driving-510-bridge",
+      "bytes": 3633,
+      "sha256": "fe657ae8c35f36b40bb09c38c4152b4619cc4f08e35b58bda8ecdbac3573ca44"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_texture_cache.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_texture_cache.h",
+      "group": "driving-510-bridge",
+      "bytes": 1389,
+      "sha256": "b7cee08a008ceeb4aa6d7568a81dcea3093fcb0b180c971e23366af4c226b49d"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_texture_filter.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_texture_filter.h",
+      "group": "driving-510-bridge",
+      "bytes": 4430,
+      "sha256": "9da4a976b8a1b0c694a9fb085c3b80e497c427dcd4fc0b1e04c82d73be6ba668"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_validation267.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_validation267.h",
+      "group": "driving-510-bridge",
+      "bytes": 2812,
+      "sha256": "19d96bcd24ce21d8de2e52297cbb7c8ebcf6a9aeb886d37e9e3e3d4d5964d61f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_vertex_compute351.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_vertex_compute351.h",
+      "group": "driving-510-bridge",
+      "bytes": 7464,
+      "sha256": "902fff1ccfa99b1d786e6cee9c1b70e663b9a76691fda3d1dbd1f3ffc2d0b76e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_vertex_hlsl.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_vertex_hlsl.h",
+      "group": "driving-510-bridge",
+      "bytes": 7213,
+      "sha256": "a3a5504cc4baa69db88bb6f559a3009c22165bc36f7581d9cfceb359f6b6f124"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nightfire_vertex_program.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nightfire_vertex_program.h",
+      "group": "driving-510-bridge",
+      "bytes": 6549,
+      "sha256": "c90c74312a1c66feb8707f4f782dd8814420b84160a73a299d16e1f58ec839dd"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/nv2a_pb_exec.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/nv2a_pb_exec.c",
+      "group": "driving-510-bridge",
+      "bytes": 186599,
+      "sha256": "3813da5bf8d16af08705807e2ac4b569a3814923f0458068f751a61b5e0824c8"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/palette175.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/palette175.h",
+      "group": "driving-510-bridge",
+      "bytes": 5850,
+      "sha256": "5422daca4363717d61df0ff779cb86232c6ac13dc56c52444285778a1ec7456b"
+    },
+    {
+      "path": "experiments/driving-510/runtime/gpu144/rgb565148.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/gpu144/rgb565148.h",
+      "group": "driving-510-bridge",
+      "bytes": 5076,
+      "sha256": "652ccb8855b0df0dcda94daee48b62fd212d1b421158ca9f67e09f46bfc48a95"
+    },
+    {
+      "path": "experiments/driving-510/runtime/immediate195.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/immediate195.h",
+      "group": "driving-510-bridge",
+      "bytes": 3214,
+      "sha256": "fd829615f72e128aea811718e3ae9fa711a6b8766f5af1ce8cefb706933d813e"
+    },
+    {
+      "path": "experiments/driving-510/runtime/kernel_bridge.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/kernel_bridge.c",
+      "group": "driving-510-bridge",
+      "bytes": 237237,
+      "sha256": "430dcd85c3e4efd66e7c309cf32ee3d8b047044b3d4f20b9bc0c4a448e999ad1"
+    },
+    {
+      "path": "experiments/driving-510/runtime/kernel_file.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/kernel_file.c",
+      "group": "driving-510-bridge",
+      "bytes": 54877,
+      "sha256": "630a374424e5cac6bdf23a4f2c1de9dcc4826e991c5b539b3812ff68320d54bf"
+    },
+    {
+      "path": "experiments/driving-510/runtime/kernel_path.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/kernel_path.c",
+      "group": "driving-510-bridge",
+      "bytes": 23628,
+      "sha256": "92b4a5625598baa1d415715dcce0848a80813c5d564b5c7f1a598b6761b84289"
+    },
+    {
+      "path": "experiments/driving-510/runtime/kernel_thunks.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/kernel_thunks.c",
+      "group": "driving-510-bridge",
+      "bytes": 22038,
+      "sha256": "720789ddb53e9cd54452693183b6d8750ca3debeda064521ac6e0f7215df0a0f"
+    },
+    {
+      "path": "experiments/driving-510/runtime/nightfire_disc.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/nightfire_disc.h",
+      "group": "driving-510-bridge",
+      "bytes": 1384,
+      "sha256": "6d346d8e86a683c11d2ec087d768a62a34bcbe2376d43a465afbe91635499ac6"
+    },
+    {
+      "path": "experiments/driving-510/runtime/nightfire_physical.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/nightfire_physical.h",
+      "group": "driving-510-bridge",
+      "bytes": 373,
+      "sha256": "d9f40717ee4779bc31124b977d6e828833485023924a66bf2930a58c2ba87175"
+    },
+    {
+      "path": "experiments/driving-510/runtime/nightfire_video_io.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/nightfire_video_io.h",
+      "group": "driving-510-bridge",
+      "bytes": 930,
+      "sha256": "8a58f3988b9d94846f8e4a8a108e7cf826305188bf9dae7f999ca900594efebc"
+    },
+    {
+      "path": "experiments/driving-510/runtime/texture_select161.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/texture_select161.h",
+      "group": "driving-510-bridge",
+      "bytes": 3099,
+      "sha256": "235f9ab22bbde52bbb39d3cd05f5e76f41a7c0cc627437467e3a87e3dc41e126"
+    },
+    {
+      "path": "experiments/driving-510/runtime/xbox_memory_layout.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/runtime/xbox_memory_layout.c",
+      "group": "driving-510-bridge",
+      "bytes": 108328,
+      "sha256": "47801c04cb48dbeddf85bba0ed7fa9b4d34505dff2ef6ef6ebd6b5dc0f7c27e5"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_aliases176.h",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_aliases176.h",
+      "group": "driving-510-bridge",
+      "bytes": 534,
+      "sha256": "a2973e38a772c852aec9568383c0c683c32182c22c9dedab341aebdea3d154cb"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_audio_probe147.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_audio_probe147.c",
+      "group": "driving-510-bridge",
+      "bytes": 2697,
+      "sha256": "22ef08f642a56fcfbd4ccc9c032da8f1b691ef634595802706f8fb9dd34be2e6"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_copy211.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_copy211.c",
+      "group": "driving-510-bridge",
+      "bytes": 1733,
+      "sha256": "33fabe810b1fdb42a67553eb74053605aa891c541cb21e37fd96806d0f258f3f"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_gpu_probe143.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_gpu_probe143.c",
+      "group": "driving-510-bridge",
+      "bytes": 2479,
+      "sha256": "140d0ee14e9cbff140ac36c78d60f65d96c0e08a4412b5df649be56ab7bd9dd6"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_memory_order.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_memory_order.c",
+      "group": "driving-510-bridge",
+      "bytes": 579,
+      "sha256": "1346edc3945437e2b4536d1e986d79e06236308230add38664a47131bde430ba"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_movie_probe144.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_movie_probe144.c",
+      "group": "driving-510-bridge",
+      "bytes": 14517,
+      "sha256": "7dee4a72544b3a2298b5c9d735ab570d3ff584fcbdd18fd45e87f51657fa56ef"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_port_io.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_port_io.c",
+      "group": "driving-510-bridge",
+      "bytes": 1186,
+      "sha256": "16e1b64f3599e7195b5446162d2b0a3488d381fd616afc714cb04097080d43c3"
+    },
+    {
+      "path": "experiments/driving-510/src/driving_resource_trace156.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/driving_resource_trace156.c",
+      "group": "driving-510-bridge",
+      "bytes": 3963,
+      "sha256": "a14e2df88d0c502441f38ba20c9656d8cdeb43402ead7b9d290be11d64fa9ba6"
+    },
+    {
+      "path": "experiments/driving-510/src/main.c",
+      "source": "nightfire-driving/analysis/perf510/build-source/src/main.c",
+      "group": "driving-510-bridge",
+      "bytes": 18666,
+      "sha256": "f2e54b0f118db22799812e0b58289ab49860b8b1e3296f56d9c25643c78b0865"
+    },
+    {
+      "path": "experiments/driving-510/tools/analyze_stall510.py",
+      "source": "nightfire-driving/analysis/perf510/analyze_stall510.py",
+      "group": "driving-510-tool",
+      "bytes": 20002,
+      "sha256": "dd0119282c2acf122fa907081cbaee3b6b2251cc76d668b3781c9dce45960579"
+    },
+    {
+      "path": "experiments/driving-510/tools/text510_analysis.py",
+      "source": "nightfire-driving/analysis/perf510/text510_analysis.py",
+      "group": "driving-510-tool",
+      "bytes": 15673,
+      "sha256": "b1918d20ee56ba554ce936a49daf1cfb897f5c521455a94612187da70905c0b7"
+    },
+    {
+      "path": "experiments/driving-510/tools/text510_binary.py",
+      "source": "nightfire-driving/analysis/perf510/text510_binary.py",
+      "group": "driving-510-tool",
+      "bytes": 20986,
+      "sha256": "3371bd6788825e71169c821b2042eef47a8dfc0db4c7a6365bda5b50b9b6a08a"
+    },
+    {
+      "path": "experiments/driving-510/tools/text510_parser.py",
+      "source": "nightfire-driving/analysis/perf510/text510_parser.py",
+      "group": "driving-510-tool",
+      "bytes": 14408,
+      "sha256": "386785f612cec3bc7484ce1e5e0a9237d344182e506ecdf9e9ead026c5602ad9"
+    },
+    {
+      "path": "experiments/driving-510/tools/text510_reference.py",
+      "source": "nightfire-driving/analysis/perf510/text510_reference.py",
+      "group": "driving-510-tool",
+      "bytes": 9286,
+      "sha256": "2f2afd748260bb2e9e663ca4c9be1e35fa76cd40118429c769287f3d3817687f"
     },
     {
       "path": "nightfire-driving/CMakeLists.txt",
+      "source": "nightfire-driving/CMakeLists.txt",
+      "group": "normal-source",
       "bytes": 10921,
       "sha256": "8e7abb314bd071b3f8ea04e10fbc905f57e4bb385031274d6fbeb4bc3c050086"
     },
     {
+      "path": "nightfire-driving/build-windows.cmd",
+      "source": "nightfire-driving/build-windows.cmd",
+      "group": "normal-source",
+      "bytes": 597,
+      "sha256": "5b571dba1a502dc6e38b55a739204130259b266c67f76e048ecf7fbd24230329"
+    },
+    {
       "path": "nightfire-driving/run-windows.cmd",
+      "source": "nightfire-driving/run-windows.cmd",
+      "group": "normal-source",
       "bytes": 2080,
       "sha256": "4ceea0b0369224e6531ca969d62bb2ff84d176e6439023440351990b409bb2c0"
     },
     {
       "path": "nightfire-driving/runtime/compile_compat.h",
+      "source": "nightfire-driving/runtime/compile_compat.h",
+      "group": "normal-source",
       "bytes": 336,
       "sha256": "fdb5100ea5e41330e850b27287b77f265c70a9e8c7fdec323fdbff691bb18d2e"
     },
     {
       "path": "nightfire-driving/runtime/driving_ac97148.c",
+      "source": "nightfire-driving/runtime/driving_ac97148.c",
+      "group": "normal-source",
       "bytes": 1163,
       "sha256": "c3bf4adfd4492201bacae0e3771dbfc0bf7608744d9d8f348d25e276885bc4a9"
     },
     {
       "path": "nightfire-driving/runtime/driving_ac97_reset148.h",
+      "source": "nightfire-driving/runtime/driving_ac97_reset148.h",
+      "group": "normal-source",
       "bytes": 1253,
       "sha256": "0ffb185134dddbe8dc8af531643040c5e30a47214f20d51511746bc5ce365835"
     },
     {
       "path": "nightfire-driving/runtime/driving_access321.c",
+      "source": "nightfire-driving/runtime/driving_access321.c",
+      "group": "normal-source",
       "bytes": 6836,
       "sha256": "dd6fd75d7356be86d025e84f95e50558dde894d6ead22612c1c59bf86c2bc22a"
     },
     {
       "path": "nightfire-driving/runtime/driving_access321.h",
+      "source": "nightfire-driving/runtime/driving_access321.h",
+      "group": "normal-source",
       "bytes": 1592,
       "sha256": "f39e8b9aa8e3542dcb989a91d481242f9f049dd35b2b851532877e59b2ab785f"
     },
     {
       "path": "nightfire-driving/runtime/driving_access321_hooks.h",
+      "source": "nightfire-driving/runtime/driving_access321_hooks.h",
+      "group": "normal-source",
       "bytes": 1300,
       "sha256": "320bbe532abc235723c0231f6649af0df2ac88a862960e0c1a92309d73b59482"
     },
     {
       "path": "nightfire-driving/runtime/driving_async295.c",
+      "source": "nightfire-driving/runtime/driving_async295.c",
+      "group": "normal-source",
       "bytes": 7984,
       "sha256": "ac5a1018af2bc9421e2296404931777517efec120a22378fb3ea1aa7d2d90307"
     },
     {
       "path": "nightfire-driving/runtime/driving_async295.h",
+      "source": "nightfire-driving/runtime/driving_async295.h",
+      "group": "normal-source",
       "bytes": 1169,
       "sha256": "399e2216c66964f38bc9c333bf5e854f7e1595d205d39554a16baf6fdb16ed16"
     },
     {
       "path": "nightfire-driving/runtime/driving_barrier242.h",
+      "source": "nightfire-driving/runtime/driving_barrier242.h",
+      "group": "normal-source",
       "bytes": 1052,
       "sha256": "799f5dc5aa13f7068998e029b446447e8efd83e921a63bcba4f85b97b62e214b"
     },
     {
       "path": "nightfire-driving/runtime/driving_batchmap264.h",
+      "source": "nightfire-driving/runtime/driving_batchmap264.h",
+      "group": "normal-source",
       "bytes": 9103,
       "sha256": "0cc8dd18c00be4a40c0a1fdd25354ebc9af4feb6a8b3ac40787af77846bf7131"
     },
     {
       "path": "nightfire-driving/runtime/driving_begin280.h",
+      "source": "nightfire-driving/runtime/driving_begin280.h",
+      "group": "normal-source",
       "bytes": 8757,
       "sha256": "9008abd92277addde42ab92905003032282386ae49f6d300a2f826b30ca36c8d"
     },
     {
       "path": "nightfire-driving/runtime/driving_blit143.h",
+      "source": "nightfire-driving/runtime/driving_blit143.h",
+      "group": "normal-source",
       "bytes": 3938,
       "sha256": "165022af9690e7e207171a27aae94e95c72e8a3984eb2ce2ca597c9d5e5d9687"
     },
     {
       "path": "nightfire-driving/runtime/driving_capture223.h",
+      "source": "nightfire-driving/runtime/driving_capture223.h",
+      "group": "normal-source",
       "bytes": 6825,
       "sha256": "5cbd70d7f7463775f588986d56d6f7533e19f2df94c6b6d76f4a15a5d632e309"
     },
     {
       "path": "nightfire-driving/runtime/driving_census255.h",
+      "source": "nightfire-driving/runtime/driving_census255.h",
+      "group": "normal-source",
       "bytes": 4964,
       "sha256": "89bfe282fede1aac74e366a8b014a3134e862c1860fe47fba847661f1ca4b7b4"
     },
     {
       "path": "nightfire-driving/runtime/driving_collect214.h",
+      "source": "nightfire-driving/runtime/driving_collect214.h",
+      "group": "normal-source",
       "bytes": 4474,
       "sha256": "e4a44be48ffa5d087eea69fdd083205762552b7bd9f2db14696d91f360cd88be"
     },
     {
       "path": "nightfire-driving/runtime/driving_command245.h",
+      "source": "nightfire-driving/runtime/driving_command245.h",
+      "group": "normal-source",
       "bytes": 1361,
       "sha256": "d8ca3f0a8084a1c1f8b4ec27564caa103ce9a1bd11482c5a4717ae9d0cb59b01"
     },
     {
       "path": "nightfire-driving/runtime/driving_command262.h",
+      "source": "nightfire-driving/runtime/driving_command262.h",
+      "group": "normal-source",
       "bytes": 1162,
       "sha256": "71a03acc68c06247ea22bd367fafd016e6670c72ac33619b0151104ee637bc6c"
     },
     {
       "path": "nightfire-driving/runtime/driving_command_read265.h",
+      "source": "nightfire-driving/runtime/driving_command_read265.h",
+      "group": "normal-source",
       "bytes": 4446,
       "sha256": "45ae1d0064e8d7e0c797faf3830a4fafedb75c865794e6a36828dd00387bc47c"
     },
     {
       "path": "nightfire-driving/runtime/driving_contig_reuse237.h",
+      "source": "nightfire-driving/runtime/driving_contig_reuse237.h",
+      "group": "normal-source",
       "bytes": 4886,
       "sha256": "f282937f82eb6a4c034b51c286830c37adbcb3fefb0c4cedd10466f080f6f350"
     },
     {
       "path": "nightfire-driving/runtime/driving_copy211_core.h",
+      "source": "nightfire-driving/runtime/driving_copy211_core.h",
+      "group": "normal-source",
       "bytes": 1671,
       "sha256": "ca9926a20a366c1651defb4f7f3c4cfdba5c7710fc0c7ae104f3378982996d39"
     },
     {
       "path": "nightfire-driving/runtime/driving_cpu320.c",
+      "source": "nightfire-driving/runtime/driving_cpu320.c",
+      "group": "normal-source",
       "bytes": 5842,
       "sha256": "4df09a1fe61e48e892378645ac828a7d176f54895eb9e91eedc09a9b86bd912a"
     },
     {
       "path": "nightfire-driving/runtime/driving_cpu320.h",
+      "source": "nightfire-driving/runtime/driving_cpu320.h",
+      "group": "normal-source",
       "bytes": 2267,
       "sha256": "75aed743465af3dcfae9b432ba34cdacc8ed243a48fc3633138826a2996ad053"
     },
     {
       "path": "nightfire-driving/runtime/driving_depth202.h",
+      "source": "nightfire-driving/runtime/driving_depth202.h",
+      "group": "normal-source",
       "bytes": 1479,
       "sha256": "bf085b85b5244a1eaece24fcde6929217b6112de8b9460b282d2bc332b01c328"
     },
     {
       "path": "nightfire-driving/runtime/driving_depth291.h",
+      "source": "nightfire-driving/runtime/driving_depth291.h",
+      "group": "normal-source",
       "bytes": 961,
       "sha256": "faa5b84d7fcf872a06e3cb9e1c60dd212ea92c49a0a6e5ecf8eabdbbd95cda8f"
     },
     {
       "path": "nightfire-driving/runtime/driving_depth302.h",
+      "source": "nightfire-driving/runtime/driving_depth302.h",
+      "group": "normal-source",
       "bytes": 873,
       "sha256": "f205768cfe51e7336e370c0d313971f2ca62268baea17bdcd9f698eba77ae637"
     },
     {
       "path": "nightfire-driving/runtime/driving_descriptor252.h",
+      "source": "nightfire-driving/runtime/driving_descriptor252.h",
+      "group": "normal-source",
       "bytes": 1714,
       "sha256": "bc60b86fb79c63bf8352b91243913c705d7c1c30eeb77c5c181a5d2db0a85c9f"
     },
     {
       "path": "nightfire-driving/runtime/driving_descriptor252_core.h",
+      "source": "nightfire-driving/runtime/driving_descriptor252_core.h",
+      "group": "normal-source",
       "bytes": 990,
       "sha256": "384b8da5eef48c924f002d11597cf2c97058b6e0bddcf45275c6d4b438017cc6"
     },
     {
       "path": "nightfire-driving/runtime/driving_dispatcher143.c",
+      "source": "nightfire-driving/runtime/driving_dispatcher143.c",
+      "group": "normal-source",
       "bytes": 5317,
       "sha256": "8b3dfece08430de64bfefb59d17693c36b0a4601de8cbc7037c8d98a991ff09a"
     },
     {
       "path": "nightfire-driving/runtime/driving_dispatcher143.h",
+      "source": "nightfire-driving/runtime/driving_dispatcher143.h",
+      "group": "normal-source",
       "bytes": 930,
       "sha256": "130543fcc5a000446143f85de0f4ff0e3a2f94bb720690f6f0f4b1a833c92701"
     },
     {
       "path": "nightfire-driving/runtime/driving_dispatcher143_core.h",
+      "source": "nightfire-driving/runtime/driving_dispatcher143_core.h",
+      "group": "normal-source",
       "bytes": 4154,
       "sha256": "e86703a4a333f404d1cc375871a6b8fc67ca1cf77c9c5bb2f4247711094cc707"
     },
     {
       "path": "nightfire-driving/runtime/driving_dma183.h",
+      "source": "nightfire-driving/runtime/driving_dma183.h",
+      "group": "normal-source",
       "bytes": 3331,
       "sha256": "d02d8b4ba62615753a752ce1c0ec92b3166a2b2303b38cfba938e0ebc0bc6dc4"
     },
     {
       "path": "nightfire-driving/runtime/driving_dsp149.c",
+      "source": "nightfire-driving/runtime/driving_dsp149.c",
+      "group": "normal-source",
       "bytes": 1619,
       "sha256": "100e099d342e3a47633c80be8fe7368311679840ed600db1bbe98720d5c9c9dd"
     },
     {
       "path": "nightfire-driving/runtime/driving_dsp_policy149.h",
+      "source": "nightfire-driving/runtime/driving_dsp_policy149.h",
+      "group": "normal-source",
       "bytes": 1805,
       "sha256": "589d293f1b4e5fb37e34b09e52aab3ca6624161cc0db46cab9cd8211e6b16242"
     },
     {
       "path": "nightfire-driving/runtime/driving_finite328.h",
+      "source": "nightfire-driving/runtime/driving_finite328.h",
+      "group": "normal-source",
       "bytes": 999,
       "sha256": "6dc635a9872a88a9c78e1192ac14d214535a1917e6dfed2de030e54ea9dff71c"
     },
     {
       "path": "nightfire-driving/runtime/driving_flip204.c",
+      "source": "nightfire-driving/runtime/driving_flip204.c",
+      "group": "normal-source",
       "bytes": 5496,
       "sha256": "6bb84ae7ff36fb416dfe55ca59694b1043b1f218014f244c4a3a828958818d68"
     },
     {
       "path": "nightfire-driving/runtime/driving_fog217.h",
+      "source": "nightfire-driving/runtime/driving_fog217.h",
+      "group": "normal-source",
       "bytes": 502,
       "sha256": "9c9558aa0056812902f286dd1bdef30806153763e13c15524e7f07caacdefa88"
     },
     {
       "path": "nightfire-driving/runtime/driving_gpu143.c",
+      "source": "nightfire-driving/runtime/driving_gpu143.c",
+      "group": "normal-source",
       "bytes": 32469,
       "sha256": "2c25407a82c198b6dd412fbea5068dde8b5b5a6c6a5655fc86837d2e194555e0"
     },
     {
       "path": "nightfire-driving/runtime/driving_gpu143_core.h",
+      "source": "nightfire-driving/runtime/driving_gpu143_core.h",
+      "group": "normal-source",
       "bytes": 5105,
       "sha256": "46b5dbb510f9815b2432b6dceadd0a4b4903e5f957c08e0e710af3f14f8387d2"
     },
     {
       "path": "nightfire-driving/runtime/driving_gpu_trace143.h",
+      "source": "nightfire-driving/runtime/driving_gpu_trace143.h",
+      "group": "normal-source",
       "bytes": 2536,
       "sha256": "a818bf9bc420755c7265e3e9dff83b06cfdd855f51885149f9ef04b2bce17855"
     },
     {
       "path": "nightfire-driving/runtime/driving_inactive306.h",
+      "source": "nightfire-driving/runtime/driving_inactive306.h",
+      "group": "normal-source",
       "bytes": 1177,
       "sha256": "2cd863f4af1abdce3a895fab0050917dc4122cb496ac6058a7a345f29e4929ba"
     },
     {
       "path": "nightfire-driving/runtime/driving_input224.c",
+      "source": "nightfire-driving/runtime/driving_input224.c",
+      "group": "normal-source",
       "bytes": 8643,
       "sha256": "644fcde0bb287ba0872499fec60db89cd74c2f5e756c05b7a612d674dffb5b2e"
     },
     {
       "path": "nightfire-driving/runtime/driving_input224.h",
+      "source": "nightfire-driving/runtime/driving_input224.h",
+      "group": "normal-source",
       "bytes": 401,
       "sha256": "ea6f024dc5e1b9a5c3a83d05b24d61fb8a3de8c6c62dee85213986278a58cb65"
     },
     {
       "path": "nightfire-driving/runtime/driving_lanes227.h",
+      "source": "nightfire-driving/runtime/driving_lanes227.h",
+      "group": "normal-source",
       "bytes": 3189,
       "sha256": "0fc9b7b7a4590a3598a79d19a59e8dad4d1b14187dd84c6c767ea7919bee1f48"
     },
     {
       "path": "nightfire-driving/runtime/driving_launch144.c",
+      "source": "nightfire-driving/runtime/driving_launch144.c",
+      "group": "normal-source",
       "bytes": 1484,
       "sha256": "4593d0070c71848d2a746a20fb5c9f7de5c86253239ee1cd72dc437fc7ec8f80"
     },
     {
       "path": "nightfire-driving/runtime/driving_launch144_core.h",
+      "source": "nightfire-driving/runtime/driving_launch144_core.h",
+      "group": "normal-source",
       "bytes": 1033,
       "sha256": "7d4f79af485531ab590c0f10bd93f29b9decab871602ace30ed5c3d49c8e1bb7"
     },
     {
       "path": "nightfire-driving/runtime/driving_lease322.h",
+      "source": "nightfire-driving/runtime/driving_lease322.h",
+      "group": "normal-source",
       "bytes": 876,
       "sha256": "6df3458433964149feb8ac87ff209b62488243ff739297dd222f660b991cdcda"
     },
     {
       "path": "nightfire-driving/runtime/driving_lease322_core.h",
+      "source": "nightfire-driving/runtime/driving_lease322_core.h",
+      "group": "normal-source",
       "bytes": 3414,
       "sha256": "99194766690dcfde571f9612e0fc610ed1e587ce339a98ecc60f9db3df90e9ad"
     },
     {
       "path": "nightfire-driving/runtime/driving_lighting301.h",
+      "source": "nightfire-driving/runtime/driving_lighting301.h",
+      "group": "normal-source",
       "bytes": 1114,
       "sha256": "441ad39f53df322c7ab63305ab1a2bd7e660583bfc36c5802260321f183ee9f3"
     },
     {
       "path": "nightfire-driving/runtime/driving_lighting304.h",
+      "source": "nightfire-driving/runtime/driving_lighting304.h",
+      "group": "normal-source",
       "bytes": 1714,
       "sha256": "6049fef59294ea27394e029e423e374ecbdfe78e8b1a1e428416e88a9263e898"
     },
     {
       "path": "nightfire-driving/runtime/driving_live201.h",
+      "source": "nightfire-driving/runtime/driving_live201.h",
+      "group": "normal-source",
       "bytes": 5697,
       "sha256": "a141253e83505820ab122b99726ef36392c581c2c1154a82256bac26639b4b7c"
     },
     {
       "path": "nightfire-driving/runtime/driving_live214.h",
+      "source": "nightfire-driving/runtime/driving_live214.h",
+      "group": "normal-source",
       "bytes": 5131,
       "sha256": "4bf872cfdcab98b13beccde17fd47598199222a0a99d9d372b9eab587d6cd687"
     },
     {
       "path": "nightfire-driving/runtime/driving_mapping230.h",
+      "source": "nightfire-driving/runtime/driving_mapping230.h",
+      "group": "normal-source",
       "bytes": 3680,
       "sha256": "a9fb95a2b46962cbf574466b3d96b31fc2829dbd67c9f254d3ff881e9b72aa3b"
     },
     {
       "path": "nightfire-driving/runtime/driving_mapping259.h",
+      "source": "nightfire-driving/runtime/driving_mapping259.h",
+      "group": "normal-source",
       "bytes": 5359,
       "sha256": "e8f6fb0580700ab942ecf22939befaef1d2f207d514facecc40d2363cdb4b48e"
     },
     {
       "path": "nightfire-driving/runtime/driving_material292.h",
+      "source": "nightfire-driving/runtime/driving_material292.h",
+      "group": "normal-source",
       "bytes": 429,
       "sha256": "0a8960863591325ed9754b8d8606f84c438c156d03c423fe74bd6619ba0330a5"
     },
     {
       "path": "nightfire-driving/runtime/driving_method_timing327.h",
+      "source": "nightfire-driving/runtime/driving_method_timing327.h",
+      "group": "normal-source",
       "bytes": 2473,
       "sha256": "4dc08dd8cbf5a8f661e3f253e32cb8903c6331dc2bfdb00a2322da5a7690b7fe"
     },
     {
       "path": "nightfire-driving/runtime/driving_movie198.h",
+      "source": "nightfire-driving/runtime/driving_movie198.h",
+      "group": "normal-source",
       "bytes": 4674,
       "sha256": "f12e11f3c0c90f81ae56615599d0bd28ce8c1f15b6ac3389233dbc6cebc77d98"
     },
     {
       "path": "nightfire-driving/runtime/driving_object227.h",
+      "source": "nightfire-driving/runtime/driving_object227.h",
+      "group": "normal-source",
       "bytes": 888,
       "sha256": "ee864eb7ad1d5532899ff6ea01d08678227c446c3d38f1c8318eba09cb9b1805"
     },
     {
       "path": "nightfire-driving/runtime/driving_ownership309.c",
+      "source": "nightfire-driving/runtime/driving_ownership309.c",
+      "group": "normal-source",
       "bytes": 10386,
       "sha256": "d65eed2d03221460fdb0814dac2b702797da621d862e3ef9a9b6a2ab30c0e089"
     },
     {
       "path": "nightfire-driving/runtime/driving_ownership309.h",
+      "source": "nightfire-driving/runtime/driving_ownership309.h",
+      "group": "normal-source",
       "bytes": 636,
       "sha256": "0512b7bc346de9c86e13a5bcf078629fdc2ab5d2d630471f8146622ef65a5e08"
     },
     {
       "path": "nightfire-driving/runtime/driving_packets236.h",
+      "source": "nightfire-driving/runtime/driving_packets236.h",
+      "group": "normal-source",
       "bytes": 27069,
       "sha256": "6d6483df2fa47041dadaf2073db7ca9c8e6497e5cd2d414debef81bf06531cf5"
     },
     {
       "path": "nightfire-driving/runtime/driving_palette287.h",
+      "source": "nightfire-driving/runtime/driving_palette287.h",
+      "group": "normal-source",
       "bytes": 1985,
       "sha256": "95eaee2fda0b4a04478375e5d000196af31823a0876bef5d4c4daf058a5619c9"
     },
     {
       "path": "nightfire-driving/runtime/driving_pb_exec231.c",
+      "source": "nightfire-driving/runtime/driving_pb_exec231.c",
+      "group": "normal-source",
       "bytes": 813,
       "sha256": "65740e7effee2480facd4c8a08599ef3da44b2b06ad23acb415bc2aaaf61ff7f"
     },
     {
       "path": "nightfire-driving/runtime/driving_permissions264.c",
+      "source": "nightfire-driving/runtime/driving_permissions264.c",
+      "group": "normal-source",
       "bytes": 1832,
       "sha256": "4ad17513b182ad1c531849a58507cdf1fc5f30e19ecc4ddd226bb548ecbc2881"
     },
     {
       "path": "nightfire-driving/runtime/driving_permissions264.h",
+      "source": "nightfire-driving/runtime/driving_permissions264.h",
+      "group": "normal-source",
       "bytes": 612,
       "sha256": "5b6096274e971e5e756613f8abfb43e06a7423b3a23ced7c7e75419bcf587b69"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan201.h",
+      "source": "nightfire-driving/runtime/driving_plan201.h",
+      "group": "normal-source",
       "bytes": 2909,
       "sha256": "93cfb706c038af6497208009f347f816beb7d7ac10f08bbe72e20efed53ec00f"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan214.h",
+      "source": "nightfire-driving/runtime/driving_plan214.h",
+      "group": "normal-source",
       "bytes": 1426,
       "sha256": "bdba9faee9b847b6e1cee68a1db8443ffc7e9dccbbb97a95bce0f64818306660"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan216.h",
+      "source": "nightfire-driving/runtime/driving_plan216.h",
+      "group": "normal-source",
       "bytes": 1316,
       "sha256": "a8313ebfdb5eac4826090489c505f12a513ea7e81bdcccb38af178bec68562c3"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan220.h",
+      "source": "nightfire-driving/runtime/driving_plan220.h",
+      "group": "normal-source",
       "bytes": 1345,
       "sha256": "fadf87710ca50c353b7eace7a370abf6af191789d0d2bb92b5e6216366ab3177"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan221.h",
+      "source": "nightfire-driving/runtime/driving_plan221.h",
+      "group": "normal-source",
       "bytes": 6239,
       "sha256": "02f247f5f67e48e90e4f225d6c84cc63de7feb3b4ee7adf85e0a72bd2d826880"
     },
     {
       "path": "nightfire-driving/runtime/driving_plan243.h",
+      "source": "nightfire-driving/runtime/driving_plan243.h",
+      "group": "normal-source",
       "bytes": 5528,
       "sha256": "e555a7f9b7b3cbd9c5279f9218acb5f5fb5d1a533b290ef114c385d5ea7eef7e"
     },
     {
       "path": "nightfire-driving/runtime/driving_present201.c",
+      "source": "nightfire-driving/runtime/driving_present201.c",
+      "group": "normal-source",
       "bytes": 5409,
       "sha256": "64811b8774d4cc47bf20d7a390656f72cdbe69e33e5eab09e4e0fef826e7b830"
     },
     {
       "path": "nightfire-driving/runtime/driving_producer235.h",
+      "source": "nightfire-driving/runtime/driving_producer235.h",
+      "group": "normal-source",
       "bytes": 4205,
       "sha256": "3c84b92386f11c5d0ee13b1fcb7a810c9c47b19a9c0812de702b4f8e92687558"
     },
     {
       "path": "nightfire-driving/runtime/driving_publication324.h",
+      "source": "nightfire-driving/runtime/driving_publication324.h",
+      "group": "normal-source",
       "bytes": 842,
       "sha256": "0a1e1e02932974f5d65c271c0501104f887b19aa5ca9e85aebfe24f0442c69b2"
     },
     {
       "path": "nightfire-driving/runtime/driving_publication324_core.h",
+      "source": "nightfire-driving/runtime/driving_publication324_core.h",
+      "group": "normal-source",
       "bytes": 3046,
       "sha256": "fba3cea59238fa72d03e4b1be235cf2f6d36ca3d30bbf6b7b91cbe876357d025"
     },
     {
       "path": "nightfire-driving/runtime/driving_queue251.h",
+      "source": "nightfire-driving/runtime/driving_queue251.h",
+      "group": "normal-source",
       "bytes": 3857,
       "sha256": "cc7731afdac1d4f9246d0a7a8ed0e5d6724b733e26f1bb20a77672cc54262324"
     },
     {
       "path": "nightfire-driving/runtime/driving_residency236.h",
+      "source": "nightfire-driving/runtime/driving_residency236.h",
+      "group": "normal-source",
       "bytes": 7155,
       "sha256": "70dfe518618064a746d248ff39b4a56290e301384a58658eea8d5e09efade7ca"
     },
     {
       "path": "nightfire-driving/runtime/driving_resolve_capture222.h",
+      "source": "nightfire-driving/runtime/driving_resolve_capture222.h",
+      "group": "normal-source",
       "bytes": 2424,
       "sha256": "1b14adcf013922c23972273146c8548911200196c812bf9f519ac8e41d48664f"
     },
     {
       "path": "nightfire-driving/runtime/driving_road242.h",
+      "source": "nightfire-driving/runtime/driving_road242.h",
+      "group": "normal-source",
       "bytes": 1637,
       "sha256": "f075b720dc5475dc61713179cb46537b1ebed755db0cfb5a4667d917f89cbbaf"
     },
     {
       "path": "nightfire-driving/runtime/driving_scanout152.c",
+      "source": "nightfire-driving/runtime/driving_scanout152.c",
+      "group": "normal-source",
       "bytes": 9986,
       "sha256": "94f59c724606a9e8dfc3ef25cfa2842bf485e312790a3e0526f679f294eaab9d"
     },
     {
       "path": "nightfire-driving/runtime/driving_scanout152.h",
+      "source": "nightfire-driving/runtime/driving_scanout152.h",
+      "group": "normal-source",
       "bytes": 1580,
       "sha256": "4fb93e413f015261838768e4fd62080cdba44f12971a27d44b444b0774fefa6a"
     },
     {
       "path": "nightfire-driving/runtime/driving_scene240.h",
+      "source": "nightfire-driving/runtime/driving_scene240.h",
+      "group": "normal-source",
       "bytes": 882,
       "sha256": "15f764daa6ae90cae44b62af29d5fd9eef6cff94eea1ea1abdfce6d20013cd5e"
     },
     {
       "path": "nightfire-driving/runtime/driving_semaphore281.h",
+      "source": "nightfire-driving/runtime/driving_semaphore281.h",
+      "group": "normal-source",
       "bytes": 4186,
       "sha256": "e8358d71599f8169b94b914e5ecc1976c60d646755b11f0f7e5cbaaacaf0d1a0"
     },
     {
       "path": "nightfire-driving/runtime/driving_storage228.h",
+      "source": "nightfire-driving/runtime/driving_storage228.h",
+      "group": "normal-source",
       "bytes": 1082,
       "sha256": "e0bd670c4fcd584f957883070a22acd532ae88851d8b10102b865c1daf3d03e5"
     },
     {
       "path": "nightfire-driving/runtime/driving_submit214.h",
+      "source": "nightfire-driving/runtime/driving_submit214.h",
+      "group": "normal-source",
       "bytes": 4781,
       "sha256": "b5f7c98dacfe340614eab255f00f3857b42952ed4bb4c21a334f1103e450f41c"
     },
     {
       "path": "nightfire-driving/runtime/driving_submit216.h",
+      "source": "nightfire-driving/runtime/driving_submit216.h",
+      "group": "normal-source",
       "bytes": 5138,
       "sha256": "84e9aeeae1d91b864c31c0181b44c4837aa33a999ae08ab312694214965d098b"
     },
     {
       "path": "nightfire-driving/runtime/driving_submit220.h",
+      "source": "nightfire-driving/runtime/driving_submit220.h",
+      "group": "normal-source",
       "bytes": 5095,
       "sha256": "8e3afe30b4340453e0e37e5c29a32ae7efed1d3558e05c4da4e7b2d6caa563bb"
     },
     {
       "path": "nightfire-driving/runtime/driving_submit221.h",
+      "source": "nightfire-driving/runtime/driving_submit221.h",
+      "group": "normal-source",
       "bytes": 12145,
       "sha256": "70f79425b8c265734409bd4ea669245ce204e0c8799a6ea792ce99d88dfa0a10"
     },
     {
       "path": "nightfire-driving/runtime/driving_submit243.h",
+      "source": "nightfire-driving/runtime/driving_submit243.h",
+      "group": "normal-source",
       "bytes": 8580,
       "sha256": "49526622dad845ecf439d4086403c9a8ee03d2466c9df1f67b6d21c21acc505e"
     },
     {
       "path": "nightfire-driving/runtime/driving_surface145.h",
+      "source": "nightfire-driving/runtime/driving_surface145.h",
+      "group": "normal-source",
       "bytes": 3144,
       "sha256": "cc9719573d3fb066787a05144b36b1a3071089f47eedcfc808142bf6c22d1a9b"
     },
     {
       "path": "nightfire-driving/runtime/driving_timing227.h",
+      "source": "nightfire-driving/runtime/driving_timing227.h",
+      "group": "normal-source",
       "bytes": 766,
       "sha256": "a738998de303989abe20d1836aa640cc868d4871ea19be8e5669e1528bea537a"
     },
     {
       "path": "nightfire-driving/runtime/driving_timing250.h",
+      "source": "nightfire-driving/runtime/driving_timing250.h",
+      "group": "normal-source",
       "bytes": 6617,
       "sha256": "ceef4c103c6d7efc5241ac9427a1288693493ae65f94300db051176370341a83"
     },
     {
       "path": "nightfire-driving/runtime/driving_vblank143.c",
+      "source": "nightfire-driving/runtime/driving_vblank143.c",
+      "group": "normal-source",
       "bytes": 2092,
       "sha256": "a97146a6dc38339847f343a879603c461ff9225eacc0d2f672570134a24b08c8"
     },
     {
       "path": "nightfire-driving/runtime/driving_vertex212.h",
+      "source": "nightfire-driving/runtime/driving_vertex212.h",
+      "group": "normal-source",
       "bytes": 1375,
       "sha256": "1035c718ca71c1c0a77c185b460d4921e8de8921e72f8be19e02473a41279e41"
     },
     {
       "path": "nightfire-driving/runtime/driving_vertex218.h",
+      "source": "nightfire-driving/runtime/driving_vertex218.h",
+      "group": "normal-source",
       "bytes": 1158,
       "sha256": "90546d0af9605d8a0e8ae4bdfd8cd91df9d9fd28bb5c68596eb204a92aa85cb9"
     },
     {
       "path": "nightfire-driving/runtime/driving_world210.h",
+      "source": "nightfire-driving/runtime/driving_world210.h",
+      "group": "normal-source",
       "bytes": 9716,
       "sha256": "80b5604a97e2c3371abd33dde4b08a9f0dcf3a60258d21ebc00536e0d79b315c"
     },
     {
       "path": "nightfire-driving/runtime/driving_writeguard270.h",
+      "source": "nightfire-driving/runtime/driving_writeguard270.h",
+      "group": "normal-source",
       "bytes": 807,
       "sha256": "f17f27d23830f9c9844a0684b6071ba62a02d935c3b48256211e759706bb451f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/linear_rgba189.h",
+      "source": "nightfire-driving/runtime/gpu144/linear_rgba189.h",
+      "group": "normal-source",
       "bytes": 3532,
       "sha256": "4ed5c23753ab584a6afdaec4f9b7baa1c6f9f4c82028a976873da851d2028bfe"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/movie_rgb232.h",
+      "source": "nightfire-driving/runtime/gpu144/movie_rgb232.h",
+      "group": "normal-source",
       "bytes": 4370,
       "sha256": "59143f6afc85e0f3a0447f5012eaf4f3a7ee0f469025ea0d6b0f6c45f0a28ac9"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nf_pixel221.h",
+      "source": "nightfire-driving/runtime/gpu144/nf_pixel221.h",
+      "group": "normal-source",
       "bytes": 6870,
       "sha256": "4dbf6d2bda3096282d3fe2b3884fe0a6cc2bb04e60e7c226b1f0d7a1239ca0f7"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_batch234.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_batch234.h",
+      "group": "normal-source",
       "bytes": 3208,
       "sha256": "9a1ef9b30604ca8586a870abf2f077ef77742d9c1dc937919d896de1b4b85a66"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_batch_limit260.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_batch_limit260.h",
+      "group": "normal-source",
       "bytes": 1053,
       "sha256": "1d73288dac73e11756da338d86d20d724ef5198a978017303497d74fcd61f082"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_batch_timing244.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_batch_timing244.h",
+      "group": "normal-source",
       "bytes": 3388,
       "sha256": "762df252abc5d64747cf8943458aa7c1ea9eef5496809b2dd689de213a0a3eaf"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_begin_probe334.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_begin_probe334.h",
+      "group": "normal-source",
       "bytes": 3285,
       "sha256": "e93009211c0cc12f5777fa2508552a2c66c44046b3753f5157f62c578de2da95"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_blend285.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_blend285.h",
+      "group": "normal-source",
       "bytes": 362,
       "sha256": "0f8fa02592ecd287c707c56d3de8c2c89360deae2200ab90af4c7c842af66db7"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_bytes_equal.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_bytes_equal.h",
+      "group": "normal-source",
       "bytes": 1389,
       "sha256": "d493ec2013a3f303b9f61632235b6481441d408aeb0913bbcd7c1c83728fa629"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_color_api276.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_color_api276.h",
+      "group": "normal-source",
       "bytes": 1706,
       "sha256": "bacf2772fe1ef16161b87b1ebfd0dbba363b521046e6b7f1aaef8d720d745978"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_color_seed276.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_color_seed276.h",
+      "group": "normal-source",
       "bytes": 5458,
       "sha256": "070e801507149a0bd2b9e52050026ccd67d997ac6573a31b294d9fe4c3a6d4cc"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_constant_mask.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_constant_mask.h",
+      "group": "normal-source",
       "bytes": 833,
       "sha256": "c99dcdc317d8ad4f11e67912ab83d7718493ddce30e29e979cc65530024f6427"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth.h",
+      "group": "normal-source",
       "bytes": 1124,
       "sha256": "8fefe8c4c37e4b1a41c0014d9ba874b027928c3f5108ea8f7d4d4103f2ec2ddc"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_api278.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_api278.h",
+      "group": "normal-source",
       "bytes": 1934,
       "sha256": "193a99d9754157bf24c14d791a24818d9a60a672381c6f14dd7c5a1f86f4f2c3"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_clean269.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_clean269.h",
+      "group": "normal-source",
       "bytes": 3094,
       "sha256": "d1f2126a7959c0b9f1afedfb1d00260b242b9654fcbc2a51dca832dcd6787b35"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_import268.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_import268.h",
+      "group": "normal-source",
       "bytes": 4073,
       "sha256": "225a4f2389051db38ebcace4cdc1df6f769947f8632b93852aa0013b36b8a9c5"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_observe83.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_observe83.h",
+      "group": "normal-source",
       "bytes": 2106,
       "sha256": "fd83edb50372114ac320f6b5f7c0d129417b9962f037491dd96611c235b73066"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_ping272.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_ping272.h",
+      "group": "normal-source",
       "bytes": 14823,
       "sha256": "983692fb84c0c454e6b3f4c9baf21581bb4ad3fe8c5838663724efd23a06b8bd"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_roundtrip130.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_roundtrip130.h",
+      "group": "normal-source",
       "bytes": 4103,
       "sha256": "b040fa31f176b462ab8f2f9a72c0acb7db057a66fcba9051f31b8ff20954c7bf"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_seed278.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_seed278.h",
+      "group": "normal-source",
       "bytes": 5051,
       "sha256": "3825ba3366d2bce580a6f40a237dc6c84b4cb081627bd9654b93b17b5ebb302f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_srv256.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_srv256.h",
+      "group": "normal-source",
       "bytes": 3622,
       "sha256": "7444605bb0131b5c4d03a13173b91fcb91a06ba6ae64c61d30eaecd804940c8d"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_transfer.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_transfer.h",
+      "group": "normal-source",
       "bytes": 2258,
       "sha256": "fd23b6ac3a6f769fb34069d34e115dac3db1170186e255ae054dd234ad3f695f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_depth_unpack335.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_depth_unpack335.h",
+      "group": "normal-source",
       "bytes": 2380,
       "sha256": "6499a485b5fbea66837085db160cc0992b99d9671862227c1fe9ac741ea39ba6"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_fog.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_fog.h",
+      "group": "normal-source",
       "bytes": 891,
       "sha256": "23845866e87644ab1e41029e3f18171e04f7b3630434d7660236847df535ef9e"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_fragment_depth291.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_fragment_depth291.h",
+      "group": "normal-source",
       "bytes": 3387,
       "sha256": "4b10d9e05cf8fdedf44cafb800773b9082018163329f2bdbbca3d2b9784031f4"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_gpu_sample254.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_gpu_sample254.h",
+      "group": "normal-source",
       "bytes": 7435,
       "sha256": "bcc0b619b252aecfa42a79c95bdf1412452c2fff0c630f02273bd1b488d88213"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_gpu_sample297.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_gpu_sample297.h",
+      "group": "normal-source",
       "bytes": 11061,
       "sha256": "a85fd5ffc0fdc70084cf22afd6f75e51cf35faebe567c8d7e6dc7c8e7c38d6e4"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_gpu_timing84.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_gpu_timing84.h",
+      "group": "normal-source",
       "bytes": 11588,
       "sha256": "8d38e8f85562218e509dd49677654f6c9a8f79c92bbb7f12678f08786e41f1be"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_hardware.c",
-      "bytes": 168942,
-      "sha256": "a329485378e51b5a39f481ca6e098904c789f742522fc23313e968cfe2847bc6"
+      "source": "nightfire-driving/runtime/gpu144/nightfire_hardware.c",
+      "group": "normal-source",
+      "bytes": 169038,
+      "sha256": "7f346c268d4a2a5c15fa8e89042913315546da603587439bc700140819ccbfd3"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_hardware.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_hardware.h",
+      "group": "normal-source",
       "bytes": 11839,
       "sha256": "0cf74092b39320dcb7e8b369c7dce8f9f77208653743c0eb137cb775abc91832"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_host_spans261.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_host_spans261.h",
+      "group": "normal-source",
       "bytes": 3844,
       "sha256": "f43a056f7a09e434c2ecb1ee0036f69a100095ae058a29ea61780b8c8b4ff8b1"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_import_probe335.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_import_probe335.h",
+      "group": "normal-source",
       "bytes": 3396,
       "sha256": "5e4d871a1e7a30b3da6d908a004efd557792851d23399a1ae3412d05e628f07f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_index_guard120.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_index_guard120.h",
+      "group": "normal-source",
       "bytes": 5378,
       "sha256": "d5bd4a0fbbc9d5742615b1a65ce4c4d3132b27582f3b72e163fbf0abfeac33ba"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_lane_flush275.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_lane_flush275.h",
+      "group": "normal-source",
       "bytes": 590,
       "sha256": "da27a7a9a07a688e51454c570aba208ac5fcdb1730fa43c4e440f08c7ff25c2a"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_native_depth302.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_native_depth302.h",
+      "group": "normal-source",
       "bytes": 4990,
       "sha256": "0b624cbbff3e5c2327ecc30cc3c216553fb6001278e53bbdba5f3b73511f87ff"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_native_pair302.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_native_pair302.h",
+      "group": "normal-source",
       "bytes": 2576,
       "sha256": "d91f2b890b33768a633538e1ee787aab38a82b9ef4561793ae70f29bacd0dfad"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_pair234.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_pair234.h",
+      "group": "normal-source",
       "bytes": 9034,
       "sha256": "a2eb68fb8c7fc5bc4361ac1db07e7cbd70e9d4712e63b35837cf2cabbb790ad0"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_pair235.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_pair235.h",
+      "group": "normal-source",
       "bytes": 13434,
       "sha256": "03549834a4afebf7721c871fd50ab533a06d1652e2e5cff9be6ef5eac7314eb9"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_pairbatch248.h",
-      "bytes": 18343,
-      "sha256": "128e949d43bee035b6388aace8e973e6135785f24d1dc3412c6f6dac045de878"
+      "source": "nightfire-driving/runtime/gpu144/nightfire_pairbatch248.h",
+      "group": "normal-source",
+      "bytes": 18588,
+      "sha256": "f88b58eb4784b3dd4a06addbab07b86a57005fb50c8b9fa72af3abac841f3ab5"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_readback294.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_readback294.h",
+      "group": "normal-source",
       "bytes": 5867,
       "sha256": "132f98447c3b2b0bb262c7138f63dd4ae8224d5ddf0b086452de8abdd05a654a"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_resident315.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_resident315.h",
+      "group": "normal-source",
       "bytes": 16066,
       "sha256": "c80c2cf617bd2fc15a95bdfc1a7d9240be77165013e5e4d3af625c1da84bcace"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_rgba_mips129.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_rgba_mips129.h",
+      "group": "normal-source",
       "bytes": 830,
       "sha256": "7fc36ed20691e33b9218e9aff35abe9ca322429c15ba4681cbf40d0a59e1eaee"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_shader_cache99.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_shader_cache99.h",
+      "group": "normal-source",
       "bytes": 11075,
       "sha256": "d5f8c5477f495d31857459326e472e0742f187ad3e6a3e5effc1ba5c0ee0fa83"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_shared339.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_shared339.h",
+      "group": "normal-source",
       "bytes": 9999,
       "sha256": "2e3e012db65fe0aba8e136aec50b26b012f33ab73cb737bcb046426c6e6d692e"
     },
     {
+      "path": "nightfire-driving/runtime/gpu144/nightfire_shared341.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_shared341.h",
+      "group": "normal-source",
+      "bytes": 13186,
+      "sha256": "08c6330cb10cc90334ea639bb44ce1c2374f7020fef0d4995abb6e1c9cca1777"
+    },
+    {
       "path": "nightfire-driving/runtime/gpu144/nightfire_surface_probe83.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_surface_probe83.h",
+      "group": "normal-source",
       "bytes": 3495,
       "sha256": "4b5977a0d4fb89e6d4916d303829d75c0703e53b5aaab3f6fc47a166d97cfb7f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_swizzled_shadow131.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_swizzled_shadow131.h",
+      "group": "normal-source",
       "bytes": 3521,
       "sha256": "e60ecb67ccf762f1866ec07d3caaf6c1fd96f66d82f6c1bff147166f47b27102"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_texture_cache.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_texture_cache.h",
+      "group": "normal-source",
       "bytes": 1389,
       "sha256": "b7cee08a008ceeb4aa6d7568a81dcea3093fcb0b180c971e23366af4c226b49d"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_texture_filter.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_texture_filter.h",
+      "group": "normal-source",
       "bytes": 4430,
       "sha256": "9da4a976b8a1b0c694a9fb085c3b80e497c427dcd4fc0b1e04c82d73be6ba668"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_validation267.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_validation267.h",
+      "group": "normal-source",
       "bytes": 2812,
       "sha256": "19d96bcd24ce21d8de2e52297cbb7c8ebcf6a9aeb886d37e9e3e3d4d5964d61f"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_vertex_hlsl.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_vertex_hlsl.h",
+      "group": "normal-source",
       "bytes": 7213,
       "sha256": "a3a5504cc4baa69db88bb6f559a3009c22165bc36f7581d9cfceb359f6b6f124"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nightfire_vertex_program.h",
+      "source": "nightfire-driving/runtime/gpu144/nightfire_vertex_program.h",
+      "group": "normal-source",
       "bytes": 6549,
       "sha256": "c90c74312a1c66feb8707f4f782dd8814420b84160a73a299d16e1f58ec839dd"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/nv2a_pb_exec.c",
+      "source": "nightfire-driving/runtime/gpu144/nv2a_pb_exec.c",
+      "group": "normal-source",
       "bytes": 186366,
       "sha256": "8edf24e6148c1e998d9173760d5ac5bda5decdd9bd00df5afd9a60f509afab26"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/palette175.h",
+      "source": "nightfire-driving/runtime/gpu144/palette175.h",
+      "group": "normal-source",
       "bytes": 5850,
       "sha256": "5422daca4363717d61df0ff779cb86232c6ac13dc56c52444285778a1ec7456b"
     },
     {
       "path": "nightfire-driving/runtime/gpu144/rgb565148.h",
+      "source": "nightfire-driving/runtime/gpu144/rgb565148.h",
+      "group": "normal-source",
       "bytes": 5076,
       "sha256": "652ccb8855b0df0dcda94daee48b62fd212d1b421158ca9f67e09f46bfc48a95"
     },
     {
       "path": "nightfire-driving/runtime/immediate195.h",
+      "source": "nightfire-driving/runtime/immediate195.h",
+      "group": "normal-source",
       "bytes": 3214,
       "sha256": "fd829615f72e128aea811718e3ae9fa711a6b8766f5af1ce8cefb706933d813e"
     },
     {
       "path": "nightfire-driving/runtime/kernel_bridge.c",
+      "source": "nightfire-driving/runtime/kernel_bridge.c",
+      "group": "normal-source",
       "bytes": 230251,
       "sha256": "919094e0f31eecee6d96ee7bda89731eb8723de4c725d0ff237131f77dedef21"
     },
     {
       "path": "nightfire-driving/runtime/kernel_file.c",
+      "source": "nightfire-driving/runtime/kernel_file.c",
+      "group": "normal-source",
       "bytes": 55629,
       "sha256": "644a92d6324444950ca88a7fd760a9525334e89026e148a5fea96e6e9dd61db7"
     },
     {
       "path": "nightfire-driving/runtime/kernel_path.c",
+      "source": "nightfire-driving/runtime/kernel_path.c",
+      "group": "normal-source",
       "bytes": 23628,
       "sha256": "92b4a5625598baa1d415715dcce0848a80813c5d564b5c7f1a598b6761b84289"
     },
     {
       "path": "nightfire-driving/runtime/kernel_thunks.c",
+      "source": "nightfire-driving/runtime/kernel_thunks.c",
+      "group": "normal-source",
       "bytes": 22038,
       "sha256": "720789ddb53e9cd54452693183b6d8750ca3debeda064521ac6e0f7215df0a0f"
     },
     {
       "path": "nightfire-driving/runtime/nightfire_disc.h",
+      "source": "nightfire-driving/runtime/nightfire_disc.h",
+      "group": "normal-source",
       "bytes": 1384,
       "sha256": "6d346d8e86a683c11d2ec087d768a62a34bcbe2376d43a465afbe91635499ac6"
     },
     {
       "path": "nightfire-driving/runtime/nightfire_physical.h",
+      "source": "nightfire-driving/runtime/nightfire_physical.h",
+      "group": "normal-source",
       "bytes": 373,
       "sha256": "d9f40717ee4779bc31124b977d6e828833485023924a66bf2930a58c2ba87175"
     },
     {
       "path": "nightfire-driving/runtime/nightfire_video_io.h",
+      "source": "nightfire-driving/runtime/nightfire_video_io.h",
+      "group": "normal-source",
       "bytes": 930,
       "sha256": "8a58f3988b9d94846f8e4a8a108e7cf826305188bf9dae7f999ca900594efebc"
     },
     {
       "path": "nightfire-driving/runtime/texture_select161.h",
+      "source": "nightfire-driving/runtime/texture_select161.h",
+      "group": "normal-source",
       "bytes": 3099,
       "sha256": "235f9ab22bbde52bbb39d3cd05f5e76f41a7c0cc627437467e3a87e3dc41e126"
     },
     {
       "path": "nightfire-driving/runtime/xbox_memory_layout.c",
+      "source": "nightfire-driving/runtime/xbox_memory_layout.c",
+      "group": "normal-source",
       "bytes": 104218,
       "sha256": "0addc6543a0cc4a4f12661706fb9983d71b17e747cc1a4c744c7d4653446c420"
     },
     {
       "path": "nightfire-driving/scripts/generate.py",
+      "source": "nightfire-driving/scripts/generate.py",
+      "group": "normal-source",
       "bytes": 2294,
       "sha256": "8a89beb7649debdf98d5dff097575ca368df334e84d8bfdefc801b254441c2e2"
     },
     {
       "path": "nightfire-driving/src/driving_aliases176.h",
+      "source": "nightfire-driving/src/driving_aliases176.h",
+      "group": "normal-source",
       "bytes": 534,
       "sha256": "a2973e38a772c852aec9568383c0c683c32182c22c9dedab341aebdea3d154cb"
     },
     {
       "path": "nightfire-driving/src/driving_audio_probe147.c",
+      "source": "nightfire-driving/src/driving_audio_probe147.c",
+      "group": "normal-source",
       "bytes": 2591,
       "sha256": "63ba7c95cafd63abaed68d3c410164e155e0e90625d4d6a1ddc7b8dc4268bf21"
     },
     {
       "path": "nightfire-driving/src/driving_copy211.c",
+      "source": "nightfire-driving/src/driving_copy211.c",
+      "group": "normal-source",
       "bytes": 1733,
       "sha256": "33fabe810b1fdb42a67553eb74053605aa891c541cb21e37fd96806d0f258f3f"
     },
     {
       "path": "nightfire-driving/src/driving_gpu_probe143.c",
+      "source": "nightfire-driving/src/driving_gpu_probe143.c",
+      "group": "normal-source",
       "bytes": 2385,
       "sha256": "06acf6d452cb629c0574df375fc0e12314fa699b5eeda650ea05ab82e0a29bb4"
     },
     {
       "path": "nightfire-driving/src/driving_memory_order.c",
+      "source": "nightfire-driving/src/driving_memory_order.c",
+      "group": "normal-source",
       "bytes": 579,
       "sha256": "1346edc3945437e2b4536d1e986d79e06236308230add38664a47131bde430ba"
     },
     {
       "path": "nightfire-driving/src/driving_movie_probe144.c",
+      "source": "nightfire-driving/src/driving_movie_probe144.c",
+      "group": "normal-source",
       "bytes": 14588,
       "sha256": "a10462382380b0689afafa681550d3f4274870c3de5a4054cf47838f3d930344"
     },
     {
       "path": "nightfire-driving/src/driving_port_io.c",
+      "source": "nightfire-driving/src/driving_port_io.c",
+      "group": "normal-source",
       "bytes": 1186,
       "sha256": "16e1b64f3599e7195b5446162d2b0a3488d381fd616afc714cb04097080d43c3"
     },
     {
       "path": "nightfire-driving/src/driving_resource_trace156.c",
+      "source": "nightfire-driving/src/driving_resource_trace156.c",
+      "group": "normal-source",
       "bytes": 3913,
       "sha256": "3ed4485470e35b869926382f7810fe92b0b47981cdc7d322031ee14eae4deda7"
     },
     {
       "path": "nightfire-driving/src/main.c",
+      "source": "nightfire-driving/src/main.c",
+      "group": "normal-source",
       "bytes": 18177,
       "sha256": "a3bd82dc47a816e16ae30dcfbd789fee6844cd5340ad683d24cdc6cd12ac4253"
     },
     {
+      "path": "nightfire-port/CMakeLists.txt",
+      "source": "nightfire-port/CMakeLists.txt",
+      "group": "normal-source",
+      "bytes": 10508,
+      "sha256": "cb900784ba4f9c2ea54b4ba5785ef85f2c43a16f9046ea2775799613a9bbade7"
+    },
+    {
       "path": "nightfire-port/build-optimized-windows.cmd",
+      "source": "nightfire-port/build-optimized-windows.cmd",
+      "group": "normal-source",
       "bytes": 1064,
       "sha256": "d62c4e9684cfd3829c5a6e8e3953a27d5d6a82a4001ea45c4e1fd8638bf58ae8"
     },
     {
       "path": "nightfire-port/build-windows.cmd",
+      "source": "nightfire-port/build-windows.cmd",
+      "group": "normal-source",
       "bytes": 1538,
       "sha256": "452c75684ff57c99cba40252b23999c910f7999feec63c820b034c582c818fb1"
     },
     {
-      "path": "nightfire-port/CMakeLists.txt",
-      "bytes": 10508,
-      "sha256": "cb900784ba4f9c2ea54b4ba5785ef85f2c43a16f9046ea2775799613a9bbade7"
-    },
-    {
       "path": "nightfire-port/output-paths.cmd",
+      "source": "nightfire-port/output-paths.cmd",
+      "group": "normal-source",
       "bytes": 626,
       "sha256": "f5ad7c7e439456025d0ce5f5c74eed946038e0b69f78d8e70312aedb7cab7fa7"
     },
     {
       "path": "nightfire-port/run-windows.cmd",
+      "source": "nightfire-port/run-windows.cmd",
+      "group": "normal-source",
       "bytes": 1918,
       "sha256": "273c08d4afe141adeee588c12d7386fac7d9f28cab6760e77cd9a3c5cbd60115"
     },
     {
       "path": "nightfire-port/runtime/fb_present.c",
+      "source": "nightfire-port/runtime/fb_present.c",
+      "group": "normal-source",
       "bytes": 11220,
       "sha256": "3a9999fca55993f47c45436c2cf091ceef496145f930ed6919af2cbb7cbc17ec"
     },
     {
       "path": "nightfire-port/runtime/kernel_bridge.c",
+      "source": "nightfire-port/runtime/kernel_bridge.c",
+      "group": "normal-source",
       "bytes": 234968,
       "sha256": "0dda52110c335abde83a8ca43f3a49c690f3a424d57da75774084f11381f15c0"
     },
     {
       "path": "nightfire-port/runtime/kernel_file.c",
+      "source": "nightfire-port/runtime/kernel_file.c",
+      "group": "normal-source",
       "bytes": 55764,
       "sha256": "4129c32ce06385654f40d5159bb88bd33652460d111c564592dee4ff909a5fb5"
     },
     {
       "path": "nightfire-port/runtime/kernel_hal.c",
+      "source": "nightfire-port/runtime/kernel_hal.c",
+      "group": "normal-source",
       "bytes": 24082,
       "sha256": "ba84d60c5a49213e1875c9981a8b256e33afaf002e7ac24aa3d9a2394b1857b8"
     },
     {
       "path": "nightfire-port/runtime/kernel_path.c",
+      "source": "nightfire-port/runtime/kernel_path.c",
+      "group": "normal-source",
       "bytes": 23020,
       "sha256": "5bddc8c743174756bfd62569952c170a863257017f63bf2468c4d47bf25a7362"
     },
     {
       "path": "nightfire-port/runtime/kernel_thunks.c",
+      "source": "nightfire-port/runtime/kernel_thunks.c",
+      "group": "normal-source",
       "bytes": 648,
       "sha256": "9b945abfbaa78f4d20b43da990bdb6ac39b8af27bda688488e62e12976dcf9a0"
     },
     {
       "path": "nightfire-port/runtime/kernel_xbox.c",
+      "source": "nightfire-port/runtime/kernel_xbox.c",
+      "group": "normal-source",
       "bytes": 9080,
       "sha256": "8e53495d4b78d3b30d5026608c0605572af769bd59e8601cca83cac555e35a2e"
     },
     {
       "path": "nightfire-port/runtime/nightfire_ack_backoff136.h",
+      "source": "nightfire-port/runtime/nightfire_ack_backoff136.h",
+      "group": "normal-source",
       "bytes": 10967,
       "sha256": "9a35aa62b7b6c137354b40e7c8d65927698d48e0a77bcdbe1362f8e5af5957e9"
     },
     {
       "path": "nightfire-port/runtime/nightfire_adpcm.h",
+      "source": "nightfire-port/runtime/nightfire_adpcm.h",
+      "group": "normal-source",
       "bytes": 3747,
       "sha256": "d23379f94b1775d8bd28a9df0363eff74851ae940061188f0158dbc4cbe1c9e6"
     },
     {
       "path": "nightfire-port/runtime/nightfire_audio_spatial.h",
+      "source": "nightfire-port/runtime/nightfire_audio_spatial.h",
+      "group": "normal-source",
       "bytes": 1024,
       "sha256": "9c45c8b5639f040cca397865dc720a863896d102b6c20e8ff9cc0a96efcfb2cb"
     },
     {
       "path": "nightfire-port/runtime/nightfire_bot_trace231.h",
+      "source": "nightfire-port/runtime/nightfire_bot_trace231.h",
+      "group": "normal-source",
       "bytes": 3499,
       "sha256": "80abfa4cebee61794b37cef32453f33cbe4f240f527ee42e8f77da6f382c2044"
     },
     {
       "path": "nightfire-port/runtime/nightfire_bytes_equal.h",
+      "source": "nightfire-port/runtime/nightfire_bytes_equal.h",
+      "group": "normal-source",
       "bytes": 1389,
       "sha256": "d493ec2013a3f303b9f61632235b6481441d408aeb0913bbcd7c1c83728fa629"
     },
     {
       "path": "nightfire-port/runtime/nightfire_camera_recorder.h",
+      "source": "nightfire-port/runtime/nightfire_camera_recorder.h",
+      "group": "normal-source",
       "bytes": 7038,
       "sha256": "cf14bb58cb58fbc21c65e34f52b3d7dab24b5f4a74eca684cf80115f4b541d29"
     },
     {
       "path": "nightfire-port/runtime/nightfire_color_reupload109.h",
+      "source": "nightfire-port/runtime/nightfire_color_reupload109.h",
+      "group": "normal-source",
       "bytes": 10251,
       "sha256": "8d64c696bdd4c84731618fc523f18d96aac93d4b8196254ae1dbb5bcc952e3ed"
     },
     {
       "path": "nightfire-port/runtime/nightfire_color_reuse110.h",
+      "source": "nightfire-port/runtime/nightfire_color_reuse110.h",
+      "group": "normal-source",
       "bytes": 7113,
       "sha256": "945359dce208cbd69fedd208b0d89437bf4f12002bc3f7e592f11f81dc4a7fd2"
     },
     {
       "path": "nightfire-port/runtime/nightfire_constant_mask.h",
+      "source": "nightfire-port/runtime/nightfire_constant_mask.h",
+      "group": "normal-source",
       "bytes": 833,
       "sha256": "c99dcdc317d8ad4f11e67912ab83d7718493ddce30e29e979cc65530024f6427"
     },
     {
       "path": "nightfire-port/runtime/nightfire_consumer135.c",
+      "source": "nightfire-port/runtime/nightfire_consumer135.c",
+      "group": "normal-source",
       "bytes": 6180,
       "sha256": "248034a4774c08aadabd65b482d6d4dbf175afdf20c2af1980864e2c8bcf2f88"
     },
     {
       "path": "nightfire-port/runtime/nightfire_consumer135.h",
+      "source": "nightfire-port/runtime/nightfire_consumer135.h",
+      "group": "normal-source",
       "bytes": 1485,
       "sha256": "655f506b2c1587de12d7e01755ff42ddc29dff245c2f3d62de718137a0521df2"
     },
     {
       "path": "nightfire-port/runtime/nightfire_depth.h",
+      "source": "nightfire-port/runtime/nightfire_depth.h",
+      "group": "normal-source",
       "bytes": 1124,
       "sha256": "8fefe8c4c37e4b1a41c0014d9ba874b027928c3f5108ea8f7d4d4103f2ec2ddc"
     },
     {
       "path": "nightfire-port/runtime/nightfire_depth_observe83.h",
+      "source": "nightfire-port/runtime/nightfire_depth_observe83.h",
+      "group": "normal-source",
       "bytes": 2106,
       "sha256": "fd83edb50372114ac320f6b5f7c0d129417b9962f037491dd96611c235b73066"
     },
     {
       "path": "nightfire-port/runtime/nightfire_depth_roundtrip130.h",
+      "source": "nightfire-port/runtime/nightfire_depth_roundtrip130.h",
+      "group": "normal-source",
       "bytes": 3923,
       "sha256": "e21a321d3e8633ae105536f805e6a7f8a7b208e75fc6b1667c1c21eaeba2e0b2"
     },
     {
       "path": "nightfire-port/runtime/nightfire_depth_transfer.h",
+      "source": "nightfire-port/runtime/nightfire_depth_transfer.h",
+      "group": "normal-source",
       "bytes": 2258,
       "sha256": "fd23b6ac3a6f769fb34069d34e115dac3db1170186e255ae054dd234ad3f695f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_dev_damage134.h",
+      "source": "nightfire-port/runtime/nightfire_dev_damage134.h",
+      "group": "normal-source",
       "bytes": 4278,
       "sha256": "cc80730f71cdd7e4c9be6a8d5050629fe13854331b09c766b27d25a025366cc6"
     },
     {
       "path": "nightfire-port/runtime/nightfire_direct_mouse122.h",
+      "source": "nightfire-port/runtime/nightfire_direct_mouse122.h",
+      "group": "normal-source",
       "bytes": 4348,
       "sha256": "07392112514b9319cf03a633d68137b92539c6acc533c78b85cadf2d21403d65"
     },
     {
       "path": "nightfire-port/runtime/nightfire_direct_mouse_dispatch127.h",
+      "source": "nightfire-port/runtime/nightfire_direct_mouse_dispatch127.h",
+      "group": "normal-source",
       "bytes": 924,
       "sha256": "c9a82e754137adc18f50df558440aa2faf79539721907219d9b7823fdc916011"
     },
     {
       "path": "nightfire-port/runtime/nightfire_disc.h",
+      "source": "nightfire-port/runtime/nightfire_disc.h",
+      "group": "normal-source",
       "bytes": 1345,
       "sha256": "4ebf87b6496a5e68c5547641e6805e20a91313acdce273c0c9b1fbf981a1ed09"
     },
     {
       "path": "nightfire-port/runtime/nightfire_flight_host116.c",
+      "source": "nightfire-port/runtime/nightfire_flight_host116.c",
+      "group": "normal-source",
       "bytes": 4002,
       "sha256": "c086e6d31ed935ffd93a180b8c59797847ac71f6d998e4551217eb0446fcb9b7"
     },
     {
       "path": "nightfire-port/runtime/nightfire_flight_host116.h",
+      "source": "nightfire-port/runtime/nightfire_flight_host116.h",
+      "group": "normal-source",
       "bytes": 347,
       "sha256": "54cc3169289389aae64fb2885d54edee622a6d9b80bc8f3d0bf2054609824fab"
     },
     {
       "path": "nightfire-port/runtime/nightfire_flight_recorder116.c",
+      "source": "nightfire-port/runtime/nightfire_flight_recorder116.c",
+      "group": "normal-source",
       "bytes": 9650,
       "sha256": "9dec93ed1f320046feb271f70ee80d887a934e06a20dc19306084ebba6aa89b6"
     },
     {
       "path": "nightfire-port/runtime/nightfire_flight_recorder116.h",
+      "source": "nightfire-port/runtime/nightfire_flight_recorder116.h",
+      "group": "normal-source",
       "bytes": 3011,
       "sha256": "bcb3483f81b33e39498e21dd36513e8f5e7210bdb9584cbccdf9293106fd5377"
     },
     {
       "path": "nightfire-port/runtime/nightfire_fog.h",
+      "source": "nightfire-port/runtime/nightfire_fog.h",
+      "group": "normal-source",
       "bytes": 891,
       "sha256": "23845866e87644ab1e41029e3f18171e04f7b3630434d7660236847df535ef9e"
     },
     {
       "path": "nightfire-port/runtime/nightfire_frame_pixels.h",
+      "source": "nightfire-port/runtime/nightfire_frame_pixels.h",
+      "group": "normal-source",
       "bytes": 1563,
       "sha256": "9db4b629835723a5973f1ab6d9e96f414680fd5f79871d20fa6264e95e33afe0"
     },
     {
       "path": "nightfire-port/runtime/nightfire_frame_probe82.h",
+      "source": "nightfire-port/runtime/nightfire_frame_probe82.h",
+      "group": "normal-source",
       "bytes": 4064,
       "sha256": "e4d8025a82951c9a0c76e482aeb5741d55ca930e333312cde9659964b499c1df"
     },
     {
       "path": "nightfire-port/runtime/nightfire_game_audio.h",
+      "source": "nightfire-port/runtime/nightfire_game_audio.h",
+      "group": "normal-source",
       "bytes": 19070,
       "sha256": "b9f81aa543f15556d0d3f17b1e69560b185e4a614fcf526e25726ae98b7e930b"
     },
     {
       "path": "nightfire-port/runtime/nightfire_game_audio_trace.h",
+      "source": "nightfire-port/runtime/nightfire_game_audio_trace.h",
+      "group": "normal-source",
       "bytes": 2816,
       "sha256": "d61c288049c7c12f392b3cd3407db908996b8dd69e2ded9ff2f570b92d69ab72"
     },
     {
       "path": "nightfire-port/runtime/nightfire_game_pacing93.h",
+      "source": "nightfire-port/runtime/nightfire_game_pacing93.h",
+      "group": "normal-source",
       "bytes": 3880,
       "sha256": "a8da15b26e4779ddf25748e8647c6970d0ba65bfc0e22295dbc6ad736fa016b6"
     },
     {
       "path": "nightfire-port/runtime/nightfire_game_rate94.h",
+      "source": "nightfire-port/runtime/nightfire_game_rate94.h",
+      "group": "normal-source",
       "bytes": 5493,
       "sha256": "48e484fba5ab484733570f0f4b228a5b8966fd60d412e26660df4fd88d76ee9f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_geometry133.h",
+      "source": "nightfire-port/runtime/nightfire_geometry133.h",
+      "group": "normal-source",
       "bytes": 4551,
       "sha256": "8aabbb21e478564f1d126bd875672721aa2617e92714a0c8fa2baea03b16fa38"
     },
     {
       "path": "nightfire-port/runtime/nightfire_gpu_timing84.h",
+      "source": "nightfire-port/runtime/nightfire_gpu_timing84.h",
+      "group": "normal-source",
       "bytes": 11588,
       "sha256": "8d38e8f85562218e509dd49677654f6c9a8f79c92bbb7f12678f08786e41f1be"
     },
     {
       "path": "nightfire-port/runtime/nightfire_hardware.c",
+      "source": "nightfire-port/runtime/nightfire_hardware.c",
+      "group": "normal-source",
       "bytes": 105247,
       "sha256": "e6c7b6cb5e4df983b51887db6a72eed79302bb1ee305e342debd948050927a1e"
     },
     {
       "path": "nightfire-port/runtime/nightfire_hardware.h",
+      "source": "nightfire-port/runtime/nightfire_hardware.h",
+      "group": "normal-source",
       "bytes": 5935,
       "sha256": "469c3e74d2f6c86d1f0f9786ffd613ded88f38e24a792fef1af284232ca6f71e"
     },
     {
       "path": "nightfire-port/runtime/nightfire_index_guard120.h",
+      "source": "nightfire-port/runtime/nightfire_index_guard120.h",
+      "group": "normal-source",
       "bytes": 5378,
       "sha256": "d5bd4a0fbbc9d5742615b1a65ce4c4d3132b27582f3b72e163fbf0abfeac33ba"
     },
     {
       "path": "nightfire-port/runtime/nightfire_input.c",
+      "source": "nightfire-port/runtime/nightfire_input.c",
+      "group": "normal-source",
       "bytes": 7623,
       "sha256": "54d0d46505a1f063dacd4e5dfdd976d107e8810611155eeeb11a4765d607801e"
     },
     {
       "path": "nightfire-port/runtime/nightfire_material_textures132.h",
+      "source": "nightfire-port/runtime/nightfire_material_textures132.h",
+      "group": "normal-source",
       "bytes": 2129,
       "sha256": "d2943ae50d6338462516074e5f692610f844d6beda0780172ac3ee1ba0c4fb33"
     },
     {
       "path": "nightfire-port/runtime/nightfire_menu_missions139.h",
+      "source": "nightfire-port/runtime/nightfire_menu_missions139.h",
+      "group": "normal-source",
       "bytes": 1367,
       "sha256": "7d5f01ba99045cc8232859f419dc5c7eccb624bfb0d263d30ccf0d6dba3f4c77"
     },
     {
       "path": "nightfire-port/runtime/nightfire_pacer93.h",
+      "source": "nightfire-port/runtime/nightfire_pacer93.h",
+      "group": "normal-source",
       "bytes": 648,
       "sha256": "317dd9c10b3dafe79b73db68d66204e436e9fa3474c68ca49965d32f1129875f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_pal.h",
+      "source": "nightfire-port/runtime/nightfire_pal.h",
+      "group": "normal-source",
       "bytes": 411,
       "sha256": "25f22cb16481d0f79199f28b0680be8cb9b86ba260848e350ed7725e72651196"
     },
     {
       "path": "nightfire-port/runtime/nightfire_pause_rate133.h",
+      "source": "nightfire-port/runtime/nightfire_pause_rate133.h",
+      "group": "normal-source",
       "bytes": 3103,
       "sha256": "cc44589584e59d7b29bef058051487e6de77cb5a594a9378f4a20e6826b68664"
     },
     {
       "path": "nightfire-port/runtime/nightfire_pc_input.h",
+      "source": "nightfire-port/runtime/nightfire_pc_input.h",
+      "group": "normal-source",
       "bytes": 5051,
       "sha256": "95721cdc2bc1d6003ece3b97d9507d0a623662bfc224fd05b0062c3ff897e071"
     },
     {
       "path": "nightfire-port/runtime/nightfire_physical.h",
+      "source": "nightfire-port/runtime/nightfire_physical.h",
+      "group": "normal-source",
       "bytes": 373,
       "sha256": "d9f40717ee4779bc31124b977d6e828833485023924a66bf2930a58c2ba87175"
     },
     {
       "path": "nightfire-port/runtime/nightfire_pose_capture.h",
+      "source": "nightfire-port/runtime/nightfire_pose_capture.h",
+      "group": "normal-source",
       "bytes": 3205,
       "sha256": "a37e372d636ba4307d0924b672b79e8866013c992a4058e015fb2b3e9e78bb05"
     },
     {
       "path": "nightfire-port/runtime/nightfire_profile.c",
+      "source": "nightfire-port/runtime/nightfire_profile.c",
+      "group": "normal-source",
       "bytes": 3020,
       "sha256": "94c41efa7e6182ef61ad81596bfed44b7889bb855dadaab8a204e6801da533cc"
     },
     {
       "path": "nightfire-port/runtime/nightfire_rgba_mips129.h",
+      "source": "nightfire-port/runtime/nightfire_rgba_mips129.h",
+      "group": "normal-source",
       "bytes": 830,
       "sha256": "7fc36ed20691e33b9218e9aff35abe9ca322429c15ba4681cbf40d0a59e1eaee"
     },
     {
       "path": "nightfire-port/runtime/nightfire_rocket_mouse127.h",
+      "source": "nightfire-port/runtime/nightfire_rocket_mouse127.h",
+      "group": "normal-source",
       "bytes": 2605,
       "sha256": "f33aaf04fcfc3ebd97612dca85f17cee5487155633b932b2d7eea3d9c4348424"
     },
     {
       "path": "nightfire-port/runtime/nightfire_shader_cache99.h",
+      "source": "nightfire-port/runtime/nightfire_shader_cache99.h",
+      "group": "normal-source",
       "bytes": 11075,
       "sha256": "d5f8c5477f495d31857459326e472e0742f187ad3e6a3e5effc1ba5c0ee0fa83"
     },
     {
       "path": "nightfire-port/runtime/nightfire_shadow_layout131.h",
+      "source": "nightfire-port/runtime/nightfire_shadow_layout131.h",
+      "group": "normal-source",
       "bytes": 9122,
       "sha256": "f7a6ea27c4de5f68b12e13088a566e09a8f57044512751b32516c9a6cf3620ed"
     },
     {
       "path": "nightfire-port/runtime/nightfire_surface_probe83.c",
+      "source": "nightfire-port/runtime/nightfire_surface_probe83.c",
+      "group": "normal-source",
       "bytes": 13664,
       "sha256": "1f0a5047ad16449aeb99b31cc5548a532279bb3e218f7849f338ebeebedcd823"
     },
     {
       "path": "nightfire-port/runtime/nightfire_surface_probe83.h",
+      "source": "nightfire-port/runtime/nightfire_surface_probe83.h",
+      "group": "normal-source",
       "bytes": 3495,
       "sha256": "4b5977a0d4fb89e6d4916d303829d75c0703e53b5aaab3f6fc47a166d97cfb7f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_swizzled_shadow131.h",
+      "source": "nightfire-port/runtime/nightfire_swizzled_shadow131.h",
+      "group": "normal-source",
       "bytes": 3521,
       "sha256": "e60ecb67ccf762f1866ec07d3caaf6c1fd96f66d82f6c1bff147166f47b27102"
     },
     {
       "path": "nightfire-port/runtime/nightfire_test_input.h",
+      "source": "nightfire-port/runtime/nightfire_test_input.h",
+      "group": "normal-source",
       "bytes": 879,
       "sha256": "5247de9ec81c04a5a434618c2e7c7aa665a64d7340a2dd0b4742111174907a2d"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_cache.h",
+      "source": "nightfire-port/runtime/nightfire_texture_cache.h",
+      "group": "normal-source",
       "bytes": 1389,
       "sha256": "b7cee08a008ceeb4aa6d7568a81dcea3093fcb0b180c971e23366af4c226b49d"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_decode100.h",
+      "source": "nightfire-port/runtime/nightfire_texture_decode100.h",
+      "group": "normal-source",
       "bytes": 2205,
       "sha256": "821a7de3a87fbb5887752b40bb57900c1008bb16345d5842c8f5cece07315f9f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_equal114.c",
+      "source": "nightfire-port/runtime/nightfire_texture_equal114.c",
+      "group": "normal-source",
       "bytes": 2266,
       "sha256": "37009f3ba2ee76da048df2603a402070096c3448c3592791962171a3728e4dbe"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_equal114.h",
+      "source": "nightfire-port/runtime/nightfire_texture_equal114.h",
+      "group": "normal-source",
       "bytes": 842,
       "sha256": "22cad4b3f847bc6853be9f42b0813a91e7a54004055e1697e9b8a303cc6544f5"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_equal114_avx2.c",
+      "source": "nightfire-port/runtime/nightfire_texture_equal114_avx2.c",
+      "group": "normal-source",
       "bytes": 1636,
       "sha256": "10328521d33de6777a1c2f58d1cc1443a8838cf8ed24d2eedb8d9959c931d3e1"
     },
     {
       "path": "nightfire-port/runtime/nightfire_texture_filter.h",
+      "source": "nightfire-port/runtime/nightfire_texture_filter.h",
+      "group": "normal-source",
       "bytes": 4430,
       "sha256": "9da4a976b8a1b0c694a9fb085c3b80e497c427dcd4fc0b1e04c82d73be6ba668"
     },
     {
       "path": "nightfire-port/runtime/nightfire_vertex_cache106.h",
+      "source": "nightfire-port/runtime/nightfire_vertex_cache106.h",
+      "group": "normal-source",
       "bytes": 12162,
       "sha256": "f472a64302337a3b192f97f84e51cec04084b277f96f3ffb2d1fd660ec2045fc"
     },
     {
       "path": "nightfire-port/runtime/nightfire_vertex_cache107.h",
+      "source": "nightfire-port/runtime/nightfire_vertex_cache107.h",
+      "group": "normal-source",
       "bytes": 13321,
       "sha256": "1b8f946fb8d4ca0c9e2393cd876c171f694a0bfe3b56ae26c615acf1ab9f89ec"
     },
     {
       "path": "nightfire-port/runtime/nightfire_vertex_hlsl.h",
+      "source": "nightfire-port/runtime/nightfire_vertex_hlsl.h",
+      "group": "normal-source",
       "bytes": 5950,
       "sha256": "70e1ec6ea6d78ad72e173bee8c70ebd6da0046dce9bcf3d518d77d3982a01187"
     },
     {
       "path": "nightfire-port/runtime/nightfire_vertex_program.h",
+      "source": "nightfire-port/runtime/nightfire_vertex_program.h",
+      "group": "normal-source",
       "bytes": 5901,
       "sha256": "4551fe64724bccf963794c84f9d48ddfaa8515d6df7fffd8e100cda1c1c24b7f"
     },
     {
       "path": "nightfire-port/runtime/nightfire_vertex_reuse105.h",
+      "source": "nightfire-port/runtime/nightfire_vertex_reuse105.h",
+      "group": "normal-source",
       "bytes": 12829,
       "sha256": "402ba2630010d2aeb2344fe5a584b1aa613fe0081dc808f11e67d430a98ac7e0"
     },
     {
       "path": "nightfire-port/runtime/nightfire_video_audio.c",
+      "source": "nightfire-port/runtime/nightfire_video_audio.c",
+      "group": "normal-source",
       "bytes": 11964,
       "sha256": "0a9f9451a24418dd7bd214c76d5654b3f42fb5a90ba8d87627e52efa0afa3a48"
     },
     {
       "path": "nightfire-port/runtime/nightfire_video_io.h",
+      "source": "nightfire-port/runtime/nightfire_video_io.h",
+      "group": "normal-source",
       "bytes": 906,
       "sha256": "6e7b39726d3a7b148135cad5327a0a520d5a3f8919b59afdac95aba18922980f"
     },
     {
       "path": "nightfire-port/runtime/nv2a_pb_exec.c",
+      "source": "nightfire-port/runtime/nv2a_pb_exec.c",
+      "group": "normal-source",
       "bytes": 186366,
       "sha256": "8edf24e6148c1e998d9173760d5ac5bda5decdd9bd00df5afd9a60f509afab26"
     },
     {
       "path": "nightfire-port/runtime/nv2a_pb_scan.c",
+      "source": "nightfire-port/runtime/nv2a_pb_scan.c",
+      "group": "normal-source",
       "bytes": 5161,
       "sha256": "9791a95e10934239df789a6b4a7227adf91f75e6259f06963223951d8f888ea2"
     },
     {
       "path": "nightfire-port/runtime/renderer/CMakeLists.txt",
+      "source": "nightfire-port/runtime/renderer/CMakeLists.txt",
+      "group": "normal-source",
       "bytes": 35598,
       "sha256": "1691942edcd75c5a4d9d4efb23e2644f5b915dad224a155b4177f1f3760145e4"
     },
     {
       "path": "nightfire-port/runtime/xbox_memory_layout.c",
+      "source": "nightfire-port/runtime/xbox_memory_layout.c",
+      "group": "normal-source",
       "bytes": 103320,
       "sha256": "d3d19f31ad87870a2d8bbd96704d64dcafe153334ce6135a4d3c83129303e3dd"
     },
     {
       "path": "nightfire-port/src/main.c",
+      "source": "nightfire-port/src/main.c",
+      "group": "normal-source",
       "bytes": 19423,
       "sha256": "35f71a44f6a5aebda882926272c889d6ff91143aa8294bbeb6d73759c1c4e2b6"
     },
     {
       "path": "nightfire-port/src/nightfire_diagnostics.h",
+      "source": "nightfire-port/src/nightfire_diagnostics.h",
+      "group": "normal-source",
       "bytes": 640,
       "sha256": "c87f098a34190def0cda5363ab1efc46e2fc034488996289c4fc262f720a76e9"
     }

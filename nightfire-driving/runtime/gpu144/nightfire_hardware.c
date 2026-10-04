@@ -1648,6 +1648,8 @@ static ID3D11SamplerState *material_sampler221(const NFHardwareMaterialTexture22
 #include "nightfire_begin_probe334.h"
 #include "nightfire_import_probe335.h"
 #include "nightfire_depth_unpack335.h"
+static void backing341_upload(const NFHardwareState*);
+static void backing341_depth_upload(void);
 static int begin_impl(const NFHardwareState *s,const NFValidation267 *proof267){
     if(!s||!fragment291_begin(s)||!native302_begin(s))return 0;
 #ifdef NIGHTFIRE_MATERIAL221
@@ -1822,7 +1824,7 @@ static int begin_impl(const NFHardwareState *s,const NFValidation267 *proof267){
             ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)color,0,NULL,swizzled131_upload,s->width*4,0);swizzled131_imports++;swizzled132_imports+=s->color_layout==NF_COLOR_SWIZZLED_128_132;
         }else
 #endif
-        if(!color276_skip(s))ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)color,0,NULL,s->color,s->pitch,0);
+        if(!color276_skip(s))backing341_upload(s);
 #ifdef NIGHTFIRE_COLOR_REUSE110
         }
 #endif
@@ -1884,7 +1886,7 @@ static int begin_impl(const NFHardwareState *s,const NFValidation267 *proof267){
             depth269_imported(depth,import_nearest269&&(!depth269_current||batch_nearest236()));
 #endif
             ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)depth_transfer,0);
-            ID3D11DeviceContext_CopyResource(ctx,(ID3D11Resource*)depth,(ID3D11Resource*)depth_transfer);
+            backing341_depth_upload();
             nf_gpu_time84_cpu(NF_GPU_TIME84_DEPTH_UPLOAD_COPY,timing84);
             depth_upload_copies++;
         }
@@ -2091,6 +2093,7 @@ int nf_hw_draw_dual220(const NFHardwareDual220 *v,unsigned n){if(resident313_blo
     fallback96_drawn();draws++;triangles+=n/3;return 1;
 }
 static int tx339_draw(unsigned,unsigned);
+static int tx341_draw(unsigned,unsigned);
 static int draw_material221(const NFHardwareMaterialVertex221 *v,unsigned n,const NFValidation267 *proof267){
 #ifndef NIGHTFIRE_MATERIAL221
     (void)v;(void)n;return 0;
@@ -2139,7 +2142,7 @@ static int draw_material221(const NFHardwareMaterialVertex221 *v,unsigned n,cons
     BT244_END(bt_vmap244,BT244_VERTEX_MAP);BT244_START(bt_vcopy244);
     memcpy((NFHardwareMaterialVertex221*)m.pData+material_start246,v,n*sizeof*v);ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)material_vb221,0);
     unsigned stride=sizeof*v,offset=0;ID3D11DeviceContext_IASetVertexBuffers(ctx,0,1,&material_vb221,&stride,&offset);
-    gt254_draw(ctx,0);gt297_op(ctx,GT297_MATERIAL,0,0);int handled339=tx339_draw(n,material_start246);if(handled339<0)return 0;if(!handled339)ID3D11DeviceContext_Draw(ctx,n,material_start246);gt297_op(ctx,GT297_MATERIAL,1,0);gt254_draw(ctx,1);depth_observe_draw(active.depth_enable,active.depth_write,n);
+    gt254_draw(ctx,0);gt297_op(ctx,GT297_MATERIAL,0,0);int handled339=tx341_draw(n,material_start246);if(!handled339)handled339=tx339_draw(n,material_start246);if(handled339<0)return 0;if(!handled339)ID3D11DeviceContext_Draw(ctx,n,material_start246);gt297_op(ctx,GT297_MATERIAL,1,0);gt254_draw(ctx,1);depth_observe_draw(active.depth_enable,active.depth_write,n);
 #ifdef NIGHTFIRE_MATERIAL_RING246
     if(material_ring246){
         if(material_start246)material_appends246++;else{material_discards246++;material_wraps246+=material_cursor246!=0;}
@@ -2159,6 +2162,7 @@ static int nf_hw_draw_material_checked267(const NFHardwareMaterialVertex221 *v,u
 int nf_hw_draw_material221(const NFHardwareMaterialVertex221 *v,unsigned n){if(resident313_blocked())return 0;return nf_hw_draw_material_checked267(v,n,NULL);}
 #include "nightfire_pair235.h"
 #include "nightfire_shared339.h"
+#include "nightfire_shared341.h"
 #include "nightfire_pairbatch248.h"
 #include "nightfire_color_api276.h"
 #include "nightfire_depth_api278.h"
