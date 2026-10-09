@@ -14,8 +14,15 @@ HWND driving_present201_window(void){return window201;}
 void driving_present201_direct(int on){InterlockedExchange(&direct201,on!=0);if(!on)InterlockedExchange(&repaint232,1);}
 static LRESULT CALLBACK procedure(HWND h,UINT m,WPARAM w,LPARAM l){
  driving_input224_window(h,m,w,l);
+#ifdef DRIVING_LEAN_RENDERER
+ if(m==WM_KEYDOWN&&w==VK_F9&&!(l&(1LL<<30))){extern void lean_session_mark(void);lean_session_mark();}   /* LEAN_SESSION_CAPTURE mark */
+#endif
  if(m==WM_PAINT||m==WM_SIZE||m==WM_DISPLAYCHANGE)InterlockedExchange(&repaint232,1);
- if(m==WM_CLOSE){InterlockedExchange(&closed,1);DestroyWindow(h);return 0;}
+ if(m==WM_CLOSE){InterlockedExchange(&closed,1);
+#ifdef DRIVING_LEAN_RENDERER
+  {extern void lean_d3d_stop_presenter(void);lean_d3d_stop_presenter();}   /* no Present into a destroyed window */
+#endif
+  DestroyWindow(h);return 0;}
  if(m==WM_DESTROY)return 0;return DefWindowProcA(h,m,w,l);
 }
 static DWORD WINAPI display(void *unused){
@@ -40,6 +47,22 @@ static DWORD WINAPI display(void *unused){
    StretchDIBits(dc,0,0,rect.right,rect.bottom,0,0,640,480,frame,&bi,DIB_RGB_COLORS,SRCCOPY);}
   ULONGLONG now=GetTickCount64();int rate_update=now-rate_time>=1000;
   if(rate_update){fps=1000.0*(current-rate_count)/(now-rate_time);rate_count=current;rate_time=now;}
+#ifdef DRIVING_LEAN_RENDERER
+  {  /* LEAN_FPS_COUNTER=1: title shows frames presented to the screen (incl.
+      * LEAN_INTERP in-between frames) and the game rate, twice a second. */
+   static int fc=-1;static ULONGLONG ft;static LONG fp;static unsigned fg;static double sfps,gfps;
+   extern volatile LONG lean_screen_presents;
+   if(fc<0){const char *v=getenv("LEAN_FPS_COUNTER");fc=v&&v[0]=='1';ft=now;fp=lean_screen_presents;fg=current;}
+   if(fc){
+    if(now-ft>=500){LONG p=lean_screen_presents;sfps=1000.0*(p-fp)/(now-ft);gfps=1000.0*(current-fg)/(now-ft);fp=p;fg=current;ft=now;
+     const char *hint=driving_input224_hint();char title[240];
+     extern volatile ULONGLONG lean_mark_flash_until;extern volatile LONG lean_mark_count;
+     if(GetTickCount64()<lean_mark_flash_until)snprintf(title,sizeof title,"Nightfire Driving | MARK %ld SAVED | %.0f FPS (game %.0f) | Frame %u",lean_mark_count,sfps,gfps,current);
+     else snprintf(title,sizeof title,"Nightfire Driving | %.0f FPS (game %.0f) | Frame %u | %s",sfps,gfps,current,hint);
+     SetWindowTextA(h,title);shown=current;last_hint=hint;}
+    Sleep(16);continue;}
+  }
+#endif
   const char *hint=driving_input224_hint();if(current!=shown||hint!=last_hint||rate_update){char title[240];snprintf(title,sizeof title,"Nightfire Driving - experimental GPU preview | %.1f FPS | Frame %u | %s",fps,current,hint);SetWindowTextA(h,title);shown=current;last_hint=hint;}
   Sleep(16);
  }
@@ -59,6 +82,12 @@ static void dump(const uint32_t *pixels,unsigned index,uint32_t physical){
  fprintf(stderr,"[PRESENT201] capture=%u physical=%08X ok=%d completed-game-resolve experimental-profile=1\n",index,physical,ok);
 }
 static int dump_index(unsigned index){
+#ifdef DRIVING_LEAN_RENDERER
+ {/* LEAN_DUMP_FRAMES=a-b/step: also save frames a..b every step (diagnostic). */
+  static int parsed;static unsigned a,b,step;
+  if(!parsed){const char *v=getenv("LEAN_DUMP_FRAMES");parsed=1;if(v)sscanf(v,"%u-%u/%u",&a,&b,&step);if(!step)step=1;}
+  if(b&&index>=a&&index<=b&&!((index-a)%step))return 1;}
+#endif
  return index==1||index==15||index==30||index==120||index==240||index==480||(index>=510&&index<=900&&index%30==0)||(index>=630&&index<=660);
 }
 /* Lean build: whether the next presented frame is one that gets saved, so

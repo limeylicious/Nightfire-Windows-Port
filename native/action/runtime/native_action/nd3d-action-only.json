@@ -1,0 +1,18 @@
+[
+ {
+  "va": "0x109EF0",
+  "name": "CDevice_SetStateUP"
+ },
+ {
+  "va": "0x104860",
+  "name": "D3DDevice_DrawVerticesUP"
+ },
+ {
+  "va": "0x1019F0",
+  "name": "D3DDevice_SetDepthClipPlanes"
+ },
+ {
+  "va": "0x103CA0",
+  "name": "D3DDevice_GetRasterStatus"
+ }
+]

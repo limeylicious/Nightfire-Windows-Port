@@ -729,6 +729,14 @@ static void bridge_MmAllocateContiguousMemoryEx(void)
 
     if (align < 4096) align = 4096;
     xbox_va = xbox_ContiguousAlloc(size, align);
+#ifdef DRIVING_LEAN_RENDERER
+    {   /* LEAN_MM_LOG=1 (diagnostic): every non-pinned contiguous allocation with its limits and caller */
+        static int mmlog = -1; if (mmlog < 0) { const char *e = getenv("LEAN_MM_LOG"); mmlog = e && e[0] == '1'; }
+        if (mmlog) { extern volatile LONG lean_present_count; uint32_t phys = xbox_va - XBOX_PHYSICAL_MIRROR_BASE;
+            fprintf(stderr, "[LEAN-MM] contig alloc size=%u low=%08X high=%08X align=%u caller=%08X -> %08X (phys %08X)%s f=%ld\n",
+                    size, low, high, align, g_xbox_kernel_caller, xbox_va, phys, (xbox_va && phys + size - 1 > high) ? " ABOVE-HIGH" : "", (long)lean_present_count); }
+    }
+#endif
 
     if (KERNEL_LOG_ON_HALF()) {
         fprintf(stderr, "  [KERNEL] MmAllocateContiguousMemoryEx: size=%u align=%u → Xbox VA 0x%08X\n",
@@ -1225,17 +1233,113 @@ static void bridge_ExAllocatePoolWithTag(void)
     g_eax = xbox_va;
 }
 
+#ifdef DRIVING_LEAN_RENDERER
+/* Lean: make raised IRQL mean something.
+ *
+ * On the single-CPU Xbox, code at DISPATCH_LEVEL cannot be interleaved with a
+ * DPC, and KeSynchronizeExecution cannot be interleaved with the ISR. Here the
+ * delivered APU ISR and all DPCs run on the kernel timer thread, in parallel
+ * with game threads, so DirectSound could unlink a voice on the game thread
+ * while its DPC walked the same list (access violation in sub_0017E038 reading
+ * a NULL Blink - 0x4C + 0xA = 0xFFFFFFBE).
+ *
+ * dispatch lock: held by a guest thread from its raise to >= DISPATCH until it
+ *                lowers below; the timer thread runs DPCs only while holding it.
+ * interrupt lock: held for KeSynchronizeExecution; the timer thread delivers
+ *                the APU ISR only while holding it.
+ * The timer thread only ever TRIES the locks and leaves busy work for its next
+ * pass, so it cannot deadlock against a raised thread waiting on the flip
+ * handshake it also services. LEAN_IRQL_LOCK=0 restores the old behaviour. */
+static CRITICAL_SECTION lean_dispatch_cs, lean_interrupt_cs;
+static INIT_ONCE lean_irql_once = INIT_ONCE_STATIC_INIT;
+static int lean_irql_on;
+static __declspec(thread) int lean_irql_shadow;   /* this thread's emulated IRQL */
+static __declspec(thread) int lean_dispatch_held; /* this thread entered lean_dispatch_cs */
+unsigned long lean_dispatch_owner(void) { return (unsigned long)(uintptr_t)lean_dispatch_cs.OwningThread; }   /* LEAN_AUDIO_GAPSTACK */
+static BOOL CALLBACK lean_irql_init(PINIT_ONCE o, PVOID p, PVOID *c)
+{
+    const char *v = getenv("LEAN_IRQL_LOCK");
+    (void)o; (void)p; (void)c;
+    InitializeCriticalSection(&lean_dispatch_cs);
+    InitializeCriticalSection(&lean_interrupt_cs);
+    lean_irql_on = !(v && v[0] == '0');
+    fprintf(stderr, "[LEAN-IRQL] dispatch/interrupt exclusion %s\n", lean_irql_on ? "on" : "off");
+    return TRUE;
+}
+static int lean_irql_enabled(void)
+{
+    InitOnceExecuteOnce(&lean_irql_once, lean_irql_init, NULL, NULL);
+    return lean_irql_on;
+}
+/* A guest thread's IRQL moves from old to new. */
+static void lean_irql_change(int old_irql, int new_irql)
+{
+    if (!lean_irql_enabled()) return;
+    {   /* LEAN_IRQL_LOG=1: first use of each raised level. */
+        static int log = -1; static volatile LONG seen[32];
+        if (log < 0) { const char *v = getenv("LEAN_IRQL_LOG"); log = v && v[0] == '1'; }
+        if (log && new_irql > old_irql && new_irql < 32 && InterlockedIncrement(&seen[new_irql]) <= 3)
+            fprintf(stderr, "[LEAN-IRQL] thread %lu raise %d -> %d (esp=%08X ret=%08X)\n", GetCurrentThreadId(),
+                    old_irql, new_irql, g_esp, BRIDGE_MEM32(g_esp));
+    }
+    /* The lock follows what this thread actually holds. A thread can be at a
+     * raised IRQL without holding it (the timer thread delivering the APU ISR
+     * sets IRQL 28 under the interrupt lock only); lowering there must not
+     * release a lock it never entered -- that drove the recursion count
+     * negative and left the main thread blocked for good (Paris freeze). */
+    if (new_irql >= 2 && !lean_dispatch_held) {
+        if (old_irql < 2) { EnterCriticalSection(&lean_dispatch_cs); lean_dispatch_held = 1; }
+    } else if (new_irql < 2 && old_irql >= 2) {
+        if (lean_dispatch_held) { lean_dispatch_held = 0; LeaveCriticalSection(&lean_dispatch_cs); }
+        else {
+            static volatile LONG n;
+            if (InterlockedIncrement(&n) <= 8)
+                fprintf(stderr, "[LEAN-IRQL] thread %lu lowered %d -> %d without holding the dispatch lock (esp=%08X ret=%08X)\n",
+                        GetCurrentThreadId(), old_irql, new_irql, g_esp, BRIDGE_MEM32(g_esp));
+        }
+    }
+    lean_irql_shadow = new_irql;
+}
+/* Timer thread: try to enter DISPATCH_LEVEL for DPC work. */
+static int lean_dispatch_try(int *saved)
+{
+    if (!lean_irql_enabled()) return 1;
+    if (lean_irql_shadow >= 2) { *saved = -1; return 1; }
+    if (!TryEnterCriticalSection(&lean_dispatch_cs)) return 0;
+    lean_dispatch_held = 1;
+    *saved = lean_irql_shadow; lean_irql_shadow = 2;
+    return 1;
+}
+static void lean_dispatch_done(int saved)
+{
+    if (!lean_irql_on || saved < 0) return;
+    if (lean_dispatch_held) { lean_dispatch_held = 0; LeaveCriticalSection(&lean_dispatch_cs); }
+    lean_irql_shadow = saved;
+}
+#endif
+
 /* ── KfRaiseIrql / KfLowerIrql (ordinals 160, 161) ────── */
 static void bridge_KfRaiseIrql(void)
 {
     uint32_t new_irql = g_ecx & 0xFFu;
     g_eax = (uint32_t)xbox_KfRaiseIrql((UCHAR)new_irql);
+#ifdef DRIVING_LEAN_RENDERER
+    /* Return this thread's lean IRQL as the previous level. The toolkit's own
+     * per-thread value does not see the levels the timer thread sets for DPCs
+     * (2) and the APU ISR (28), so a DPC/ISR that raised and later lowered
+     * "back" to the toolkit's 0 would drop below DISPATCH mid-routine. */
+    if (lean_irql_enabled()) g_eax = (uint32_t)lean_irql_shadow;
+    lean_irql_change(lean_irql_shadow, (int)new_irql);
+#endif
 }
 
 static void bridge_KfLowerIrql(void)
 {
     uint32_t new_irql = g_ecx & 0xFFu;
     xbox_KfLowerIrql((UCHAR)new_irql);
+#ifdef DRIVING_LEAN_RENDERER
+    lean_irql_change(lean_irql_shadow, (int)new_irql);
+#endif
     g_eax = 0;
 }
 
@@ -1243,6 +1347,10 @@ static void bridge_KfLowerIrql(void)
 static void bridge_KeRaiseIrqlToDpcLevel(void)
 {
     g_eax = (uint32_t)xbox_KeRaiseIrqlToDpcLevel();
+#ifdef DRIVING_LEAN_RENDERER
+    if (lean_irql_enabled()) g_eax = (uint32_t)lean_irql_shadow;   /* as KfRaiseIrql */
+    lean_irql_change(lean_irql_shadow, 2);
+#endif
 }
 
 /* ── RtlInitializeCriticalSection / Enter / Leave (ordinals 291, 277, 294) ─ */
@@ -1566,6 +1674,33 @@ static void bridge_KeDelayExecutionThread(void)
     uint32_t interval_ptr = STACK_ARG(2);
 
 
+#ifdef DRIVING_LEAN_RENDERER
+    /* LEAN_PRECISE_DELAY=1 (lean bridge only, off by default): the toolkit
+     * sleeps with Sleep(ms), which rounds a relative delay up to the 15.6 ms
+     * Windows timer tick unless someone raised the global timer resolution.
+     * Wait on a per-thread high-resolution waitable timer for the exact
+     * interval instead (100 ns units, as the title asked). */
+    {
+        static int on = -1;
+        if (on < 0) { const char *e = getenv("LEAN_PRECISE_DELAY"); on = e && e[0] == '1';
+            if (on) fprintf(stderr, "[LEAN-DELAY] precise KeDelayExecutionThread on\n"); }
+        if (on && interval_ptr) {
+            LONGLONG iv = *(const LONGLONG *)XBOX_TO_NATIVE(interval_ptr);
+            if (iv < 0) {
+                static __declspec(thread) HANDLE timer;
+                if (!timer) timer = CreateWaitableTimerExW(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+                if (timer) {
+                    LARGE_INTEGER due; due.QuadPart = iv;
+                    if (SetWaitableTimer(timer, &due, 0, NULL, NULL, FALSE)) {
+                        DWORD r = WaitForSingleObjectEx(timer, INFINITE, alertable ? TRUE : FALSE);
+                        g_eax = (r == WAIT_IO_COMPLETION) ? 0x101u /* STATUS_ALERTED */ : 0;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+#endif
     g_eax = (uint32_t)xbox_KeDelayExecutionThread(
         (KPROCESSOR_MODE)wait_mode, (BOOLEAN)alertable,
         XBOX_TO_NATIVE(interval_ptr));
@@ -1830,6 +1965,18 @@ static void bridge_KeSynchronizeExecution(void)
      * the dummy return address and the argument, so g_esp needs no fixup. */
     g_esp -= 4; BRIDGE_MEM32(g_esp) = context;
     g_esp -= 4; BRIDGE_MEM32(g_esp) = 0;
+#ifdef DRIVING_LEAN_RENDERER
+    if (lean_irql_enabled()) {
+        /* The ISR's IRQL is above DISPATCH. Lock order is always dispatch,
+         * then interrupt; the timer thread only tries either. */
+        int saved = lean_irql_shadow;
+        lean_irql_change(saved, 28);
+        EnterCriticalSection(&lean_interrupt_cs);
+        fn();
+        LeaveCriticalSection(&lean_interrupt_cs);
+        lean_irql_change(28, saved);
+    } else
+#endif
     fn();
     /* g_eax is whatever the routine returned, which is this call's result. */
 }
@@ -1869,6 +2016,35 @@ typedef struct { uint32_t dpc, arg1, arg2; } PendingDpc;
 static PendingDpc g_dpc_queue[XBOX_MAX_PENDING_DPC];
 static volatile LONG g_dpc_head, g_dpc_tail;
 
+#ifdef DRIVING_LEAN_RENDERER
+/* Several threads queue DPCs (game threads and the ISR on the timer thread),
+ * so insertion takes a lock. A DPC already queued is not queued twice, as on
+ * the real kernel (returns FALSE). */
+static SRWLOCK lean_dpc_queue_lock = SRWLOCK_INIT;
+/* Lean diagnostic: inserts refused because the same DPC was still queued (a lost
+ * interrupt's deferred work, e.g. a vblank), reported in the 5 s [LEAN-VBLANK] line. */
+static volatile LONG lean_dpc_refused_n;
+static volatile uint32_t lean_dpc_refused_last;
+static void lean_dpc_refused(uint32_t dpc) { InterlockedIncrement(&lean_dpc_refused_n); lean_dpc_refused_last = dpc; }
+static int lean_queue_dpc(uint32_t dpc, uint32_t arg1, uint32_t arg2)
+{
+    LONG tail, next, i;
+    AcquireSRWLockExclusive(&lean_dpc_queue_lock);
+    for (i = g_dpc_head; i != g_dpc_tail; i = (i + 1) % XBOX_MAX_PENDING_DPC)
+        if (g_dpc_queue[i].dpc == dpc) { ReleaseSRWLockExclusive(&lean_dpc_queue_lock); lean_dpc_refused(dpc); return 0; }
+    tail = g_dpc_tail;
+    next = (tail + 1) % XBOX_MAX_PENDING_DPC;
+    if (next == g_dpc_head) {
+        ReleaseSRWLockExclusive(&lean_dpc_queue_lock);
+        fprintf(stderr, "  [KERNEL] DPC queue full, dropping 0x%08X\n", dpc);
+        return 0;
+    }
+    g_dpc_queue[tail].dpc = dpc; g_dpc_queue[tail].arg1 = arg1; g_dpc_queue[tail].arg2 = arg2;
+    g_dpc_tail = next;
+    ReleaseSRWLockExclusive(&lean_dpc_queue_lock);
+    return 1;
+}
+#endif
 static void bridge_KeInsertQueueDpc(void)
 {
     uint32_t dpc  = STACK_ARG(0);
@@ -1878,6 +2054,11 @@ static void bridge_KeInsertQueueDpc(void)
 
     if (!dpc) { g_eax = 0; return; }
 
+#ifdef DRIVING_LEAN_RENDERER
+    g_eax = (uint32_t)lean_queue_dpc(dpc, arg1, arg2);
+    (void)tail; (void)next;
+    return;
+#endif
     tail = g_dpc_tail;
     next = (tail + 1) % XBOX_MAX_PENDING_DPC;
     if (next == g_dpc_head) {
@@ -2013,8 +2194,16 @@ static void lean_apu_interrupt_tick(void)
     if (on < 0) { const char *v = getenv("LEAN_APU_IRQ"); on = !(v && v[0] == '0'); }
     if (!on || !lean_apu_irq_pending() || !xbox_GetConnectedInterrupt(MCPX_APU_VECTOR))
         return;
+    static unsigned long long deferred;
+    if (lean_irql_enabled() && !TryEnterCriticalSection(&lean_interrupt_cs)) {
+        deferred++; return;   /* a KeSynchronizeExecution is running; next pass */
+    }
+    int saved_irql = lean_irql_shadow; lean_irql_shadow = 28;
     int r = kernel_raise_interrupt(MCPX_APU_VECTOR);
+    lean_irql_shadow = saved_irql;
+    if (lean_irql_enabled()) LeaveCriticalSection(&lean_interrupt_cs);
     raised++; if (r > 0) claimed++;
+    if (deferred && !(raised % 2000)) fprintf(stderr, "[LEAN-IRQL] APU ISR deferred %llu times\n", deferred);
     if (raised <= 8 || !(raised % 2000))
         fprintf(stderr, "[LEAN-APU] interrupt raised=%llu claimed=%llu last=%d\n", raised, claimed, r);
 }
@@ -2022,6 +2211,21 @@ static void lean_apu_interrupt_tick(void)
 #ifdef DRIVING_LEAN_RENDERER
 #include <timeapi.h>
 #pragma comment(lib, "winmm.lib")
+#endif
+#ifdef DRIVING_LEAN_RENDERER
+volatile long long lean_vblank_due;   /* QPC time of the latest 50 Hz vblank */
+volatile long long lean_vblank_next;  /* QPC time the next vblank is due (LEAN_VBLANK_WAIT) */
+static volatile LONG lean_vbl_masked, lean_vbl_claimed, lean_vbl_declined;   /* [LEAN-VBLANK] diagnostics */
+/* LEAN_VBLANK_HZ (experimental, default 50 = PAL): emulated vblank rate. The game
+ * takes one 1/60 s simulation step per vblank (scheduler 0x5BA80, counter 0x1E5204),
+ * so 50 Hz runs the world at 50/60 speed; 60 tests the PAL60/NTSC rate. */
+int lean_vblank_hz(void)
+{
+    static int r = 0;
+    if (!r) { const char *v = getenv("LEAN_VBLANK_HZ"); int x = v ? atoi(v) : 50; if (x < 25 || x > 240) x = 50;
+        fprintf(stderr, "[LEAN] vblank rate %d Hz\n", x); r = x; }
+    return r;
+}
 #endif
 static void kernel_vblank_tick(void)
 {
@@ -2052,21 +2256,24 @@ static void kernel_vblank_tick(void)
             QueryPerformanceCounter(&t);
             if (!hz.QuadPart) { QueryPerformanceFrequency(&hz); due = t; }
             if (t.QuadPart < due.QuadPart) return;
-            due.QuadPart += hz.QuadPart / 50;
+            lean_vblank_due = due.QuadPart;   /* scheduled time of this vblank (LEAN_INTERP stamps) */
+            due.QuadPart += hz.QuadPart / lean_vblank_hz();
             if (t.QuadPart - due.QuadPart > hz.QuadPart / 5) due = t;
+            lean_vblank_next = due.QuadPart;
             {   /* Lean: vblanks scheduled vs wall time, and the largest catch-up
                  * backlog, every 5 s (LEAN_VBLANK_STATS=0 disables). */
                 static int on = -1; static LARGE_INTEGER t0; static long long n5, max_backlog, resets;
                 if (on < 0) { const char *v = getenv("LEAN_VBLANK_STATS"); on = !(v && v[0] == '0'); t0 = t; }
                 if (on) {
-                    long long backlog = (t.QuadPart - due.QuadPart) / (hz.QuadPart / 50) + 1;
+                    long long backlog = (t.QuadPart - due.QuadPart) / (hz.QuadPart / lean_vblank_hz()) + 1;
                     if (backlog > max_backlog) max_backlog = backlog;
                     if (due.QuadPart == t.QuadPart) resets++;
                     n5++;
                     if (t.QuadPart - t0.QuadPart >= hz.QuadPart * 5) {
                         double secs = (double)(t.QuadPart - t0.QuadPart) / hz.QuadPart;
-                        fprintf(stderr, "[LEAN-VBLANK] 5s: ticks=%lld wall=%.3fs rate=%.2f/s max_backlog=%lld resets=%lld\n",
-                                n5, secs, n5 / secs, max_backlog, resets);
+                        fprintf(stderr, "[LEAN-VBLANK] 5s: ticks=%lld wall=%.3fs rate=%.2f/s max_backlog=%lld resets=%lld dpc_refused=%ld (last %08X) masked=%ld claimed=%ld declined=%ld\n",
+                                n5, secs, n5 / secs, max_backlog, resets, InterlockedExchange(&lean_dpc_refused_n, 0), lean_dpc_refused_last,
+                                InterlockedExchange(&lean_vbl_masked, 0), InterlockedExchange(&lean_vbl_claimed, 0), InterlockedExchange(&lean_vbl_declined, 0));
                         t0 = t; n5 = max_backlog = resets = 0;
                     }
                 }
@@ -2085,7 +2292,12 @@ static void kernel_vblank_tick(void)
 
     /* VBLANK143: only deliver an enabled PCRTC source. */
     if (!(BRIDGE_MEM32(XBOX_NV2A_REG_BASE + 0x600140u) & 1u)
-        || !(BRIDGE_MEM32(XBOX_NV2A_REG_BASE + 0x140u) & 1u)) return;
+        || !(BRIDGE_MEM32(XBOX_NV2A_REG_BASE + 0x140u) & 1u)) {
+#ifdef DRIVING_LEAN_RENDERER
+        InterlockedIncrement(&lean_vbl_masked);
+#endif
+        return;
+    }
 
     BRIDGE_MEM32(XBOX_NV2A_REG_BASE + NV2A_PCRTC_INTR_0) |= NV2A_PCRTC_INTR_VBLANK;
     BRIDGE_MEM32(XBOX_NV2A_REG_BASE + NV2A_PMC_INTR_0)   |= NV2A_PMC_INTR_PCRTC;
@@ -2094,6 +2306,7 @@ static void kernel_vblank_tick(void)
         static unsigned n;
         int claimed = kernel_raise_interrupt(NV2A_VECTOR);
 #ifdef DRIVING_LEAN_RENDERER
+        if (claimed > 0) InterlockedIncrement(&lean_vbl_claimed); else InterlockedIncrement(&lean_vbl_declined);
         if(lean_flip_ctx&&lean_flip_trace())fprintf(stderr,"[FLIPTRACE] %llu vblank claimed=%d rd=%u wr=%u c0=%u c4=%u c8=%u pend=%08X\n",(unsigned long long)GetTickCount64(),claimed,
             BRIDGE_MEM32(lean_flip_ctx+0x1bc),BRIDGE_MEM32(lean_flip_ctx+0x1cc),BRIDGE_MEM32(lean_flip_ctx+0x1c0),BRIDGE_MEM32(lean_flip_ctx+0x1c4),BRIDGE_MEM32(lean_flip_ctx+0x1c8),BRIDGE_MEM32(XBOX_NV2A_REG_BASE + NV2A_PCRTC_INTR_0));
 #endif
@@ -2105,16 +2318,53 @@ static void kernel_vblank_tick(void)
     }
 }
 
+#ifdef DRIVING_LEAN_RENDERER
+/* LEAN_HANG_DUMP: IRQL locks and DPC queue for the freeze monitor (lean_hang.c). */
+void lean_kernel_dump_state(void)
+{
+    LONG h = g_dpc_head, t = g_dpc_tail, i;
+    fprintf(stderr, "[LEAN-HANG] irql: exclusion=%d dispatch owner=%lu recursion=%ld; interrupt owner=%lu recursion=%ld\n",
+            lean_irql_on, (unsigned long)(uintptr_t)lean_dispatch_cs.OwningThread, (long)lean_dispatch_cs.RecursionCount,
+            (unsigned long)(uintptr_t)lean_interrupt_cs.OwningThread, (long)lean_interrupt_cs.RecursionCount);
+    fprintf(stderr, "[LEAN-HANG] dpc queue: %ld pending", (t - h + XBOX_MAX_PENDING_DPC) % XBOX_MAX_PENDING_DPC);
+    for (i = h; i != t; i = (i + 1) % XBOX_MAX_PENDING_DPC)
+        fprintf(stderr, " [dpc=%08X routine=%08X]", g_dpc_queue[i].dpc, BRIDGE_MEM32(g_dpc_queue[i].dpc + 12));
+    fputc('\n', stderr);
+}
+#endif
+
 /* Run whatever is queued. Called from the timer thread, which has the guest
  * stack and TIB that a deferred routine needs. */
 static void kernel_drain_dpcs(void)
 {
+#ifdef DRIVING_LEAN_RENDERER
+    int saved;
+    if (g_dpc_head == g_dpc_tail) return;
+    {   /* Report DPCs held back for long by a thread at raised IRQL. */
+        static ULONGLONG since, last_report;
+        if (!lean_dispatch_try(&saved)) {
+            ULONGLONG now = GetTickCount64();
+            if (!since) since = now;
+            if (now - since > 2000 && now - last_report > 5000) {
+                last_report = now;
+                fprintf(stderr, "[LEAN-IRQL] DPCs held back %llu ms; dispatch lock owner thread %lu recursion %ld\n",
+                        now - since, (unsigned long)(uintptr_t)lean_dispatch_cs.OwningThread,
+                        (long)lean_dispatch_cs.RecursionCount);
+            }
+            return;   /* a thread is at raised IRQL */
+        }
+        since = 0;
+    }
+#endif
     while (g_dpc_head != g_dpc_tail) {
         LONG head = g_dpc_head;
         PendingDpc d = g_dpc_queue[head];
         g_dpc_head = (head + 1) % XBOX_MAX_PENDING_DPC;
         kernel_run_dpc(d.dpc, d.arg1, d.arg2);
     }
+#ifdef DRIVING_LEAN_RENDERER
+    lean_dispatch_done(saved);
+#endif
 }
 
 /* ── KeInitializeDpc (ordinal 107) ────────────────────────
@@ -2378,7 +2628,9 @@ static DWORD WINAPI kernel_timer_thread(LPVOID unused)
         kernel_vblank_tick();  /* the GPU's frame clock */
         driving_flip204_tick();
 #ifdef DRIVING_LEAN_RENDERER
-        lean_apu_interrupt_tick();
+        { static int nochip = -1; extern int lean_audio_no_chip(void);
+          if (nochip < 0) nochip = lean_audio_no_chip();
+          if (!nochip) lean_apu_interrupt_tick(); }   /* LEAN_AUDIO_NO_CHIP: no emulated APU, no APU interrupt */
 #endif
         kernel_drain_dpcs();   /* deferred work, before due timers */
         now = (long long)GetTickCount64();
@@ -2402,9 +2654,16 @@ static DWORD WINAPI kernel_timer_thread(LPVOID unused)
             LeaveCriticalSection(&g_timer_lock);
 
             /* Outside the lock: the routine can set or cancel timers. */
-            if (dpc)
+            if (dpc) {
+#ifdef DRIVING_LEAN_RENDERER
+                if (lean_irql_enabled()) lean_queue_dpc(dpc, 0, 0); else
+#endif
                 kernel_run_dpc(dpc, 0, 0);
+            }
         }
+#ifdef DRIVING_LEAN_RENDERER
+        kernel_drain_dpcs();   /* the timer DPCs just queued */
+#endif
     }
 }
 
@@ -3487,6 +3746,43 @@ static void bridge_IoCreateSymbolicLink(void)
                                                 target_va ? &target : NULL);
 }
 
+#ifdef DRIVING_LEAN_RENDERER
+/* LEAN_PRIORITY_BRIDGE=1 (lean bridge only, off by default): the title's
+ * SetThreadPriority (0x10EA0F) turns its thread handle into a thread object
+ * with ObReferenceObjectByHandle and passes that to KeSetBasePriorityThread.
+ * The bridge returned object 0 and the toolkit then handed the object to
+ * SetThreadPriority as a Windows handle, so every request (the sound thread
+ * asks for time-critical) was dropped. Hand out a zeroed guest block per
+ * thread (GetExitCodeThread 0x10EAEF reads +4 and +0x120, so it must be real
+ * memory) and remember which host thread it stands for. */
+static int lean_prio_bridge_on(void)
+{
+    static int on = -1;
+    if (on < 0) { const char *e = getenv("LEAN_PRIORITY_BRIDGE"); on = e && e[0] == '1';
+        if (on) fprintf(stderr, "[LEAN-PRIO] priority bridge on\n"); }
+    return on;
+}
+static struct { uint32_t obj; HANDLE h; } s_lean_thread_obj[64];
+static uint32_t lean_thread_object(HANDLE h)
+{
+    int i;
+    for (i = 0; i < 64 && s_lean_thread_obj[i].obj; i++)
+        if (s_lean_thread_obj[i].h == h) return s_lean_thread_obj[i].obj;
+    if (i == 64) return 0;
+    uint32_t obj = xbox_HeapAlloc(0x200, 16);
+    if (!obj) return 0;
+    memset((void *)XBOX_TO_NATIVE(obj), 0, 0x200);
+    s_lean_thread_obj[i].h = h; s_lean_thread_obj[i].obj = obj;
+    return obj;
+}
+static HANDLE lean_thread_handle(uint32_t obj)
+{
+    for (int i = 0; i < 64 && s_lean_thread_obj[i].obj; i++)
+        if (s_lean_thread_obj[i].obj == obj) return s_lean_thread_obj[i].h;
+    return NULL;
+}
+#endif
+
 /* ── ObReferenceObjectByHandle (ordinal 246) ─────────────── */
 static void bridge_ObReferenceObjectByHandle(void)
 {
@@ -3496,6 +3792,29 @@ static void bridge_ObReferenceObjectByHandle(void)
     uint32_t obj_type = STACK_ARG(1);
     uint32_t object_ptr = STACK_ARG(2);
     if (object_ptr) BRIDGE_MEM32(object_ptr) = 0;
+#ifdef DRIVING_LEAN_RENDERER
+    if (object_ptr && lean_prio_bridge_on()) {
+        HANDLE h = bridge_resolve_handle(handle);
+        if (handle == 0xFFFFFFFEu) {   /* NtCurrentThread(): a real handle for this thread */
+            static __declspec(thread) HANDLE self;
+            if (!self) self = OpenThread(THREAD_SET_INFORMATION | THREAD_QUERY_INFORMATION, FALSE, GetCurrentThreadId());
+            h = self;
+        }
+        if (h && GetThreadId(h)) {
+            uint32_t obj = lean_thread_object(h);
+            BRIDGE_MEM32(object_ptr) = obj;
+            /* Mirror the host thread's exit into the block: the title's
+             * GetExitCodeThread reads +4 (signalled) and +0x120 (exit code),
+             * and 0x4FB10 waits on it for a worker to finish. */
+            DWORD code;
+            if (obj && GetExitCodeThread(h, &code) && code != STILL_ACTIVE) {
+                *(uint8_t *)XBOX_TO_NATIVE(obj + 4) = 1;
+                *(uint32_t *)XBOX_TO_NATIVE(obj + 0x120) = code;
+            }
+        }
+    }
+#endif
+    (void)obj_type;
     g_eax = 0;  /* STATUS_SUCCESS */
 }
 
@@ -3706,6 +4025,25 @@ static void bridge_KeQueryBasePriorityThread(void)
 
 static void bridge_KeSetBasePriorityThread(void)
 {
+#ifdef DRIVING_LEAN_RENDERER
+    {   /* Lean diagnostic: the toolkit passes the guest KTHREAD pointer to
+         * SetThreadPriority as if it were a Windows handle, so the request is
+         * dropped. Log what the game asks for (first 20 calls). */
+        static volatile LONG n;
+        if (InterlockedIncrement(&n) <= 20)
+            fprintf(stderr, "[LEAN-PRIO] KeSetBasePriorityThread guest thread=%08X increment=%d host thread=%lu ret=%08X\n",
+                    STACK_ARG(0), (int)STACK_ARG(1), GetCurrentThreadId(), BRIDGE_MEM32(g_esp));
+    }
+    if (lean_prio_bridge_on()) {
+        HANDLE h = lean_thread_handle(STACK_ARG(0));
+        if (h) {
+            g_eax = (uint32_t)xbox_KeSetBasePriorityThread(h, (LONG)STACK_ARG(1));
+            fprintf(stderr, "[LEAN-PRIO] thread %lu increment %d -> Windows priority %d\n",
+                    GetThreadId(h), (int)STACK_ARG(1), GetThreadPriority(h));
+            return;
+        }
+    }
+#endif
     g_eax = (uint32_t)xbox_KeSetBasePriorityThread(
         XBOX_TO_NATIVE(STACK_ARG(0)), (LONG)STACK_ARG(1));
 }
@@ -5378,6 +5716,13 @@ static void kernel_thunk_dispatch(void)
     }
 
     if (bridge) {
+#ifdef DRIVING_LEAN_RENDERER
+        /* LEAN_STAGE_TIMING: kernel waits (delay, Ke/Nt waits, critical sections) and file reads */
+        if (ordinal == 99 || ordinal == 158 || ordinal == 159 || ordinal == 233 || ordinal == 234 || ordinal == 235 || ordinal == 277 || ordinal == 219) {
+            extern uint64_t lean_stage_t0(void); extern void lean_stage_add(int, uint64_t);
+            uint64_t st0 = lean_stage_t0(); bridge(); lean_stage_add(ordinal == 219 ? 5 : 4, st0);
+        } else
+#endif
         bridge();
     } else {
         /* No specific bridge - return 0. Warn once per ordinal rather than

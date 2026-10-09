@@ -63,6 +63,23 @@ class ExportPolicyTests(unittest.TestCase):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 read_allowlist(data(dict(row, source=source, path=path)))
 
+    def test_native_mapping(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        for source, path, group in (
+                ('nightfire-port-native/runtime/pcg_menu.c', 'native/action/runtime/pcg_menu.c', 'native-action'),
+                ('nightfire-driving-native/runtime/lean/lean_d3d.c', 'native/driving/runtime/lean/lean_d3d.c', 'native-driving'),
+                ('native-driving/play-nightfire-native.cmd', 'native/launchers/play-nightfire-native.cmd', 'native-launch')):
+            read_allowlist(data(dict(source=source, path=path, group=group)))
+        for source, path, group in (
+                ('nightfire-port-native/runtime/pcg_menu.c', 'native/driving/runtime/pcg_menu.c', 'native-action'),
+                ('nightfire-port-native/src/recomp/gen/recomp_0001.c', 'native/action/src/recomp/gen/recomp_0001.c', 'native-action'),
+                ('nightfire-driving-native/recovery/old/lean_d3d.c', 'native/driving/recovery/old/lean_d3d.c', 'native-driving'),
+                ('native-driving/ingame-menu/tools/edl_helper.dll', 'native/launchers/ingame-menu/tools/edl_helper.dll', 'native-launch'),
+                ('nightfire-port/runtime/fb_present.c', 'native/action/runtime/fb_present.c', 'native-action')):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                read_allowlist(data(dict(source=source, path=path, group=group)))
+
 
 if __name__ == '__main__':
     unittest.main()

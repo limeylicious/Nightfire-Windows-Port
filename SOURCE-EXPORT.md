@@ -18,6 +18,8 @@ Current local references: frozen Action241 and normal Driving321; the last verif
 
 `experiments/driving-lean/` (group `driving-lean`) records the new and changed files of the lean GPU-resident Driving renderer, copied byte for byte from the owner's `nightfire-driving-lean` workspace on 2026-10-04. Like the 510 snapshot it is documentary: its CMake file references unchanged runtime files, generated game translations and the pinned toolkit, none of which are copied here. The workspace's own `lean-source-manifest.json` is excluded because it lists local absolute paths. No source bytes are redacted or rewritten during copying; missing inputs are explicitly excluded.
 
+`native/` (groups `native-action`, `native-driving`, `native-launch`) records the hand-written source of the native Action and Driving builds and their launchers, copied byte for byte on 2026-10-09 from the owner's `nightfire-port-native`, `nightfire-driving-native` and `native-driving` workspaces. The same update refreshed `experiments/driving-lean/` and the crash-capture files under `nightfire-port/`. Left out on purpose: lifted-code test fixtures, address maps and disassembly dumps, game text and menu dumps, the menu extractor and its helper library, launch data captured from the game, internal hand-off notes, files containing local paths, and every file adapted from xemu. The xemu-derived lean APU copies, `nightfire-port/runtime/nightfire_adpcm.h` and the LGPL licence text that accompanied them were removed from this repository on 2026-10-09; the builds that still use such code take it from the pinned toolkit. Some files whose comments name the owner were held back pending the owner's decision.
+
 Run from this repository using Python3.9 or newer:
 
 ```text

@@ -122,6 +122,8 @@ file(GLOB GENERATED CONFIGURE_DEPENDS "src/recomp/gen/*.c")
 list(FILTER GENERATED EXCLUDE REGEX "(^|/)nightfire_thread_check\\.c$")
 add_executable(nightfire_diagnostic src/main.c src/recomp_manual.c runtime/nightfire_video_audio.c runtime/nightfire_input.c $<TARGET_OBJECTS:nightfire_observer_runtime> ${GENERATED})
 target_sources(nightfire_diagnostic PRIVATE runtime/nightfire_flight_recorder116.c runtime/nightfire_flight_host116.c)
+# Checkpoint 242: play-session crash capture (diagnostic; off unless NIGHTFIRE_SESSION242=1).
+target_sources(nightfire_diagnostic PRIVATE runtime/nightfire_session242.c)
 if(NIGHTFIRE_CONSUMER135)
     target_sources(nightfire_diagnostic PRIVATE runtime/nightfire_consumer135.c)
     target_compile_definitions(nightfire_diagnostic PRIVATE NIGHTFIRE_CONSUMER135)

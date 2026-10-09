@@ -6,6 +6,13 @@ owner currently plays. Files are copied byte for byte from the
 `nightfire-driving-lean` workspace and listed with hashes in the root
 `SOURCE-MANIFEST.json` (group `driving-lean`).
 
+**Update 2026-10-09:** changed files and new launchers, scripts and reports
+from the same workspace were added (guided play sessions, crash and freeze
+capture in `runtime/lean/lean_session.c` and `lean_hang.c`, native sound in
+`runtime/lean/lean_dsound.c`, smooth-motion interpolation in
+`runtime/lean/lean_interp.inc`). The newer native builds that grew out of this
+renderer are in [`native/`](../../native/README.md).
+
 ## What it changes
 
 The older Driving bridge copied rendered frames from the GPU back into
@@ -21,10 +28,11 @@ vertex and pixel programs as generated HLSL.
 - `runtime/lean/lean_present.inc`, `runtime/driving_present201.c`,
   `runtime/driving_flip204.c`: Direct3D swap-chain present and 50 Hz flip
   pacing (`LEAN_SWAPCHAIN=0` falls back to the GDI window).
-- `runtime/lean/apu/`: lean copies of the toolkit's MCPX APU files (derived
-  from xemu, LGPL-2.1-or-later; notices kept in each file). They deliver the
-  voice-processor output to XAudio2 and ramp voice gains to avoid clicks. The
-  DSP is still stubbed, so reverb and other effects are absent.
+- `runtime/lean/apu/` (removed on 2026-10-09): lean copies of the toolkit's
+  MCPX APU files, derived from xemu under LGPL-2.1-or-later. They are no longer
+  published here; `CMakeLists.txt` still names them. The native builds in
+  [`native/`](../../native/README.md) play sound through the project's own
+  mixer instead.
 - `runtime/kernel_bridge.c`, `runtime/driving_dsp149.c`, `src/main.c`: APU
   interrupt delivery, audio-processor command acknowledgement, drift-free
   50 Hz vblank and lean start-up, all under `DRIVING_LEAN_RENDERER`.

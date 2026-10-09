@@ -38,6 +38,10 @@ int  lean_d3d_blit(uint32_t src, unsigned spitch, uint32_t dst, unsigned dpitch,
 int  lean_d3d_readback(uint32_t addr, unsigned w, unsigned h, uint32_t *out);
 void lean_d3d_forget(uint32_t addr, uint32_t bytes);
 void lean_d3d_report(void);
+/* Visibility tests (native D3D). */
+void lean_d3d_vis_begin(void);
+void lean_d3d_vis_end(unsigned index);
+int  lean_d3d_vis_result(unsigned index, uint32_t *count);
 
 /* Supplied by the front end. */
 uint8_t *lean_guest(uint32_t va, uint32_t bytes);

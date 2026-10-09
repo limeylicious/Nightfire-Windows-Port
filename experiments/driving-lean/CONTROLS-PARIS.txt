@@ -1,0 +1,61 @@
+NIGHTFIRE DRIVING - PARIS CONTROLS (lean build, play-lean-paris-guided.cmd)
+==========================================================================
+Keyboard and mouse only. A real game controller is NOT read by this build yet.
+The mouse works only while it is "captured": click in the game window (or
+press F1). Esc lets the mouse go again. While captured, the pointer is hidden
+and kept inside the window.
+
+KEYS -> XBOX PAD
+----------------
+  W / S            left stick up / down
+  A / D            left stick left / right   (steer)
+  Mouse move       right stick               (aim / look)
+  Left mouse       RIGHT trigger             (fire / accelerate)  [needs capture]
+  Right mouse, T   LEFT trigger              (aim-zoom / brake)   [needs capture]
+  Z, E, R          A button
+  X, Q             B button
+  Ctrl, C          X button
+  Space            Y button
+  G                Black button
+  F                White button
+  Arrow keys       D-pad
+  Enter            START  (pause menu)
+  Tab              BACK
+  Shift            left stick click
+  V                right stick click
+
+WHAT THEY DO IN PARIS
+---------------------
+Confirmed in our tests:
+  * Sniping from the helicopter: aim with the mouse, LEFT MOUSE fires the rifle.
+    (Our automated runs played all the scopes with only the fire trigger.)
+  * Aston Martin drive: LEFT MOUSE accelerates (you confirmed this earlier),
+    A / D steer.
+  * Enter = pause menu (Start).
+Probably (Xbox defaults, not yet checked in our build - please tell us):
+  * Right mouse: sniper zoom / aim while sniping; brake and reverse when driving.
+  * One of the face buttons (Z, X, C or Space) is the handbrake; another fires
+    the car's weapons/gadget; another changes weapon/gadget. Try them on the
+    open road and tell us which is which.
+  * Space (Y) or V (right stick click) may be look-behind.
+  * Skipping a cutscene: try Enter, then Z (A button).
+
+OUR OWN KEYS
+------------
+  F9       mark a moment. You hear a chime and the title shows "MARK n SAVED".
+           A picture and the game state are saved. Use it for anything that
+           looks or sounds wrong.
+  F1       capture / release the mouse.   Esc  release the mouse.
+  Quit     close the game window (the X button, or Alt+F4). The session is
+           then saved and the black window says "Session saved".
+  FPS counter and smooth mode are already on in this script (no key needed).
+  The title bar shows the game frame rate.
+
+FOR A FULL RUN
+--------------
+  * No time limit that matters: the run stops by itself after 60 minutes.
+  * Everything is saved in sessions\<date-time>-paris\ (sound recording too;
+    about 15 MB a minute; plenty of disk room).
+  * End of the mission: the Xbox would load the next part of the game here.
+    Our build cannot do that, so the game should just close by itself (not
+    tested yet - if it freezes instead, press F9, then close the window).

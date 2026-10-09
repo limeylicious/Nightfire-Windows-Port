@@ -41,6 +41,16 @@ def running():
                        capture_output=True, text=True)
     return q.stdout.strip()
 
+def keep_awake(on):
+    """While the game runs: SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED |
+    ES_DISPLAY_REQUIRED) so the PC and display stay awake; cleared when it exits."""
+    try:
+        import ctypes
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | (0x00000003 if on else 0))
+    except Exception:
+        pass
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('scene', choices=sorted(SOURCES))
@@ -57,11 +67,16 @@ def main():
     run.mkdir(parents=True)
     for kv in a.env:
         k, v = kv.split('=', 1); env[k] = v
+    # Native audio needs the stream reader fix: without it the vehicle level hangs at
+    # start-up (STRM reader race, 6/6 runs 2026-10-06). Explicit LEAN_STRM_FIX=0 wins.
+    if env.get('LEAN_AUDIO_NATIVE') == '1' and 'LEAN_STRM_FIX' not in env:
+        env['LEAN_STRM_FIX'] = '1'
     env.update(DRIVING_EXECUTABLE=str(EXES[a.build]), DRIVING_CAPTURE_DIR=str(run),
                RECOMP_WATCHDOG_SECS=str(a.seconds))
     (run / 'environment.json').write_text(json.dumps(
         {k: v for k, v in env.items() if k.startswith(('DRIVING_', 'NIGHTFIRE_', 'RECOMP_', 'LEAN_'))}, indent=2))
     start = time.monotonic()
+    keep_awake(True)
     with (run / 'launcher.log').open('w') as log:
         proc = subprocess.Popen([env['COMSPEC'], '/d', '/c', str(LEAN / 'run-windows.cmd')],
                                 cwd=LEAN, env=env, stdout=log, stderr=subprocess.STDOUT,
@@ -71,6 +86,7 @@ def main():
         except subprocess.TimeoutExpired:
             subprocess.run(['taskkill', '/F', '/T', '/PID', str(proc.pid)], capture_output=True)
             code = 'killed-by-outer-guard'
+    keep_awake(False)
     elapsed = time.monotonic() - start
     for name in ('driving-startup.log', 'xbox_kernel.log'):
         if (LEAN / 'logs' / name).exists():

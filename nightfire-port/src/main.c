@@ -244,6 +244,16 @@ static LONG CALLBACK veh_handler(PEXCEPTION_POINTERS ep)
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
+/* Checkpoint 242 (NIGHTFIRE_SESSION242=1): the final, unhandled exception is
+ * written to the session folder after the vectored handler above has logged it. */
+static LONG WINAPI session242_unhandled(PEXCEPTION_POINTERS ep)
+{
+    extern void nightfire_session242_crash(PEXCEPTION_POINTERS, const uint32_t *);
+    uint32_t gr[7] = { g_eax, g_ecx, g_edx, g_ebx, g_esi, g_edi, g_esp };
+    nightfire_session242_crash(ep, gr);
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
 /* ── WinMain ───────────────────────────────────────────────── */
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -272,6 +282,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_UNDNAME);
     SymInitialize(GetCurrentProcess(), NULL, TRUE);
     AddVectoredExceptionHandler(1, veh_handler);
+    {   /* Checkpoint 242 play-session crash capture; off unless NIGHTFIRE_SESSION242=1. */
+        extern void nightfire_session242_init(void); extern int nightfire_session242_on(void);
+        nightfire_session242_init();
+        if (nightfire_session242_on()) SetUnhandledExceptionFilter(session242_unhandled);
+    }
 
     /* Step 1: Load XBE */
     if (!load_xbe(YOUR_GAME_XBE_PATH, &xbe_data, &xbe_size)) {

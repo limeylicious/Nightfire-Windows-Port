@@ -11,8 +11,8 @@ MANUAL_FILES = {
     'SOURCE-MANIFEST.json', 'tools/export_source.py', 'tools/verify_export.py',
     'tools/export_policy.py', 'tools/source_allowlist.json', 'tools/test_export_policy.py',
     'licenses/xboxrecomp-MIT.txt', 'licenses/xboxrecomp-NOTICE.txt',
-    'licenses/LGPL-2.1.txt', 'docs/STATUS-510.md', 'experiments/driving-510/README.md',
-    'experiments/driving-lean/README.md',
+    'docs/STATUS-510.md', 'experiments/driving-510/README.md',
+    'experiments/driving-lean/README.md', 'native/README.md',
 }
 DENIED_NAMES = {
     'recomp_manual.c', 'driving_native247.h', 'driving_admission283.h',
@@ -23,7 +23,13 @@ DENIED_PARTS = {
     'game_files', 'recomp', 'gen', 'analysis', 'captures', 'logs', 'recovery',
     'cache', 'releases', 'generic263', 'packaging', 'node_modules', '__pycache__',
 }
-ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json'}
+# Native workspaces: source prefix -> repository prefix, relative paths kept.
+NATIVE_GROUPS = {
+    'native-driving': ('nightfire-driving-native/', 'native/driving/'),
+    'native-action': ('nightfire-port-native/', 'native/action/'),
+    'native-launch': ('native-driving/', 'native/launchers/'),
+}
+ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json', '.cmake'}
 SECRET = re.compile(
     rb'[A-Z]:[\\/]+Users[\\/]+|/' rb'Users/[^/\s]+/|/' rb'home/[^/\s]+/|'
     rb'-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|'
@@ -55,7 +61,8 @@ def check_destination(name: str) -> None:
 
 def check_text(name: str, data: bytes) -> None:
     check_destination(name)
-    if len(data) > 260_000 and name != 'SOURCE-MANIFEST.json':
+    # 270 kB: native/driving/runtime/kernel_bridge.c (261 kB) was reviewed on 2026-10-09.
+    if len(data) > 270_000 and name != 'SOURCE-MANIFEST.json':
         raise ValueError(f'oversized text requires separate review: {name}')
     if b'\0' in data or data.startswith((b'MZ', b'XBEH', b'BM', b'PK\x03\x04', b'DDS ', b'\x89PNG')):
         raise ValueError(f'binary content: {name}')
@@ -100,6 +107,12 @@ def read_allowlist(data: bytes) -> list[dict]:
             suffix = source.removeprefix(prefix)
             if not source.startswith(prefix) or destination != 'experiments/driving-lean/' + suffix:
                 raise ValueError(f'invalid lean mapping: {destination}')
+            check_destination(source)
+        elif group in NATIVE_GROUPS:
+            prefix, target = NATIVE_GROUPS[group]
+            suffix = source.removeprefix(prefix)
+            if not source.startswith(prefix) or destination != target + suffix:
+                raise ValueError(f'invalid native mapping: {destination}')
             check_destination(source)
         else:
             raise ValueError(f'unknown source group: {group}')

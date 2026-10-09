@@ -7,6 +7,7 @@
 #endif
 #include <windows.h>
 #include <d3d11_1.h>
+#include <dxgi1_5.h>
 #include <d3dcompiler.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,17 +43,29 @@ static struct {uint64_t draws,prims,tex_uploads,tex_hits,tex_hash_bytes,vs_compi
 typedef struct RT {
     uint32_t addr;unsigned w,h,fmt,pitch,swz,depth;
     ID3D11Texture2D *tex;ID3D11RenderTargetView *rtv;ID3D11DepthStencilView *dsv;ID3D11ShaderResourceView *srv;
-    uint64_t ram_hash;unsigned last;int gpu_written;
+    uint64_t ram_hash;uint32_t ram_bytes;unsigned last;int gpu_written;   /* ram_bytes: span ram_hash covers */
 } RT;
 #define MAX_RT 48
 static RT rts[MAX_RT];
 static unsigned rt_clock,epoch;
 
+/* LEAN_INTERP: recorded frames keep raw pointers to textures, views and
+ * surfaces, so while it is on their release waits 6 game frames (the
+ * replay only uses the newest two) instead of taking a reference per draw. */
+#define GRAVE_MAX 16384
+static struct {IUnknown *u;unsigned frame;} grave[GRAVE_MAX];static unsigned grave_n,grave_frame;static int grave_on;
+static void defer_release(void *obj){
+    IUnknown *u=(IUnknown*)obj;if(!u)return;
+    if(!grave_on||grave_n==GRAVE_MAX){u->lpVtbl->Release(u);return;}
+    grave[grave_n].u=u;grave[grave_n].frame=grave_frame;grave_n++;
+}
+static void grave_tick(void){
+    unsigned j=0;grave_frame++;
+    for(unsigned i=0;i<grave_n;i++){if(grave_frame-grave[i].frame>=6)grave[i].u->lpVtbl->Release(grave[i].u);else grave[j++]=grave[i];}
+    grave_n=j;
+}
 static void rt_release(RT *r){
-    if(r->rtv)ID3D11RenderTargetView_Release(r->rtv);
-    if(r->dsv)ID3D11DepthStencilView_Release(r->dsv);
-    if(r->srv)ID3D11ShaderResourceView_Release(r->srv);
-    if(r->tex)ID3D11Texture2D_Release(r->tex);
+    defer_release(r->rtv);defer_release(r->dsv);defer_release(r->srv);defer_release(r->tex);
     memset(r,0,sizeof *r);
 }
 static uint64_t ram_sample_hash(uint32_t addr,uint32_t bytes){
@@ -76,18 +89,27 @@ static void rt_upload_color(RT *r){
     }else ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)r->tex,0,NULL,g,r->pitch,0);
     st.rt_uploads++;
 }
+/* LEAN_RT_TRACE=addr (hex, diagnostic): log why that surface is released
+ * and how textures at its address are fed (first 40 of each). */
+static int rt_trace(uint32_t addr,const char *what,unsigned a,unsigned b){
+    static int init;static uint32_t want;static unsigned n[8];
+    if(!init){const char *v=getenv("LEAN_RT_TRACE");init=1;want=v?(uint32_t)strtoul(v,NULL,16):0;}
+    if(!want||addr!=want)return 0;
+    unsigned k=(unsigned)(what[0]+what[1]+what[9])%8;if(n[k]++>=400)return 1;
+    LOG("[LEAN-RT] %08X %s %u %u\n",addr,what,a,b);return 1;
+}
 static RT *rt_find(uint32_t addr,int depth){
     for(unsigned i=0;i<MAX_RT;i++)if(rts[i].tex&&rts[i].addr==addr&&rts[i].depth==(unsigned)depth)return &rts[i];
     return NULL;
 }
 static RT *rt_get(uint32_t addr,unsigned w,unsigned h,unsigned fmt,unsigned pitch,unsigned swz,int depth){
     RT *r=rt_find(addr,depth);
-    if(r&&(r->w!=w||r->h!=h||(!depth&&r->fmt!=fmt&&(r->fmt==3)!=(fmt==3)))){rt_release(r);r=NULL;}
+    if(r&&(r->w!=w||r->h!=h||(!depth&&r->fmt!=fmt&&(r->fmt==3)!=(fmt==3)))){rt_trace(addr,"release:size/format",fmt,r->fmt);rt_release(r);r=NULL;}
     if(r){r->last=++rt_clock;if(!depth)r->fmt=fmt;r->pitch=pitch;return r;}
     /* A colour surface replacing older storage at an overlapping address. */
     unsigned slot=MAX_RT;
     for(unsigned i=0;i<MAX_RT;i++)if(!rts[i].tex){slot=i;break;}
-    if(slot==MAX_RT){unsigned best=0;for(unsigned i=1;i<MAX_RT;i++)if(rts[i].last<rts[best].last)best=i;rt_release(&rts[best]);slot=best;}
+    if(slot==MAX_RT){unsigned best=0;for(unsigned i=1;i<MAX_RT;i++)if(rts[i].last<rts[best].last)best=i;rt_trace(rts[best].addr,"release:evicted",0,0);rt_release(&rts[best]);slot=best;}
     r=&rts[slot];
     D3D11_TEXTURE2D_DESC td={0};td.Width=w;td.Height=h;td.MipLevels=1;td.ArraySize=1;td.SampleDesc.Count=1;td.Usage=D3D11_USAGE_DEFAULT;
     HRESULT hr;
@@ -107,13 +129,13 @@ static RT *rt_get(uint32_t addr,unsigned w,unsigned h,unsigned fmt,unsigned pitc
     }
     r->addr=addr;r->w=w;r->h=h;r->fmt=fmt;r->pitch=pitch;r->swz=swz;r->depth=depth;r->last=++rt_clock;
     if(!depth){rt_upload_color(r);}
-    r->ram_hash=ram_sample_hash(addr,pitch*h);
+    r->ram_bytes=pitch*h;r->ram_hash=ram_sample_hash(addr,r->ram_bytes);
     st.rt_creates++;
     LOG("[LEAN] surface %s %08X %ux%u fmt=%u pitch=%u swz=%u\n",depth?"depth":"color",addr,w,h,fmt,pitch,swz);
     return r;
 }
 void lean_d3d_forget(uint32_t addr,uint32_t bytes){
-    for(unsigned i=0;i<MAX_RT;i++)if(rts[i].tex&&rts[i].addr<addr+bytes&&addr<rts[i].addr+rts[i].pitch*rts[i].h)rt_release(&rts[i]);
+    for(unsigned i=0;i<MAX_RT;i++)if(rts[i].tex&&rts[i].addr<addr+bytes&&addr<rts[i].addr+rts[i].pitch*rts[i].h){rt_trace(rts[i].addr,"release:forget(blit)",addr,bytes);rt_release(&rts[i]);}
 }
 
 /* ------------------------------------------------------------- textures */
@@ -182,8 +204,7 @@ static TexE texs[TEX_SLOTS];
 static unsigned tex_count,tex_clock;
 static size_t tex_memory;
 static void tex_release(TexE *t){
-    if(t->srv)ID3D11ShaderResourceView_Release(t->srv);
-    if(t->tex)ID3D11Texture2D_Release(t->tex);
+    defer_release(t->srv);defer_release(t->tex);
     if(t->bytes&&tex_memory>=t->bytes)tex_memory-=t->bytes;
     memset(t,0,sizeof *t);tex_count--;
 }
@@ -237,7 +258,7 @@ static int tex_build(TexE *t,const uint8_t *g,Fmt f,unsigned fmtcode,unsigned w,
     return 1;
 }
 typedef struct TexInfo {unsigned w,h,levels,cube,linear,depth,kind;ID3D11ShaderResourceView *srv;} TexInfo;
-static ID3D11ShaderResourceView *magenta_srv;
+static ID3D11ShaderResourceView *magenta_srv;static ID3D11ShaderResourceView *white_srv;   /* LEAN_RT_TEX_WHITE */static unsigned lean_frame_no;   /* defined with LEAN_PICK below */
 /* Resolve a stage texture to an SRV. Returns 0 if unusable. */
 static int tex_lookup(const uint32_t *K,unsigned stage,uint32_t addr,uint32_t paladdr,TexInfo *ti,ID3D11RenderTargetView *bound_rtv){
     uint32_t format=K[(0x1b04+stage*64)/4],ctl1=K[(0x1b10+stage*64)/4],rect=K[(0x1b1c+stage*64)/4];
@@ -251,19 +272,56 @@ static int tex_lookup(const uint32_t *K,unsigned stage,uint32_t addr,uint32_t pa
     else{w=1u<<lu;h=1u<<lv;if(!levels)levels=1;
         unsigned maxl=1;{unsigned m=w>h?w:h;while(m>1){m>>=1;maxl++;}}if(levels>maxl)levels=maxl;}
     ti->w=w;ti->h=h;ti->levels=levels;ti->cube=cube;ti->linear=linear;ti->kind=f.kind;ti->depth=f.kind==TK_D24||f.kind==TK_D16;
+    {static int init;static uint32_t tw,twl[16];static unsigned ntw;if(!init){const char *v=getenv("LEAN_TEX_WHITE");tw=v?(uint32_t)strtoul(v,NULL,16):0;while(v&&*v&&ntw<16){twl[ntw++]=(uint32_t)strtoul(v,(char**)&v,16);if(*v==',')v++;else break;}init=1;}
+     for(unsigned q=0;q<ntw;q++)if(twl[q]==addr&&white_srv&&twl[q]>3){ti->srv=white_srv;ti->w=ti->h=1;return 1;}   /* diagnostic; LEAN_TEX_WHITE=1/2/3: every texture / stages 1-3 / stage 0 of AA scene draws */
+     if(tw&&white_srv&&(addr==tw||(tw<=3&&((K[0x208/4]>>12)&15)&&(tw==1||(tw==2&&stage>0)||(tw==3&&stage==0))))){ti->srv=white_srv;ti->w=ti->h=1;return 1;}}
     /* Render-target alias: the title samples a surface it rendered. */
     if(!cube){
         RT *r=rt_find(addr,ti->depth);
         if(!r&&ti->depth)r=rt_find(addr,0);
+        if(r)rt_trace(addr,r->gpu_written?"texture:rt-written":"texture:rt-not-written",fmtcode,linear);
+        else rt_trace(addr,"texture:no-rt",fmtcode,linear);
         if(r&&r->gpu_written){
-            uint64_t hh=ram_sample_hash(r->addr,r->pitch*r->h);
+            /* Compare over the span the stored hash was taken on. The surface can be
+             * re-bound with another pitch (e.g. the Paris drive light map), and hashing a
+             * different span read as "the CPU replaced it": the GPU-rendered surface was
+             * dropped and its untouched guest memory (black) sampled instead.
+             * LEAN_RT_HASH_FIXED_RANGE=0 restores the old comparison. */
+            static int fixed=-1;if(fixed<0){const char *v=getenv("LEAN_RT_HASH_FIXED_RANGE");fixed=!(v&&v[0]=='0');}
+            uint64_t hh=ram_sample_hash(r->addr,fixed&&r->ram_bytes?r->ram_bytes:r->pitch*r->h);
             if(hh==r->ram_hash){
                 if(r->rtv&&r->rtv==bound_rtv){WARN("texture samples the bound target %08X\n",addr);return 0;}
+                {   /* LEAN_DUMP_RT=addr: save that rendered surface (as sampled) at its
+                     * 100th, 1000th and 3000th use. LEAN_RT_TEX_WHITE=addr: sample white
+                     * instead (diagnostic A/B for what the surface contributes). */
+                    static int init;static uint32_t dwant,wwant;static unsigned uses,dfrom,dframe,dlast,dn;   /* LEAN_DUMP_RT_FRAME=n: 6 dumps, every 50 frames from frame n */   /* LEAN_DUMP_RT_FROM=n: also every 500 uses from n */
+                    if(!init){const char *v0=getenv("LEAN_DUMP_RT_FRAME");dframe=v0?(unsigned)atoi(v0):0;const char *v=getenv("LEAN_DUMP_RT_FROM");dfrom=v?(unsigned)atoi(v):0;v=getenv("LEAN_DUMP_RT");dwant=v?(uint32_t)strtoul(v,NULL,16):0;v=getenv("LEAN_RT_TEX_WHITE");wwant=v?(uint32_t)strtoul(v,NULL,16):0;init=1;}
+                    if(wwant&&addr==wwant&&white_srv){ti->srv=white_srv;return 1;}
+                    if(dwant&&addr==dwant&&!r->depth&&(++uses==100||uses==1000||uses==3000||(dfrom&&uses>=dfrom&&uses<dfrom+3000&&!((uses-dfrom)%500))||(dframe&&dn<6&&lean_frame_no>=dframe&&lean_frame_no>=dlast+50&&(dlast=lean_frame_no,++dn)))){
+                        const char *dir=getenv("DRIVING_CAPTURE_DIR");D3D11_TEXTURE2D_DESC sd;ID3D11Texture2D_GetDesc(r->tex,&sd);
+                        sd.Usage=D3D11_USAGE_STAGING;sd.BindFlags=0;sd.CPUAccessFlags=D3D11_CPU_ACCESS_READ;sd.MiscFlags=0;ID3D11Texture2D *stg=NULL;
+                        if(dir&&SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&sd,NULL,&stg))){D3D11_MAPPED_SUBRESOURCE m;
+                            ID3D11DeviceContext_CopyResource(ctx,(ID3D11Resource*)stg,(ID3D11Resource*)r->tex);
+                            if(SUCCEEDED(ID3D11DeviceContext_Map(ctx,(ID3D11Resource*)stg,0,D3D11_MAP_READ,0,&m))){
+                                char path[MAX_PATH];snprintf(path,sizeof path,"%s/rt-%08X-use%u.bmp",dir,addr,uses);FILE *fo=fopen(path,"wb");
+                                if(fo){unsigned char hd[54]={0};uint32_t W=sd.Width,H=sd.Height,size=54+W*H*4,off=54,dib=40;int32_t ht=-(int32_t)H;uint16_t pl=1,bits=32;
+                                    memcpy(hd,"BM",2);memcpy(hd+2,&size,4);memcpy(hd+10,&off,4);memcpy(hd+14,&dib,4);memcpy(hd+18,&W,4);memcpy(hd+22,&ht,4);memcpy(hd+26,&pl,2);memcpy(hd+28,&bits,2);
+                                    fwrite(hd,1,54,fo);for(uint32_t y=0;y<H;y++)fwrite((uint8_t*)m.pData+y*m.RowPitch,4,W,fo);fclose(fo);}
+                                ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)stg,0);LOG("[LEAN-RT] dumped %08X use %u\n",addr,uses);}
+                            ID3D11Texture2D_Release(stg);}}
+                }
                 ti->srv=r->srv;
                 /* Linear coordinates address the guest storage; our storage has the same texel grid. */
                 return 1;
             }
             /* CPU replaced the memory: the surface no longer describes it. */
+            {static unsigned nd;if(nd++<60)LOG("[LEAN-RT-DISCARD] %08X %ux%u fmt=%u span stored=%u now=%u pitch=%u (texture fmt %02X)\n",r->addr,r->w,r->h,r->fmt,r->ram_bytes,r->pitch*r->h,r->pitch,fmtcode);}   /* audit: CPU-overwrite discards */
+            if(rt_trace(addr,"release:ram-hash-changed",fmtcode,linear)){   /* show what the sampled guest lines now hold */
+                uint32_t bytes=r->pitch*r->h,step=bytes/64;if(step<64)step=64;uint8_t *g=lean_guest(r->addr,bytes);unsigned nz=0;
+                for(uint32_t o=0;g&&o+64<=bytes;o+=step){unsigned any=0;for(unsigned k=0;k<64;k++)any|=g[o+k];
+                    if(any&&nz++<4)LOG("[LEAN-RT]   line +%06X: %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X %02X%02X%02X%02X\n",o,
+                        g[o],g[o+1],g[o+2],g[o+3],g[o+4],g[o+5],g[o+6],g[o+7],g[o+8],g[o+9],g[o+10],g[o+11],g[o+12],g[o+13],g[o+14],g[o+15]);}
+                LOG("[LEAN-RT]   %u of 64 sampled lines non-zero; frame %u\n",nz,lean_frame_no);}
             rt_release(r);
         }
     }
@@ -290,6 +348,33 @@ static int tex_lookup(const uint32_t *K,unsigned stage,uint32_t addr,uint32_t pa
     if(!tex_build(t,g,f,fmtcode,w,h,levels,cube,pitch,haspal?pal:NULL)){memset(t,0,sizeof *t);return 0;}
     {static unsigned seen[256];if(!seen[fmtcode]++||(getenv("LEAN_LOG_TEXTURES")&&seen[fmtcode]<40))
         LOG("[LEAN] texture fmt=%02X %ux%u levels=%u cube=%u linear=%d stage=%u addr=%08X format=%08X filter=%08X address=%08X\n",fmtcode,w,h,levels,cube,linear,stage,addr,format,K[(0x1b14+stage*64)/4],K[(0x1b08+stage*64)/4]);}
+    {   /* LEAN_DUMP_TEX=addr[,addr...] (hex): save mip 0 of those textures as
+         * BMP into DRIVING_CAPTURE_DIR once each (BGRA textures only). */
+        static int parsed;static uint32_t want[8];static unsigned nwant,done[8];
+        if(!parsed){parsed=1;const char *v=getenv("LEAN_DUMP_TEX");while(v&&*v&&nwant<8){want[nwant++]=(uint32_t)strtoul(v,(char**)&v,16);if(*v==',')v++;}}
+        for(unsigned k=0;k<nwant;k++)if(want[k]==addr&&!done[k]){
+            done[k]=1;const char *dir=getenv("DRIVING_CAPTURE_DIR");
+            D3D11_TEXTURE2D_DESC sd;ID3D11Texture2D_GetDesc(t->tex,&sd);sd.MipLevels=1;sd.ArraySize=1;sd.Usage=D3D11_USAGE_STAGING;sd.BindFlags=0;sd.CPUAccessFlags=D3D11_CPU_ACCESS_READ;sd.MiscFlags=0;
+            ID3D11Texture2D *stg=NULL;D3D11_MAPPED_SUBRESOURCE m;
+            if(dir&&sd.Format!=DXGI_FORMAT_B8G8R8A8_UNORM){   /* compressed: raw guest bytes */
+                char path[MAX_PATH];snprintf(path,sizeof path,"%s/tex-%08X-%ux%u-fmt%02X.raw",dir,addr,w,h,fmtcode);
+                FILE *fo=fopen(path,"wb");if(fo){fwrite(g,1,total,fo);fclose(fo);LOG("[LEAN] dumped raw texture %08X fmt %02X to %s\n",addr,fmtcode,path);}
+            }
+            if(dir&&sd.Format==DXGI_FORMAT_B8G8R8A8_UNORM&&SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&sd,NULL,&stg))){
+                ID3D11DeviceContext_CopySubresourceRegion(ctx,(ID3D11Resource*)stg,0,0,0,0,(ID3D11Resource*)t->tex,0,NULL);
+                if(SUCCEEDED(ID3D11DeviceContext_Map(ctx,(ID3D11Resource*)stg,0,D3D11_MAP_READ,0,&m))){
+                    char path[MAX_PATH];snprintf(path,sizeof path,"%s/tex-%08X-%ux%u.bmp",dir,addr,sd.Width,sd.Height);
+                    FILE *fo=fopen(path,"wb");
+                    if(fo){uint32_t W=sd.Width,H=sd.Height,img=W*H*4;uint8_t hd[54]={'B','M'};
+                        *(uint32_t*)(hd+2)=54+img;*(uint32_t*)(hd+10)=54;*(uint32_t*)(hd+14)=40;*(int32_t*)(hd+18)=(int32_t)W;*(int32_t*)(hd+22)=-(int32_t)H;
+                        *(uint16_t*)(hd+26)=1;*(uint16_t*)(hd+28)=32;*(uint32_t*)(hd+34)=img;fwrite(hd,1,54,fo);
+                        for(uint32_t y=0;y<H;y++)fwrite((uint8_t*)m.pData+(size_t)y*m.RowPitch,1,W*4,fo);fclose(fo);}
+                    ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)stg,0);LOG("[LEAN] dumped texture %08X to %s\n",addr,path);
+                }
+                ID3D11Texture2D_Release(stg);
+            }
+        }
+    }
     t->key=key;t->hash=hh;t->addr=addr;t->epoch=epoch;t->last=++tex_clock;t->bytes=total;tex_count++;tex_memory+=total;
     st.tex_uploads++;ti->srv=t->srv;return 1;
 }
@@ -348,15 +433,43 @@ static ID3D11DepthStencilState *depth_state(const uint32_t *K,int has_depth){
     if(FAILED(ID3D11Device_CreateDepthStencilState(dev,&d,&s)))return NULL;cache_put(&depth_cache,key,(IUnknown*)s);return s;
 }
 static int no_cull=-1,flip_winding=-1;
-static ID3D11RasterizerState *raster_state(const uint32_t *K,int scissor){
+static int depth_bias_on=-1;
+static struct {uint64_t by_topo[4],offset,point_params,point_smooth,additive;uint32_t point_size;} cen;
+static ID3D11RasterizerState *raster_state(const uint32_t *K,int scissor,int topo,unsigned zunit){
     if(no_cull<0){const char*v=getenv("LEAN_NO_CULL");no_cull=v&&*v=='1';v=getenv("LEAN_FLIP_WINDING");flip_winding=v&&*v=='1';}
+    if(depth_bias_on<0){const char*v=getenv("LEAN_DEPTH_BIAS");depth_bias_on=!(v&&*v=='0');}
     D3D11_CULL_MODE cull=D3D11_CULL_NONE;
     if(!no_cull&&K[0x308/4]){uint32_t f=K[0x39c/4];cull=f==0x404?D3D11_CULL_FRONT:f==0x405?D3D11_CULL_BACK:D3D11_CULL_NONE;}
     int ccw=(K[0x3a0/4]==0x901)^flip_winding;
     int fill=K[0x38c/4]==0x1b01?1:0;
-    uint64_t key=(uint64_t)cull|(uint64_t)ccw<<4|(uint64_t)scissor<<5|(uint64_t)fill<<6;
+    /* Polygon offset (NV097 0x330/0x334/0x338 point/line/fill enable, 0x384
+     * slope factor, 0x388 bias in Z-buffer units). Decals such as light pools
+     * on the road rely on it to win the depth test against coplanar surfaces.
+     * The bias unit is one step of the guest Z buffer, so a Z16 step is 256
+     * D24 steps. LEAN_DEPTH_BIAS=0 ignores it as before. */
+    int ofs=depth_bias_on&&K[(topo==2?0x330:topo==1?0x334:0x338)/4];
+    float zfactor=0,zbias=0;if(ofs){memcpy(&zfactor,&K[0x384/4],4);memcpy(&zbias,&K[0x388/4],4);}
+    INT dbias=ofs?(INT)lrintf(zbias*(float)zunit):0;
+    /* Near/far handling (NV097 0x1D78 ZMIN_MAX_CONTROL = D3DRS_DEPTHCLIPCONTROL):
+     * bit 0 culls fragments outside the depth range, bit 4 clamps them instead.
+     * With cull, D3D11 depth clipping drops them as the chip does; clamping
+     * them (the old behaviour) let geometry just behind the car's reflection
+     * camera paint over a whole reflection view. D3D11 clips to the target's
+     * full depth range, so a cull range reaching past it (0x398 clip max above
+     * the Z buffer's maximum) keeps the clamp. LEAN_DEPTH_CLIP=0: always clamp. */
+    static int depth_clip_on=-1;if(depth_clip_on<0){const char*v=getenv("LEAN_DEPTH_CLIP");depth_clip_on=!(v&&*v=='0');}
+    uint32_t zc=K[0x1d78/4];float clip_max;memcpy(&clip_max,&K[0x398/4],4);
+    int dclip=depth_clip_on&&(zc&1)&&!(zc&0x10)&&clip_max<=(zunit==256?65535.5f:16777216.0f);
+    {static uint32_t seen[16][3];static unsigned ns;uint32_t c0=K[0x394/4],c1=K[0x398/4];unsigned i;
+     uint32_t zk=zc^(zunit<<16);for(i=0;i<ns&&!(seen[i][0]==zk&&seen[i][1]==c0&&seen[i][2]==c1);i++){}
+     if(i==ns&&ns<16){seen[ns][0]=zk;seen[ns][1]=c0;seen[ns][2]=c1;ns++;float f0,f1;memcpy(&f0,&c0,4);memcpy(&f1,&c1,4);
+         LOG("[LEAN] depth range control %08X clip %g..%g (zunit %u) -> %s\n",zc,f0,f1,zunit,dclip?"clip":"clamp");}}
+    uint64_t key=(uint64_t)cull|(uint64_t)ccw<<4|(uint64_t)scissor<<5|(uint64_t)fill<<6|(uint64_t)dclip<<7|(uint64_t)(uint32_t)dbias<<8|(uint64_t)(ofs?K[0x384/4]:0)<<40;
+    key^=(uint64_t)(ofs?K[0x384/4]:0)*0x9E3779B97F4A7C15ull;
     ID3D11RasterizerState *r=(ID3D11RasterizerState*)cache_get(&raster_cache,key);if(r)return r;
-    D3D11_RASTERIZER_DESC d={0};d.FillMode=fill?D3D11_FILL_WIREFRAME:D3D11_FILL_SOLID;d.CullMode=cull;d.FrontCounterClockwise=ccw;d.DepthClipEnable=FALSE;d.ScissorEnable=scissor;
+    D3D11_RASTERIZER_DESC d={0};d.FillMode=fill?D3D11_FILL_WIREFRAME:D3D11_FILL_SOLID;d.CullMode=cull;d.FrontCounterClockwise=ccw;d.DepthClipEnable=dclip;d.ScissorEnable=scissor;
+    d.DepthBias=dbias;d.SlopeScaledDepthBias=ofs?zfactor:0;d.DepthBiasClamp=0;
+    if(ofs&&(zfactor!=0||zbias!=0)){static unsigned n;if(n++<16)LOG("[LEAN] polygon offset factor=%g bias=%g -> DepthBias=%d\n",zfactor,zbias,dbias);}
     if(FAILED(ID3D11Device_CreateRasterizerState(dev,&d,&r)))return NULL;cache_put(&raster_cache,key,(IUnknown*)r);return r;
 }
 static D3D11_TEXTURE_ADDRESS_MODE addr_mode(unsigned v){
@@ -391,7 +504,9 @@ static void tx(Text *b,const char *fmt,...){
 }
 static void text_init(Text *b){b->cap=16384;b->n=0;b->bad=0;b->t=malloc(b->cap);if(!b->t)b->bad=1;else b->t[0]=0;}
 
-typedef struct VSE {uint64_t key;ID3D11VertexShader *vs;ID3D11InputLayout *il;unsigned mask;} VSE;
+/* cmask: constant rows 0..191 the program reads (all of them if it indexes with
+ * a0); smooth mode blends only those. */
+typedef struct VSE {uint64_t key;ID3D11VertexShader *vs;ID3D11InputLayout *il;unsigned mask;uint32_t cmask[6];} VSE;
 typedef struct PSE {uint64_t key;ID3D11PixelShader *ps;} PSE;
 #define SH_SLOTS 4096
 static VSE vss[SH_SLOTS];static PSE pss[SH_SLOTS];
@@ -430,10 +545,23 @@ static unsigned vp_input_mask(const NFVertexProgram *s){
     }
     return m|1u; /* position always present */
 }
+static void vp_const_mask(const NFVertexProgram *s,uint32_t cm[6]){
+    memset(cm,0,6*4);
+    for(unsigned pc=s->start;pc<136;pc++){
+        const uint32_t *w=s->code[pc];
+        unsigned mac=nf_vp_field(w,85,4),ilu=nf_vp_field(w,89,3),ci=nf_vp_field(w,77,8),indexed=nf_vp_field(w,1,1);
+        unsigned srcs[3]={nf_vp_field(w,58,15),nf_vp_field(w,43,15),nf_vp_field(w,28,15)};
+        int use[3]={mac!=0,mac==2||mac==4||(mac>=5&&mac<=12),mac==3||mac==4||ilu!=0};
+        for(unsigned i=0;i<3;i++)if(use[i]&&(srcs[i]&3)==3){
+            if(indexed){memset(cm,0xff,6*4);return;}
+            unsigned r=ci<192?ci:191;cm[r>>5]|=1u<<(r&31);}
+        if(w[3]&1)break;
+    }
+}
 static int vp_hlsl(Text *b,const NFVertexProgram *s,unsigned mask){
-    tx(b,"cbuffer VC:register(b0){float4 kc[192];float4 surf;float4 fogp;};\n");
+    tx(b,"cbuffer VC:register(b0){float4 kc[192];float4 surf;float4 fogp;float4 pt;};\n");
     tx(b,"struct VI{");for(unsigned i=0;i<16;i++)if(mask&(1u<<i))tx(b,"float4 a%u:TEXCOORD%u;",i,i);tx(b,"};\n");
-    tx(b,"struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;};\n");
+    tx(b,"struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;float ps:TEXCOORD5;};\n");
     tx(b,"VO main(VI v){precise float4 r[13];precise float4 o[16];int a0=0;[unroll]for(int i=0;i<13;i++)r[i]=0;[unroll]for(int j=0;j<16;j++)o[j]=float4(0,0,0,1);o[1]=0;o[2]=0;r[12]=float4(0,0,0,1);\n");
     int ended=0;
     for(unsigned pc=s->start;pc<136;pc++){
@@ -472,7 +600,7 @@ static int vp_hlsl(Text *b,const NFVertexProgram *s,unsigned mask){
          "q.d0=saturate(o[3]);q.d1=saturate(o[4]);q.t0=o[9];q.t1=o[10];q.t2=o[11];q.t3=o[12];\n"
          "float d=o[5].x;if(fogp.y>0)d=abs(d);float f=1;\n"
          "if(fogp.x==1)f=d*fogp.w+fogp.z-1;else if(fogp.x==2)f=exp2(d*16*fogp.w)+fogp.z-1.5;else if(fogp.x==3){float e=d*16*fogp.w;f=exp2(-e*e)+fogp.z-1.5;}\n"
-         "q.fog=f;return q;}\n");
+         "q.fog=f;q.ps=o[6].x;return q;}\n");
     return !b->bad;
 }
 static VSE *vs_get(const NFVertexProgram *s){
@@ -482,14 +610,14 @@ static VSE *vs_get(const NFVertexProgram *s){
     unsigned slot=(unsigned)(key%SH_SLOTS);
     for(unsigned i=0;i<64;i++){VSE *e=&vss[(slot+i)%SH_SLOTS];if(e->vs&&e->key==key)return e;if(!e->vs){
         unsigned mask=vp_input_mask(s);Text b;text_init(&b);
-        if(!vp_hlsl(&b,s,mask)){free(b.t);return NULL;}
+        if(!vp_hlsl(&b,s,mask)){free(b.t);return NULL;}{static int dump=-1;if(dump<0){const char *v=getenv("LEAN_DUMP_VS");dump=v&&*v=='1';}   /* LEAN_DUMP_VS=1: save each new vertex program */const char *dir=getenv("DRIVING_CAPTURE_DIR");if(dump&&dir){char path[MAX_PATH];snprintf(path,sizeof path,"%s/vs-%016llX.hlsl",dir,(unsigned long long)key);FILE *f=fopen(path,"wb");if(f){fwrite(b.t,1,b.n,f);fclose(f);}}}
         ID3DBlob *code=compile(b.t,b.n,"vs_5_0","lean-vs");free(b.t);if(!code)return NULL;
         if(FAILED(ID3D11Device_CreateVertexShader(dev,ID3D10Blob_GetBufferPointer(code),ID3D10Blob_GetBufferSize(code),NULL,&e->vs))){ID3D10Blob_Release(code);return NULL;}
         D3D11_INPUT_ELEMENT_DESC el[16];unsigned n=0;
         for(unsigned k=0;k<16;k++)if(mask&(1u<<k)){el[n].SemanticName="TEXCOORD";el[n].SemanticIndex=k;el[n].Format=DXGI_FORMAT_R32G32B32A32_FLOAT;el[n].InputSlot=0;el[n].AlignedByteOffset=n*16;el[n].InputSlotClass=D3D11_INPUT_PER_VERTEX_DATA;el[n].InstanceDataStepRate=0;n++;}
         HRESULT hr=ID3D11Device_CreateInputLayout(dev,el,n,ID3D10Blob_GetBufferPointer(code),ID3D10Blob_GetBufferSize(code),&e->il);
         ID3D10Blob_Release(code);if(FAILED(hr)){ID3D11VertexShader_Release(e->vs);e->vs=NULL;return NULL;}
-        e->key=key;e->mask=mask;st.vs_compiles++;return e;}}
+        e->key=key;e->mask=mask;vp_const_mask(s,e->cmask);st.vs_compiles++;return e;}}
     return NULL;
 }
 unsigned lean_d3d_vp_mask(const void *vp){VSE *e=vs_get((const NFVertexProgram*)vp);return e?e->mask:0;}
@@ -609,6 +737,15 @@ static ID3D11PixelShader *ps_get(const uint32_t *K,const unsigned *stage_kind){
     uint64_t key=hash_words(k.w,k.n,k.n);unsigned slot=(unsigned)(key%SH_SLOTS);
     for(unsigned i=0;i<64;i++){PSE *e=&pss[(slot+i)%SH_SLOTS];if(e->ps&&e->key==key)return e->ps;if(!e->ps){
         Text b;text_init(&b);if(!ps_hlsl(&b,K,stage_kind)){free(b.t);return NULL;}
+        {   /* LEAN_DUMP_PS=1: save each new pixel shader with its combiner registers. */
+            static int dump=-1;static unsigned n;if(dump<0){const char *v=getenv("LEAN_DUMP_PS");dump=v&&*v=='1';}
+            const char *dir=getenv("DRIVING_CAPTURE_DIR");
+            if(dump&&dir&&n<200){char path[MAX_PATH];snprintf(path,sizeof path,"%s/ps-%03u-prog%05X.hlsl",dir,n++,K[0x1e70/4]);
+                FILE *f=fopen(path,"wb");if(f){
+                    fprintf(f,"// shader_program=%08X combiner_ctl=%08X final0=%08X final1=%08X\n",K[0x1e70/4],K[0x1e60/4],K[0x288/4],K[0x28c/4]);
+                    for(unsigned s2=0;s2<8;s2++)fprintf(f,"// stage%u color_icw=%08X color_ocw=%08X alpha_icw=%08X alpha_ocw=%08X\n",s2,K[(0xac0+s2*4)/4],K[(0x1e40+s2*4)/4],K[(0x260+s2*4)/4],K[(0xaa0+s2*4)/4]);
+                    fwrite(b.t,1,b.n,f);fclose(f);}}
+        }
         ID3DBlob *code=compile(b.t,b.n,"ps_5_0","lean-ps");free(b.t);if(!code)return NULL;
         HRESULT hr=ID3D11Device_CreatePixelShader(dev,ID3D10Blob_GetBufferPointer(code),ID3D10Blob_GetBufferSize(code),NULL,&e->ps);
         ID3D10Blob_Release(code);if(FAILED(hr)){e->ps=NULL;return NULL;}
@@ -618,14 +755,40 @@ static ID3D11PixelShader *ps_get(const uint32_t *K,const unsigned *stage_kind){
 
 /* ------------------------------------------------------------- buffers */
 static ID3D11Buffer *vb,*ib,*vcb,*pcb,*clear_cb;
+/* LEAN_PICK=N (diagnostic): every draw into an AA scene surface is painted a
+ * flat colour encoding its index in the frame (r=id&15, g=(id>>4)&15,
+ * b=(id>>8)&15, each *16+8), and the draws of presented frames N-1 and N are
+ * logged with their state, so a pixel in gpu201-frameN.bmp names its draw. */
+static unsigned lean_frame_no,lean_draw_no,lean_pick_end,lean_pick_step=1;static int lean_pick=-1;static ID3D11PixelShader *pick_ps;
+/* Point sprites (NV097 point smooth on a point list): D3D11 draws 1-pixel
+ * points, so expand each point to a screen-aligned quad of the oPts size (or
+ * the fixed size) and generate stage-3 texture coordinates across it, as the
+ * NV2A does. LEAN_POINT_SPRITES=0 keeps 1-pixel points. */
+static ID3D11GeometryShader *sprite_gs;static int sprite_on=-1;static int sprite_bound;
+static const char sprite_src[]=
+"cbuffer VC:register(b0){float4 kc[192];float4 surf;float4 fogp;float4 pt;};\n"
+"struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;float ps:TEXCOORD5;};\n"
+"struct GO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;};\n"
+"[maxvertexcount(4)]void main(point VO i[1],inout TriangleStream<GO> s){\n"
+"float sz=i[0].ps>0?i[0].ps:pt.x;if(sz<=0)return;\n"
+"float2 h=float2(sz*pt.y*surf.x*0.5,sz*pt.z*surf.y*0.5)*i[0].p.w;\n"
+"GO o;o.d0=i[0].d0;o.d1=i[0].d1;o.t0=i[0].t0;o.t1=i[0].t1;o.t2=i[0].t2;o.fog=i[0].fog;\n"
+"[unroll]for(int k=0;k<4;k++){float2 c=float2((k&1)?1:-1,(k&2)?-1:1);\n"
+"o.p=i[0].p+float4(c*h,0,0);o.t3=float4((c.x+1)*0.5,(1-c.y)*0.5,0,1);s.Append(o);}}\n";
 static UINT vb_size=64u<<20,ib_size=16u<<20,vb_at,ib_at;
 static int vp_dirty=1;
 static ID3D11VertexShader *clear_vs;static ID3D11PixelShader *clear_ps;
 static ID3D11DepthStencilState *clear_ds[4];static ID3D11BlendState *clear_bs[16];static ID3D11RasterizerState *clear_rs;
 
+static int interp_enabled(void); /* lean_interp.inc */
+static int ring_mapped[2];
 static void *ring(ID3D11Buffer *buf,UINT size,UINT *at,UINT need,UINT *offset){
     D3D11_MAPPED_SUBRESOURCE m;D3D11_MAP mode=D3D11_MAP_WRITE_NO_OVERWRITE;
-    if(*at+need>size){*at=0;mode=D3D11_MAP_WRITE_DISCARD;}
+    /* LEAN_INTERP replays draw straight from these rings, so a wrap must not
+     * discard: data is overwritten about 20 frames later instead. */
+    int *first=&ring_mapped[buf==vb?0:1];
+    if(*at+need>size){*at=0;if(!interp_enabled())mode=D3D11_MAP_WRITE_DISCARD;}
+    if(!*first){mode=D3D11_MAP_WRITE_DISCARD;*first=1;}
     if(FAILED(ID3D11DeviceContext_Map(ctx,(ID3D11Resource*)buf,0,mode,0,&m)))return NULL;
     *offset=*at;*at+=(need+15)&~15u;return (uint8_t*)m.pData+*offset;
 }
@@ -644,10 +807,10 @@ int lean_d3d_init(void){
     if(FAILED(hr)){LOG("[LEAN] D3D11 device creation failed %08lX\n",hr);ready=-1;return 0;}
     ID3D11DeviceContext_QueryInterface(ctx,&IID_ID3D11DeviceContext1,(void**)&ctx1);
     vb=mkbuf(vb_size,D3D11_BIND_VERTEX_BUFFER,1);ib=mkbuf(ib_size,D3D11_BIND_INDEX_BUFFER,1);
-    vcb=mkbuf(192*16+32,D3D11_BIND_CONSTANT_BUFFER,0);pcb=mkbuf(sizeof(float)*4*(8+8+4+4),D3D11_BIND_CONSTANT_BUFFER,0);
+    vcb=mkbuf(192*16+48,D3D11_BIND_CONSTANT_BUFFER,0);pcb=mkbuf(sizeof(float)*4*(8+8+4+4),D3D11_BIND_CONSTANT_BUFFER,0);
     clear_cb=mkbuf(32,D3D11_BIND_CONSTANT_BUFFER,0);
     {uint32_t px=0xffff00ffu;D3D11_TEXTURE2D_DESC td={1,1,1,1,DXGI_FORMAT_B8G8R8A8_UNORM,{1,0},D3D11_USAGE_DEFAULT,D3D11_BIND_SHADER_RESOURCE,0,0};
-     D3D11_SUBRESOURCE_DATA sd={&px,4,0};ID3D11Texture2D *t;if(SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&td,&sd,&t))){ID3D11Device_CreateShaderResourceView(dev,(ID3D11Resource*)t,NULL,&magenta_srv);ID3D11Texture2D_Release(t);}}
+     D3D11_SUBRESOURCE_DATA sd={&px,4,0};ID3D11Texture2D *t;if(SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&td,&sd,&t))){ID3D11Device_CreateShaderResourceView(dev,(ID3D11Resource*)t,NULL,&magenta_srv);ID3D11Texture2D_Release(t);t=NULL;px=0xffffffffu;if(SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&td,&sd,&t)))ID3D11Device_CreateShaderResourceView(dev,(ID3D11Resource*)t,NULL,&white_srv);ID3D11Texture2D_Release(t);}}
     {static const char cs[]="cbuffer C:register(b0){float4 col;float4 z;};float4 vmain(uint i:SV_VertexID):SV_Position{float2 p=float2((i<<1)&2,i&2);return float4(p*float2(2,-2)+float2(-1,1),z.x,1);}\n"
         "float4 main(float4 p:SV_Position):SV_Target{return col;}\n";
      ID3DBlob *c=NULL,*e=NULL;
@@ -666,6 +829,16 @@ int lean_d3d_init(void){
 void lean_d3d_epoch(void){epoch++;}
 void lean_d3d_vp_dirty(void){vp_dirty=1;}
 
+/* The immediate context is shared with the in-between-frames display thread
+ * (lean_interp.inc). One coarse lock per public call keeps it consistent; it
+ * is far cheaper than D3D's per-call multithread protection. */
+static SRWLOCK lean_ctx_lock=SRWLOCK_INIT;
+#define CTX_LOCK() AcquireSRWLockExclusive(&lean_ctx_lock)
+#define CTX_UNLOCK() ReleaseSRWLockExclusive(&lean_ctx_lock)
+/* Game-side entry: also totals how long the game waited for the lock (QPC
+ * ticks), which LEAN_PRESENT_UNCAPPED uses to keep out of the game's way. */
+static volatile LONG64 lean_game_lock_wait;
+#define GAME_LOCK() do{if(!TryAcquireSRWLockExclusive(&lean_ctx_lock)){LARGE_INTEGER w0_,w1_;QueryPerformanceCounter(&w0_);AcquireSRWLockExclusive(&lean_ctx_lock);QueryPerformanceCounter(&w1_);InterlockedAdd64(&lean_game_lock_wait,w1_.QuadPart-w0_.QuadPart);}}while(0)
 /* --------------------------------------------------------------- targets */
 static int bind_target(const LeanTarget *t,int want_depth,RT **color,RT **depth){
     unsigned sw=t->width*t->aa_x,sh=t->height*t->aa_y;*color=*depth=NULL;
@@ -681,7 +854,15 @@ static int bind_target(const LeanTarget *t,int want_depth,RT **color,RT **depth)
 static float u8f(uint32_t v,unsigned shift){return ((v>>shift)&255)/255.0f;}
 static void argb4(float *o,uint32_t v){o[0]=u8f(v,16);o[1]=u8f(v,8);o[2]=u8f(v,0);o[3]=u8f(v,24);}
 
-void lean_d3d_draw(const LeanDraw *d){
+/* lean_interp.inc (included at the end) */
+static int interp_enabled(void);
+static void interp_end_frame(ID3D11Texture2D *tex,ID3D11ShaderResourceView *srv);
+static void interp_rec_draw(ID3D11VertexShader*,ID3D11InputLayout*,ID3D11PixelShader*,int,ID3D11ShaderResourceView *const*,ID3D11SamplerState *const*,ID3D11BlendState*,const float*,ID3D11DepthStencilState*,UINT,ID3D11RasterizerState*,UINT,RT*,RT*,UINT,UINT,UINT,UINT,UINT,UINT,UINT,const float*,const float*);
+static void interp_rec_clear(RT*,RT*,UINT,const float*,float,UINT,UINT,int,D3D11_RECT,UINT,UINT);
+static void interp_rec_blit(RT*,RT*,D3D11_BOX,UINT,UINT);
+static float interp_vconst[192*4+12],interp_pconst[96];
+static const uint32_t *interp_cur_cmask;   /* constant rows the current draw's program reads */
+static void lean_d3d_draw_impl(const LeanDraw *d){
     if(!ready||!d->nidx)return;
     const uint32_t *K=d->K;const NFVertexProgram *vp=(const NFVertexProgram*)d->vp;
     VSE *vs=vs_get(vp);if(!vs){st.refused++;return;}
@@ -701,9 +882,30 @@ void lean_d3d_draw(const LeanDraw *d){
         if(mode==6||mode==7){memcpy(&tdim[i][2],&K[(0x1b28+i*64)/4],4);memcpy(&tdim[i][3],&K[(0x1b2c+i*64)/4],4);}
     }
     ID3D11PixelShader *ps=ps_get(K,kind);if(!ps){st.refused++;return;}
+    {   /* LEAN_SHOW_DIFFUSE=1 (diagnostic): 3D draws (more than 2 triangles)
+         * output only their vertex colours (diffuse + specular), to see the
+         * per-vertex lighting without textures or combiners. */
+        static int show=-1;static ID3D11PixelShader *dps;
+        if(show<0){const char *v=getenv("LEAN_SHOW_DIFFUSE");show=v?atoi(v):0;   /* =2: diffuse alpha as grey */
+            if(show){static const char src[]="struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;};float4 main(VO p):SV_Target{return SHOWA==1?float4(p.d0.aaa,1):SHOWA==2?float4(p.d0.rgb,1):float4(p.d0.rgb+p.d1.rgb,1);}\n";
+                char src2[700];snprintf(src2,sizeof src2,"#define SHOWA %d\n%s",show==2?1:show==3?2:0,src);ID3DBlob *c=compile(src2,strlen(src2),"ps_5_0","lean-diffuse");if(c){ID3D11Device_CreatePixelShader(dev,ID3D10Blob_GetBufferPointer(c),ID3D10Blob_GetBufferSize(c),NULL,&dps);ID3D10Blob_Release(c);}}}
+        if(show&&dps&&d->topo==0&&d->nidx>6)ps=dps;
+        if(lean_pick<0){const char *v=getenv("LEAN_PICK");lean_pick=v?atoi(v):0;{const char *dash=v?strchr(v,45):NULL;lean_pick_end=dash?(unsigned)atoi(dash+1):(unsigned)lean_pick;}{const char *sl=v?strchr(v,47):NULL;lean_pick_step=sl?(unsigned)atoi(sl+1):1;if(!lean_pick_step)lean_pick_step=1;}
+            if(lean_pick){static const char src[]="cbuffer PC:register(b0){float4 f0[8];float4 f1[8];float4 ff0;float4 ff1;float4 fogc;float4 aref;float4 tdim[4];};struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;};float4 main(VO p):SV_Target{return float4(aref.yzw,1);}\n";
+                ID3DBlob *c=compile(src,sizeof src-1,"ps_5_0","lean-pick");if(c){ID3D11Device_CreatePixelShader(dev,ID3D10Blob_GetBufferPointer(c),ID3D10Blob_GetBufferSize(c),NULL,&pick_ps);ID3D10Blob_Release(c);}}}
+        if(lean_pick&&pick_ps&&d->t.aa_x>1){ps=pick_ps;if(K[0x304/4]&&K[0x348/4]==1){lean_draw_no++;return;}}   /* pick: skip additive (glow) passes so IDs stay exact */
+        {   /* LEAN_SHOW_TEX0=1 (diagnostic): scene draws with stage 0 enabled output
+             * the raw stage-0 sample (=2: its alpha as grey), no lighting/blend math. */
+            static int t0=-1;static ID3D11PixelShader *tps;
+            if(t0<0){const char *v=getenv("LEAN_SHOW_TEX0");t0=v?atoi(v):0;
+                if(t0){char src[512];snprintf(src,sizeof src,"Texture2D tx0:register(t0);SamplerState sm0:register(s0);struct VO{float4 p:SV_Position;float4 d0:COLOR0;float4 d1:COLOR1;float4 t0:TEXCOORD0;float4 t1:TEXCOORD1;float4 t2:TEXCOORD2;float4 t3:TEXCOORD3;float fog:TEXCOORD4;};float4 main(VO p):SV_Target{float4 c=tx0.Sample(sm0,p.t0.xy/(p.t0.w==0?1:p.t0.w));return %s;}",t0==2?"float4(c.aaa,1)":"float4(c.rgb,1)");
+                    ID3DBlob *c=compile(src,strlen(src),"ps_5_0","lean-tex0");if(c){ID3D11Device_CreatePixelShader(dev,ID3D10Blob_GetBufferPointer(c),ID3D10Blob_GetBufferSize(c),NULL,&tps);ID3D10Blob_Release(c);}}}
+            if(t0&&tps&&d->t.aa_x>1&&d->topo==0&&(K[0x1e70/4]&31)==1)ps=tps;
+        }
+    }
     /* Constants */
     if(vp_dirty||1){
-        float buf[192*4+8];
+        float buf[192*4+12];
         for(unsigned i=0;i<192;i++)memcpy(&buf[i*4],vp->constant_words[i],16);
         float *s=buf+192*4;
         s[0]=2.0f/d->t.width;s[1]=2.0f/d->t.height;s[2]=1.0f/((d->t.zeta_fmt==1)?65535.0f:16777215.0f);s[3]=0;
@@ -711,7 +913,10 @@ void lean_d3d_draw(const LeanDraw *d){
         uint32_t fm=K[0x29c/4];float mode=0,absf=0;
         if(K[0x2a4/4]){if(fm==0x2601||fm==0x804)mode=1;else if(fm==0x800||fm==0x802)mode=2;else if(fm==0x801||fm==0x803)mode=3;absf=(fm>=0x802&&fm<=0x804)?1.0f:0.0f;}
         s[4]=mode;s[5]=absf;s[6]=bias;s[7]=slope;
+        /* point sprites: fixed size (NV097 0x43C, 1/8 pixel units) and AA scale */
+        s[8]=(float)(K[0x43c/4]&0x1ff)/8.0f;s[9]=(float)(d->t.aa_x?d->t.aa_x:1);s[10]=(float)(d->t.aa_y?d->t.aa_y:1);s[11]=0;
         ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)vcb,0,NULL,buf,0,0);vp_dirty=0;
+        memcpy(interp_vconst,buf,sizeof interp_vconst);
     }
     {
         float pc[(8+8+4+4)*4];
@@ -719,8 +924,15 @@ void lean_d3d_draw(const LeanDraw *d){
         argb4(&pc[64],K[0x1e20/4]);argb4(&pc[68],K[0x1e24/4]);
         uint32_t fc=K[0x2a8/4];pc[72]=u8f(fc,0);pc[73]=u8f(fc,8);pc[74]=u8f(fc,16);pc[75]=u8f(fc,24);
         pc[76]=(float)(K[0x340/4]&255);pc[77]=pc[78]=pc[79]=0;
+        if(lean_pick>0){unsigned id=lean_draw_no;pc[77]=((id&15)*16+8)/255.0f;pc[78]=(((id>>4)&15)*16+8)/255.0f;pc[79]=(((id>>8)&15)*16+8)/255.0f;
+            if(lean_frame_no+1>=(unsigned)lean_pick&&lean_frame_no+1<=lean_pick_end&&!((lean_frame_no+1-(unsigned)lean_pick)%lean_pick_step))
+                LOG("[LEAN-PICK] frame=%u draw=%u rgb=%02X%02X%02X topo=%u idx=%u aa=%u tex=%08X/%08X/%08X/%08X prog=%05X blend=%u %04X/%04X atest=%u func=%u ref=%u ztest=%u zwrite=%u comb=%08X fin=%08X/%08X d0w=%08X vs=%016llX dfmt=%08X sfmt=%08X\n",
+                    lean_frame_no+1,id,(id&15)*16+8,((id>>4)&15)*16+8,((id>>8)&15)*16+8,d->topo,d->nidx,d->t.aa_x,d->tex_addr[0],d->tex_addr[1],d->tex_addr[2],d->tex_addr[3],K[0x1e70/4],
+                    K[0x304/4],K[0x344/4],K[0x348/4],K[0x300/4],K[0x33c/4],K[0x340/4],K[0x30c/4],K[0x35c/4],K[0x1e60/4],K[0x288/4],K[0x28c/4],K[0x1e70/4],(unsigned long long)vs->key,K[(0x1760+12)/4],K[(0x1760+16)/4]);}
+        lean_draw_no++;
         memcpy(&pc[80],tdim,sizeof tdim);
         ID3D11DeviceContext_UpdateSubresource(ctx,(ID3D11Resource*)pcb,0,NULL,pc,0,0);
+        memcpy(interp_pconst,pc,sizeof interp_pconst);
     }
     /* Geometry */
     UINT stride=0;for(unsigned k=0;k<16;k++)if(d->mask&(1u<<k))stride+=16;
@@ -733,6 +945,15 @@ void lean_d3d_draw(const LeanDraw *d){
     ID3D11DeviceContext_IASetIndexBuffer(ctx,ib,DXGI_FORMAT_R32_UINT,ioff);
     ID3D11DeviceContext_IASetPrimitiveTopology(ctx,d->topo==1?D3D11_PRIMITIVE_TOPOLOGY_LINELIST:d->topo==2?D3D11_PRIMITIVE_TOPOLOGY_POINTLIST:D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ID3D11DeviceContext_VSSetShader(ctx,vs->vs,NULL,0);ID3D11DeviceContext_VSSetConstantBuffers(ctx,0,1,&vcb);
+    {
+        if(sprite_on<0){const char *v=getenv("LEAN_POINT_SPRITES");sprite_on=!(v&&*v=='0');
+            if(sprite_on){ID3DBlob *gc=compile(sprite_src,sizeof sprite_src-1,"gs_5_0","lean-sprite-gs");
+                if(gc){ID3D11Device_CreateGeometryShader(dev,ID3D10Blob_GetBufferPointer(gc),ID3D10Blob_GetBufferSize(gc),NULL,&sprite_gs);ID3D10Blob_Release(gc);}
+                LOG("[LEAN] point sprites %s\n",sprite_gs?"expanded by geometry shader":"unavailable");}}
+        int sprite=sprite_gs&&d->topo==2&&K[0x31c/4];
+        if(sprite)ID3D11DeviceContext_GSSetShader(ctx,sprite_gs,NULL,0);sprite_bound=sprite;
+        if(sprite)ID3D11DeviceContext_GSSetConstantBuffers(ctx,0,1,&vcb);
+    }
     ID3D11DeviceContext_PSSetShader(ctx,ps,NULL,0);ID3D11DeviceContext_PSSetConstantBuffers(ctx,0,1,&pcb);
     ID3D11DeviceContext_PSSetShaderResources(ctx,0,4,srv);ID3D11DeviceContext_PSSetSamplers(ctx,0,4,smp);
     /* Output merger */
@@ -740,15 +961,65 @@ void lean_d3d_draw(const LeanDraw *d){
     ID3D11BlendState *bs=blend_state(K[0x304/4]!=0,K[0x344/4],K[0x348/4],K[0x350/4],mask);
     float bf[4];argb4(bf,K[0x34c/4]);
     ID3D11DeviceContext_OMSetBlendState(ctx,bs,bf,0xffffffffu);
-    ID3D11DeviceContext_OMSetDepthStencilState(ctx,depth_state(K,depth!=NULL),K[0x368/4]&255);
-    ID3D11DeviceContext_RSSetState(ctx,raster_state(K,0));
+    ID3D11DepthStencilState *dss=depth_state(K,depth!=NULL);ID3D11RasterizerState *rss=raster_state(K,0,d->topo,d->t.zeta_fmt==1?256u:1u);
+    ID3D11DeviceContext_OMSetDepthStencilState(ctx,dss,K[0x368/4]&255);
+    ID3D11DeviceContext_RSSetState(ctx,rss);
+    {   /* census for the stats line: what kinds of draws a scene uses */
+        int ofs_on=K[(d->topo==2?0x330:d->topo==1?0x334:0x338)/4]!=0;
+        cen.by_topo[d->topo&3]++;if(ofs_on)cen.offset++;if(K[0x318/4])cen.point_params++;if(K[0x31c/4])cen.point_smooth++;
+        if(d->topo==2){cen.point_size=K[0x43c/4];
+            static unsigned n;if(n++<12){
+                const float *v0=d->verts;
+                LOG("[LEAN-POINTS] n=%u mask=%04X size=%08X params=%u smooth=%u blend=%u src=%04X dst=%04X ztest=%u zwrite=%u tex0=%08X ctl0=%08X/%08X/%08X/%08X fmt0=%08X shader=%08X v0=(%.1f,%.1f,%.1f,%.1f)\n",
+                    d->nidx,d->mask,K[0x43c/4],K[0x318/4],K[0x31c/4],K[0x304/4],K[0x344/4],K[0x348/4],K[0x30c/4],K[0x35c/4],
+                    d->tex_addr[0],K[0x1b0c/4],K[(0x1b0c+64)/4],K[(0x1b0c+128)/4],K[(0x1b0c+192)/4],K[0x1b04/4],K[0x1e70/4],
+                    v0[0],v0[1],v0[2],v0[3]);
+            }}
+        if(K[0x304/4]&&(K[0x348/4]==1||K[0x348/4]==0x301))cen.additive++;
+        /* LEAN_LOG_BLEND=1: first 24 blended triangle draws per distinct
+         * (blend, texture) pair, to identify decals such as light pools. */
+        {static int on=-1;if(on<0){const char *v=getenv("LEAN_LOG_BLEND");on=v?atoi(v):0;}
+         if(on&&d->topo==0&&K[0x304/4]&&(on!=2||d->nidx<=48)){
+            static uint64_t seen[24];static unsigned n;
+            uint64_t key=((uint64_t)K[0x344/4]<<48)^((uint64_t)K[0x348/4]<<32)^d->tex_addr[0]^((uint64_t)d->tex_addr[1]<<20);
+            unsigned i;for(i=0;i<n&&seen[i]!=key;i++){}
+            if(i==n&&n<24){seen[n++]=key;
+                LOG("[LEAN-BLEND] src=%04X dst=%04X eq=%04X ztest=%u zfunc=%04X zwrite=%u alpha_test=%u ofs=%u bias=%08X tris=%u tex=%08X/%08X/%08X/%08X fmt0=%08X fmt1=%08X shader=%08X cull=%u\n",
+                    K[0x344/4],K[0x348/4],K[0x350/4],K[0x30c/4],K[0x354/4],K[0x35c/4],K[0x300/4],K[0x338/4],K[0x388/4],d->nidx/3,
+                    d->tex_addr[0],d->tex_addr[1],d->tex_addr[2],d->tex_addr[3],K[0x1b04/4],K[(0x1b04+64)/4],K[0x1e70/4],K[0x308/4]);}
+         }}
+    }
+    {   /* LEAN_DRAWLOG=a-b (diagnostic): every draw of frames a..b (lean_frame_no,
+         * matched by the [LEAN-WALL] capture lines) with its textures and states. */
+        static int init;static unsigned a,b,ms,cnt;static ULONGLONG t0;   /* LEAN_DRAWLOG_MS=start,count: frames from start ms after the first draw */
+        if(!init){const char *v=getenv("LEAN_DRAWLOG");init=1;if(v)sscanf(v,"%u-%u",&a,&b);v=getenv("LEAN_DRAWLOG_MS");if(v)sscanf(v,"%u,%u",&ms,&cnt);t0=GetTickCount64();}
+        if(cnt&&!b&&GetTickCount64()-t0>=ms){a=lean_frame_no;b=a+cnt-1;}
+        static int rinit;static uint32_t only;static unsigned lastf=~0u;   /* LEAN_DRAWLOG_RT=addr: only draws into that surface, plus its first draw's constants */
+        if(!rinit){const char *v=getenv("LEAN_DRAWLOG_RT");only=v?(uint32_t)strtoul(v,NULL,16):0;rinit=1;}
+        if(b&&lean_frame_no>=a&&lean_frame_no<=b&&(!only||d->t.color==only)){
+            if(only&&lastf!=lean_frame_no){lastf=lean_frame_no;
+                for(unsigned r=0;r<16;r++){const float *c=(const float*)vp->constant_words[r];
+                    LOG("[LEAN-DRAWC] f=%u c%u=%.4f %.4f %.4f %.4f\n",lean_frame_no,r,c[0],c[1],c[2],c[3]);}
+                const float *v0=d->verts;LOG("[LEAN-DRAWC] f=%u v0=%.3f %.3f %.3f %.3f nverts=%u\n",lean_frame_no,v0[0],v0[1],v0[2],v0[3],d->nverts);}
+            uint64_t ch=hash_words(&K[0x260/4],16,1);ch=hash_words(&K[0xa60/4],16,ch);ch=hash_words(&K[0x1e20/4],16,ch);ch=hash_words(&K[0x288/4],2,ch);
+            LOG("[LEAN-DRAW] f=%u n=%u rt=%08X topo=%u idx=%u tex=%08X/%08X/%08X/%08X fmt=%08X/%08X/%08X/%08X srv=%p/%p/%p/%p prog=%05X blend=%u %04X/%04X z=%u/%04X/%u cull=%u comb=%016llX f0=%08X/%08X fc=%08X/%08X vs=%016llX\n",
+                lean_frame_no,lean_draw_no,d->t.color,d->topo,d->nidx,d->tex_addr[0],d->tex_addr[1],d->tex_addr[2],d->tex_addr[3],
+                K[0x1b04/4],K[(0x1b04+64)/4],K[(0x1b04+128)/4],K[(0x1b04+192)/4],(void*)srv[0],(void*)srv[1],(void*)srv[2],(void*)srv[3],K[0x1e70/4],
+                K[0x304/4],K[0x344/4],K[0x348/4],K[0x30c/4],K[0x354/4],K[0x35c/4],K[0x308/4],(unsigned long long)ch,K[0xa60/4],K[0xa80/4],K[0x1e20/4],K[0x1e24/4],
+                (unsigned long long)vs->key);
+        }
+    }
     ID3D11DeviceContext_DrawIndexed(ctx,d->nidx,0,0);
+    interp_cur_cmask=vs->cmask;
+    if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,rss,d->topo,color,depth,
+        d->t.width*d->t.aa_x,d->t.height*d->t.aa_y,stride,voff,d->nverts,ioff,d->nidx,interp_vconst,interp_pconst);
+    if(sprite_bound){ID3D11DeviceContext_GSSetShader(ctx,NULL,NULL,0);sprite_bound=0;}
     if(color)color->gpu_written=1;if(depth)depth->gpu_written=1;
     st.draws++;st.prims+=d->nidx;
     {ID3D11ShaderResourceView *none[4]={0};ID3D11DeviceContext_PSSetShaderResources(ctx,0,4,none);}
 }
 
-void lean_d3d_clear(const LeanTarget *t,uint32_t flags,unsigned x0,unsigned x1,unsigned y0,unsigned y1,uint32_t color,uint32_t zs){
+static void lean_d3d_clear_impl(const LeanTarget *t,uint32_t flags,unsigned x0,unsigned x1,unsigned y0,unsigned y1,uint32_t color,uint32_t zs){
     if(!ready)return;
     int want_color=(flags&0xf0)!=0,want_depth=(flags&3)!=0;
     LeanTarget tt=*t;if(!want_color)tt.color=0;
@@ -765,6 +1036,7 @@ void lean_d3d_clear(const LeanTarget *t,uint32_t flags,unsigned x0,unsigned x1,u
     unsigned cmask=((flags>>4)&1?1:0)|((flags>>5)&1?2:0)|((flags>>6)&1?4:0)|((flags>>7)&1?8:0); /* R,G,B,A */
     float zv=t->zeta_fmt==1?(zs>>16)/65535.0f:(zs>>8)/16777215.0f;unsigned sv=zs&255;
     st.clears++;
+    if(interp_enabled()){D3D11_RECT ir={rx0,ry0,rx1,ry1};interp_rec_clear(c,z,flags,col,zv,sv,cmask,full,ir,sw,sh);}
     if(c&&full&&cmask==15){ID3D11DeviceContext_ClearRenderTargetView(ctx,c->rtv,col);c->gpu_written=1;c=NULL;}
     else if(c&&ctx1&&cmask==15){D3D11_RECT r={rx0,ry0,rx1,ry1};ID3D11DeviceContext1_ClearView(ctx1,(ID3D11View*)c->rtv,col,&r,1);c->gpu_written=1;c=NULL;}
     if(z&&full){UINT f=((flags&1)?D3D11_CLEAR_DEPTH:0)|((flags&2)?D3D11_CLEAR_STENCIL:0);ID3D11DeviceContext_ClearDepthStencilView(ctx,z->dsv,f,zv,(UINT8)sv);z->gpu_written=1;z=NULL;}
@@ -785,7 +1057,7 @@ void lean_d3d_clear(const LeanTarget *t,uint32_t flags,unsigned x0,unsigned x1,u
     if(c)c->gpu_written=1;if(z)z->gpu_written=1;
 }
 
-int lean_d3d_blit(uint32_t src,unsigned spitch,uint32_t dst,unsigned dpitch,unsigned sx,unsigned sy,unsigned dx,unsigned dy,unsigned w,unsigned h){
+static int lean_d3d_blit_impl(uint32_t src,unsigned spitch,uint32_t dst,unsigned dpitch,unsigned sx,unsigned sy,unsigned dx,unsigned dy,unsigned w,unsigned h){
     if(!ready)return 0;
     RT *s=NULL;
     for(unsigned i=0;i<MAX_RT;i++){RT *r=&rts[i];if(r->tex&&!r->depth&&r->gpu_written&&r->addr==src&&r->pitch==spitch){s=r;break;}}
@@ -796,11 +1068,12 @@ int lean_d3d_blit(uint32_t src,unsigned spitch,uint32_t dst,unsigned dpitch,unsi
     if(!d)return 0;
     D3D11_BOX box={sx,sy,0,sx+w,sy+h,1};
     ID3D11DeviceContext_CopySubresourceRegion(ctx,(ID3D11Resource*)d->tex,0,dx,dy,0,(ID3D11Resource*)s->tex,0,&box);
+    if(interp_enabled())interp_rec_blit(s,d,box,dx,dy);
     d->gpu_written=1;st.blits++;return 1;
 }
 
 static ID3D11Texture2D *staging;static unsigned staging_w,staging_h;
-int lean_d3d_readback(uint32_t addr,unsigned w,unsigned h,uint32_t *out){
+static int lean_d3d_readback_impl(uint32_t addr,unsigned w,unsigned h,uint32_t *out){
     if(!ready)return 0;
     RT *r=NULL;for(unsigned i=0;i<MAX_RT;i++)if(rts[i].tex&&!rts[i].depth&&rts[i].addr==addr&&rts[i].gpu_written){r=&rts[i];break;}
     if(!r)return 0;
@@ -819,7 +1092,44 @@ int lean_d3d_readback(uint32_t addr,unsigned w,unsigned h,uint32_t *out){
     st.readbacks++;return 1;
 }
 
+/* Visibility tests (native D3D): every game draw between begin and end is
+ * wrapped in its own occlusion query; the result is their sum (samples that
+ * passed). Draws replayed by the in-between-frames thread are never inside. */
+typedef struct {ID3D11Query *q[32];unsigned n;ULONGLONG first_poll;} VisTest;
+static VisTest vis_cur,vis_done[256];static int vis_active;
+static void vis_release(VisTest *t){for(unsigned i=0;i<t->n;i++)if(t->q[i])ID3D11Query_Release(t->q[i]);t->n=0;}
+void lean_d3d_vis_begin(void){GAME_LOCK();vis_release(&vis_cur);vis_active=ready;CTX_UNLOCK();}
+void lean_d3d_vis_end(unsigned index){GAME_LOCK();vis_active=0;VisTest *t=&vis_done[index&255];vis_release(t);*t=vis_cur;t->first_poll=0;vis_cur.n=0;CTX_UNLOCK();}
+/* 1 = ready (count set), 0 = still running. */
+int lean_d3d_vis_result(unsigned index,uint32_t *count){
+    GAME_LOCK();VisTest *t=&vis_done[index&255];UINT64 sum=0;int ok=1;
+    for(unsigned i=0;i<t->n&&ok;i++){UINT64 v=0;HRESULT hr=ID3D11DeviceContext_GetData(ctx,(ID3D11Asynchronous*)t->q[i],&v,sizeof v,0);
+        if(hr==S_OK)sum+=v;else if(hr==S_FALSE)ok=0;}
+    /* A query that never completes must not hang the game (it polls this):
+     * after 250 ms report the object visible, once logged. */
+    if(!ok){ULONGLONG now=GetTickCount64();if(!t->first_poll)t->first_poll=now;
+        else if(now-t->first_poll>250){static unsigned w;if(w++<8)LOG("[LEAN] visibility test %u not ready after 250 ms; reported visible\n",index);sum=640u*480u*2u;ok=1;}}
+    CTX_UNLOCK();if(ok)*count=sum>0xFFFFFFFFull?0xFFFFFFFFu:(uint32_t)sum;return ok;
+}
+void lean_d3d_draw(const LeanDraw *d){
+    GAME_LOCK();
+    ID3D11Query *q=NULL;
+    if(vis_active&&vis_cur.n<32){D3D11_QUERY_DESC qd={D3D11_QUERY_OCCLUSION,0};if(SUCCEEDED(ID3D11Device_CreateQuery(dev,&qd,&q)))ID3D11DeviceContext_Begin(ctx,(ID3D11Asynchronous*)q);}
+    lean_d3d_draw_impl(d);
+    if(q){ID3D11DeviceContext_End(ctx,(ID3D11Asynchronous*)q);vis_cur.q[vis_cur.n++]=q;}
+    CTX_UNLOCK();
+}
+void lean_d3d_clear(const LeanTarget *t,uint32_t flags,unsigned x0,unsigned x1,unsigned y0,unsigned y1,uint32_t color,uint32_t zs){
+    GAME_LOCK();lean_d3d_clear_impl(t,flags,x0,x1,y0,y1,color,zs);CTX_UNLOCK();}
+int lean_d3d_blit(uint32_t src,unsigned spitch,uint32_t dst,unsigned dpitch,unsigned sx,unsigned sy,unsigned dx,unsigned dy,unsigned w,unsigned h){
+    GAME_LOCK();int r=lean_d3d_blit_impl(src,spitch,dst,dpitch,sx,sy,dx,dy,w,h);CTX_UNLOCK();return r;}
+int lean_d3d_readback(uint32_t addr,unsigned w,unsigned h,uint32_t *out){
+    GAME_LOCK();int r=lean_d3d_readback_impl(addr,w,h,out);CTX_UNLOCK();return r;}
 void lean_d3d_report(void){
+    LOG("[LEAN-CENSUS] tris=%llu lines=%llu points=%llu (point_size_word=%08X) offset=%llu point_params=%llu point_smooth=%llu additive=%llu\n",
+        (unsigned long long)cen.by_topo[0],(unsigned long long)cen.by_topo[1],(unsigned long long)cen.by_topo[2],cen.point_size,
+        (unsigned long long)cen.offset,(unsigned long long)cen.point_params,(unsigned long long)cen.point_smooth,(unsigned long long)cen.additive);
+    memset(&cen,0,sizeof cen);
     LOG("[LEAN-STATS] draws=%llu indices=%llu tex_uploads=%llu tex_hits=%llu tex_hash_MB=%.1f vs=%llu ps=%llu clears=%llu blits=%llu readbacks=%llu surfaces=%llu surface_uploads=%llu refused=%llu textures=%u tex_MB=%.1f\n",
         (unsigned long long)st.draws,(unsigned long long)st.prims,(unsigned long long)st.tex_uploads,(unsigned long long)st.tex_hits,st.tex_hash_bytes/1048576.0,
         (unsigned long long)st.vs_compiles,(unsigned long long)st.ps_compiles,(unsigned long long)st.clears,(unsigned long long)st.blits,(unsigned long long)st.readbacks,
@@ -832,6 +1142,25 @@ void lean_d3d_report(void){
  * raises a one-shot guard fault that src/main.c logs with the reader. */
 void lean_d3d_guard_surfaces(void){
     static int on=-1;static unsigned frame;
+    lean_frame_no++;lean_draw_no=0;
+    {   /* LEAN_GAMMA_GUARD=1 (diagnostic): once a second, guard the NV2A RAMDAC
+         * pages (0xFD680000 PRAMDAC, 0xFD681000 PRMDIO/VGA DAC ports) so the
+         * first access to each after re-arming is logged with its code site. */
+        static int g=-1;static unsigned gf;
+        if(g<0){const char *v=getenv("LEAN_GAMMA_GUARD");g=v&&*v=='1';if(g)LOG("[LEAN-GUARD] RAMDAC guard pages on\n");}
+        if(g&&!(gf++%50))for(uint32_t pg=0xFD680000u;pg<=0xFD681000u;pg+=0x1000){
+            extern ptrdiff_t xbox_GetMemoryOffset(void);uint8_t *p=(uint8_t*)((uintptr_t)xbox_GetMemoryOffset()+pg);MEMORY_BASIC_INFORMATION mbi;DWORD old;
+            if(p&&VirtualQuery(p,&mbi,sizeof mbi)&&mbi.State==MEM_COMMIT&&!(mbi.Protect&(PAGE_GUARD|PAGE_NOACCESS))){
+                static int told;
+                if(told++<2){   /* read the registers before arming the guard */
+                    const uint8_t *r0=(const uint8_t*)((uintptr_t)xbox_GetMemoryOffset()+0xFD680600u),*r1=(const uint8_t*)((uintptr_t)xbox_GetMemoryOffset()+0xFD6813C6u);
+                    LOG("[LEAN-GUARD] page %08X protect=%lX PRAMDAC_GENERAL_CONTROL=%02X%02X%02X%02X DAC 3C6..3C9=%02X %02X %02X %02X\n",pg,(unsigned long)mbi.Protect,
+                        r0[3],r0[2],r0[1],r0[0],r1[0],r1[1],r1[2],r1[3]);
+                }
+                if(!VirtualProtect(p,4096,mbi.Protect|PAGE_GUARD,&old)&&told<3)LOG("[LEAN-GUARD] VirtualProtect %08X failed %lu\n",pg,GetLastError());
+            }
+        }
+    }
     if(on<0){const char *v=getenv("LEAN_SURFACE_GUARD");on=v&&*v=='1';if(on)LOG("[LEAN-GUARD] surface guard pages on\n");}
     if(!on||!ready||(++frame%25))return;
     for(unsigned i=0;i<MAX_RT;i++){
@@ -846,6 +1175,25 @@ void lean_d3d_guard_surfaces(void){
     }
 }
 /* Which resident surface (if any) holds guest address va; for the guard log. */
+unsigned lean_d3d_frame_no(void){return lean_frame_no;}
+/* Diagnostic: save a resident colour surface as BMP (LEAN_CAPTURE_RTS). */
+void lean_d3d_dump_rt(uint32_t addr,const char *path){
+    GAME_LOCK();
+    RT *r=NULL;for(unsigned i=0;i<MAX_RT;i++)if(rts[i].tex&&!rts[i].depth&&rts[i].addr==addr){r=&rts[i];break;}
+    if(r){D3D11_TEXTURE2D_DESC sd;ID3D11Texture2D_GetDesc(r->tex,&sd);
+        sd.Usage=D3D11_USAGE_STAGING;sd.BindFlags=0;sd.CPUAccessFlags=D3D11_CPU_ACCESS_READ;sd.MiscFlags=0;ID3D11Texture2D *stg=NULL;
+        if(SUCCEEDED(ID3D11Device_CreateTexture2D(dev,&sd,NULL,&stg))){D3D11_MAPPED_SUBRESOURCE m;
+            ID3D11DeviceContext_CopyResource(ctx,(ID3D11Resource*)stg,(ID3D11Resource*)r->tex);
+            if(SUCCEEDED(ID3D11DeviceContext_Map(ctx,(ID3D11Resource*)stg,0,D3D11_MAP_READ,0,&m))){
+                FILE *fo=fopen(path,"wb");
+                if(fo){unsigned char hd[54]={0};uint32_t W=sd.Width,H=sd.Height,size=54+W*H*4,off=54,dib=40;int32_t ht=-(int32_t)H;uint16_t pl=1,bits=32;
+                    memcpy(hd,"BM",2);memcpy(hd+2,&size,4);memcpy(hd+10,&off,4);memcpy(hd+14,&dib,4);memcpy(hd+18,&W,4);memcpy(hd+22,&ht,4);memcpy(hd+26,&pl,2);memcpy(hd+28,&bits,2);
+                    fwrite(hd,1,54,fo);for(uint32_t y=0;y<H;y++)fwrite((uint8_t*)m.pData+y*m.RowPitch,4,W,fo);fclose(fo);}
+                ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)stg,0);}
+            ID3D11Texture2D_Release(stg);}}
+    else LOG("[LEAN-RT] dump %08X: no resident surface\n",addr);
+    CTX_UNLOCK();
+}
 int lean_d3d_surface_at(uint32_t va,uint32_t *base,unsigned *w,unsigned *h,unsigned *depth){
     for(unsigned i=0;i<MAX_RT;i++){RT *r=&rts[i];if(!r->tex)continue;
         if(va>=r->addr&&va<r->addr+r->pitch*r->h){*base=r->addr;*w=r->w;*h=r->h;*depth=r->depth;return 1;}}
@@ -854,3 +1202,6 @@ int lean_d3d_surface_at(uint32_t va,uint32_t *base,unsigned *w,unsigned *h,unsig
 
 /* Direct3D presentation into the game window (shares dev, ctx and rts). */
 #include "lean_present.inc"
+/* In-between frames (LEAN_INTERP=1): recorded here, replayed on its own thread. */
+#include "lean_interp.inc"
+

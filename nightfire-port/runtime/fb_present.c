@@ -80,6 +80,7 @@ void xbox_FramebufferPublish(uint32_t address,uint32_t row)
                          staging,NF_FRAME_BYTES,&read) && read==NF_FRAME_BYTES) {
         memcpy(pixels,staging,NF_FRAME_BYTES);
         captured=1; captured_address=address;published_frames++;
+        {extern void nightfire_session242_frame(void);nightfire_session242_frame();} /* checkpoint242 crash capture: frame counter only */
         if(published_frames%100==0) {
             const char *prefix=getenv("RECOMP_FB_DUMP");
             if(prefix) {char name[MAX_PATH];snprintf(name,sizeof name,"%s-flip-%u.bmp",prefix,published_frames);nf_frame_write_bmp(name,pixels);}
