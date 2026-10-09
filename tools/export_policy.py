@@ -29,7 +29,7 @@ NATIVE_GROUPS = {
     'native-action': ('nightfire-port-native/', 'native/action/'),
     'native-launch': ('native-driving/', 'native/launchers/'),
 }
-ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json'}
+ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json', '.cmake'}
 SECRET = re.compile(
     rb'[A-Z]:[\\/]+Users[\\/]+|/' rb'Users/[^/\s]+/|/' rb'home/[^/\s]+/|'
     rb'-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|'
@@ -61,7 +61,8 @@ def check_destination(name: str) -> None:
 
 def check_text(name: str, data: bytes) -> None:
     check_destination(name)
-    if len(data) > 260_000 and name != 'SOURCE-MANIFEST.json':
+    # 270 kB: native/driving/runtime/kernel_bridge.c (261 kB) was reviewed on 2026-10-09.
+    if len(data) > 270_000 and name != 'SOURCE-MANIFEST.json':
         raise ValueError(f'oversized text requires separate review: {name}')
     if b'\0' in data or data.startswith((b'MZ', b'XBEH', b'BM', b'PK\x03\x04', b'DDS ', b'\x89PNG')):
         raise ValueError(f'binary content: {name}')

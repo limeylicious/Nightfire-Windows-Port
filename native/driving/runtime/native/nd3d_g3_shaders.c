@@ -1,0 +1,438 @@
+/* Native D3D, group 3: vertex/pixel shaders and shader constants.
+ *
+ * Spec: native-driving/phase2/specs/G3-shaders-constants.md. Reference: the
+ * recompiled originals in src/recomp/gen/recomp_0017.c (sub_0016A790 ...
+ * sub_0016B160). Where the spec and the recompiled C differ, the recompiled C
+ * is followed and the difference is marked ND3D-CHECK.
+ *
+ * Each routine keeps the original's CPU-side bookkeeping (device fields at
+ * dev+0x370..0x388, dev+0x20D8, dev+0x4AC, the flags at dev+8, the constant
+ * shadow dev+0xC58 = 0x176528, g_RenderState mirrors, dirty bits 0x175424,
+ * stack pops). The push-buffer mechanics are gone; the words the original
+ * computed go to:
+ *   0xB00 program words         -> nd3d_vp_program_words(load slot, ...)
+ *   0xB80 constant words        -> nd3d_vp_constants(constant slot, ...)
+ *   0x1E9C / 0x1EA4 load slots  -> tracked here, passed to the two calls above
+ *   0x1EA0 program start        -> nd3d_vp_start()
+ *   0x1E94 execution mode       -> nd3d_vp_mode()
+ *   0x1940+4k VERTEX_DATA4UB    -> nd3d_attr(k, bytes low..high / 255, 0)
+ *   everything else (combiner words, 0x1E98, 0x17F8, 0x181C, 0x840.., 0x9D0..)
+ *                               -> ND3D_SET at the original method slot.
+ *
+ * Calls to other routines, guest ABI through nd3d_call:
+ *   0x167F80 viewport constants + clip range  ECX = dev, EDX = put -> EAX = EDX  (group 1)
+ *   0x16AC90 XYZRHW pass-through program       ECX = dev, plain ret             (group 1)
+ *   0x167F30 bump-env matrices                 ECX = dev, EDX = put -> EAX = EDX  (group 1)
+ *   0x1678A0 SetRenderState_TextureFactor      stdcall, 1 argument, ret 4
+ *   0x16A150 build the global FVF shader object 0x1786D8, stdcall 2 args (recompiled, CPU only)
+ *   0x16A290 program/constant shadow walk, stdcall 2 args (recompiled, CPU only; non-pure only)
+ *   0x16AA50 / 0x16AAB0 Load / Select (this file, through their glue entries)
+ * The helpers that took the push-buffer pointer in EDX get the current put
+ * pointer (dev+0); it is never advanced, so their EAX is not stored back.
+ *
+ * SetVertexShaderConstantNotInline 0x16A980 stays recompiled (CPU shadow copy,
+ * skipped on this pure device) and calls 0x16A8A0 below. */
+#include "nd3d_internal.h"
+
+void sub_0016A150(void);   /* FVF code -> global vertex shader object (CPU only) */
+void sub_0016A290(void);   /* LoadVertexShader's shadow walk (CPU only) */
+void sub_001678A0(void);   /* D3DDevice_SetRenderState_TextureFactor */
+void sub_0016AA50(void);   /* D3DDevice_LoadVertexShader (n_0016AA50 below) */
+void sub_0016AAB0(void);   /* D3DDevice_SelectVertexShader (n_0016AAB0 below) */
+
+#define DEV_PS          0x370u    /* current pixel shader object (NULL = fixed-function combiners) */
+#define DEV_PS_FC       0x374u    /* PSDEF FinalCombinerInputsABCD | EFG of the current PS */
+#define DEV_PS_TEXADJ   0x378u    /* PSDEF PSFinalCombinerConstants & 0x100 */
+#define DEV_PS_TEXMODES 0x37Cu    /* PSDEF PSTextureModes */
+#define DEV_VS          0x380u    /* current vertex shader object */
+#define DEV_VS_HANDLE   0x384u    /* current vertex shader handle (or FVF code) */
+#define DEV_VS_START    0x388u    /* current program start address */
+#define DEV_PS_CONST    0x4ACu    /* PS constant r, packed ARGB (+4*r) */
+#define DEV_CONST_MODE  0x20D8u   /* shader constant mode without bit 0x10 */
+#define DEVF_PURE       0x10u     /* dev+8: pure device, shadow copies skipped (the game sets it) */
+#define DEVF_NORESERVED 0x200u    /* dev+8: D3DSCM_NORESERVEDCONSTANTS */
+
+#define VS_CONST_SHADOW 0x00176528u   /* dev+0xC58: float[192][4] by Kelvin slot */
+#define FVF_OBJECT      0x001786D8u   /* global vertex shader object used for FVF handles */
+#define RS_TEXTUREFACTOR 0x00175878u  /* g_RenderState[148] */
+#define RS_PSTEXMODES   0x00175848u   /* g_RenderState[136], complex PSTextureModes */
+#define RS_PSCONST0     0x00175650u   /* g_RenderState[10+k], stage k C0 */
+#define RS_PSCONST1     0x00175670u   /* g_RenderState[18+k], stage k C1 */
+#define RS_PSFC0        0x001756D4u   /* g_RenderState[43] */
+#define RS_PSFC1        0x001756D8u   /* g_RenderState[44] */
+#define PS_NIBBLE_TABLE 0x001D35A0u   /* r * 0x11111111 for r = 0..15 */
+#define PS_ONES         0x001D3580u   /* {1,1,1,1} (MINPS operand) */
+#define PS_CLAMP_LO     0x00242CC0u   /* MAXPS operand (BSS; taken as zero) */
+#define PS_255          0x001D3590u   /* {255,255,255,255} (MULPS operand) */
+#define VS_RESERVED_CONSTS 0x001742E0u /* 12 floats for slots 60..62 */
+#define IDENTITY_4X4    0x00174290u
+
+#define VP_PROGRAM_SLOTS  136u
+#define VP_CONSTANT_SLOTS 192u
+
+#define G3_LOG(limit, ...) do { static unsigned n_; if (n_ < (limit)) { n_++; nd3d_log(__VA_ARGS__); } } while (0)
+
+/* The hardware's TRANSFORM_CONSTANT_LOAD pointer as left by the routines in
+ * this file (last 0x1EA4 value plus the constants written since). Only used if
+ * a shader image sends constant words before its own 0x1EA4, which images
+ * built by CreateVertexShader never do (the first CONST token always emits one). */
+static unsigned hw_const_load;
+
+/* ---------------------------------------------------- vertex program sinks */
+
+/* `nwords` program words starting at instruction *load; the load pointer
+ * advances one instruction per 4 words, as the hardware's does. */
+static void route_program(unsigned *load, const uint32_t *w, uint32_t nwords)
+{
+    uint32_t n = nwords / 4u;
+    if (nwords & 3u)   /* ND3D-CHECK: partial instruction (never built by D3D); its words are dropped. */
+        G3_LOG(8, "ND3D-CHECK g3: %u program words are not whole instructions; %u trailing words dropped\n",
+               nwords, nwords & 3u);
+    if (n && *load < VP_PROGRAM_SLOTS) {
+        uint32_t fit = VP_PROGRAM_SLOTS - *load;
+        if (n > fit) G3_LOG(8, "g3: program load %u+%u runs past slot 135\n", *load, n);
+        nd3d_vp_program_words(*load, w, n < fit ? n : fit);
+    } else if (n) G3_LOG(8, "g3: program load at slot %u ignored (136 slots)\n", *load);
+    *load += n;
+}
+
+/* `nwords` constant words starting at slot *slot; the pointer advances one
+ * slot per 4 words. Slots past 191 are logged, never written. */
+static void route_constants(unsigned *slot, const uint32_t *w, uint32_t nwords)
+{
+    uint32_t n = nwords / 4u;
+    if (nwords & 3u)   /* ND3D-CHECK: partial vec4 (the game always passes Count*4); its words are dropped. */
+        G3_LOG(8, "ND3D-CHECK g3: %u constant words are not whole vec4s; %u trailing words dropped\n",
+               nwords, nwords & 3u);
+    if (n && *slot < VP_CONSTANT_SLOTS) {
+        uint32_t fit = VP_CONSTANT_SLOTS - *slot;
+        if (n > fit) G3_LOG(8, "g3: constants %u+%u run past slot 191\n", *slot, n);
+        nd3d_vp_constants(*slot, w, n < fit ? n : fit);
+    } else if (n) G3_LOG(8, "g3: constant slot %u (+%u) above 191 ignored\n", *slot, n);
+    *slot += n;
+}
+
+/* A vertex shader object stores its microcode and declaration constants as a
+ * pre-built command image at obj+0x114, obj+0xC DWORDs long (spec 4.1, 6.1):
+ *   (k<<18)|0xB00, k microcode words ...   (k <= 32, program words)
+ *   0x41EA4, slot                          (constant load pointer, one per CONST token)
+ *   ((m*4)<<18)|0xB80, m*4 data words ...  (m <= 8, constants)
+ * LoadVertexShader originally copied that image verbatim into the push
+ * buffer. Here the image is only read as the game's shader data: its headers
+ * are walked to find the program and constant words, which are routed exactly
+ * where the hardware's auto-incrementing load pointers would have put them.
+ * Nothing is executed. Only the obj+0xC DWORDs the original copied are read. */
+static void route_shader_image(uint32_t obj, unsigned *load)
+{
+    uint32_t img = obj + 0x114u, ndw = G32(obj + 0xCu), i = 0;
+    unsigned cslot = hw_const_load;
+    int have_cslot = 0;
+    while (i < ndw) {
+        uint32_t hdr = G32(img + 4u * i++);
+        uint32_t m = hdr & 0x1FFCu, n = (hdr >> 18) & 0x7FFu;
+        if (!hdr) continue;                         /* a zero word is a no-op header */
+        if (hdr & 0xE003E003u) {                    /* jump/call/non-increasing/subchannel: never built by D3D */
+            G3_LOG(8, "ND3D-CHECK g3: shader %08X image word %u header %08X not understood; rest skipped\n",
+                   obj + 1u, i - 1u, hdr);
+            break;
+        }
+        if (n > ndw - i) {                          /* the original copied only obj+0xC DWORDs */
+            G3_LOG(8, "ND3D-CHECK g3: shader %08X image header %08X runs past its %u DWORDs\n", obj + 1u, hdr, ndw);
+            n = ndw - i;
+        }
+        const uint32_t *d = (const uint32_t *)ND3D_GPTR(img + 4u * i);
+        if (m >= 0xB00u && m < 0xB80u && !(m & 0xFu) && m + 4u * n <= 0xB80u)
+            route_program(load, d, n);
+        else if (m >= 0xB80u && m < 0xC00u && !(m & 0xFu) && m + 4u * n <= 0xC00u) {
+            if (!have_cslot)   /* ND3D-CHECK: relies on the pointer as this file last left it. */
+                G3_LOG(8, "ND3D-CHECK g3: shader %08X sends constants before 0x1EA4; using slot %u\n", obj + 1u, cslot);
+            route_constants(&cslot, d, n);
+        } else if (m == 0x1EA4u && n == 1u) {
+            cslot = d[0]; have_cslot = 1;
+        } else if (n)
+            G3_LOG(8, "ND3D-CHECK g3: shader %08X image header %08X (method %X) not routed\n", obj + 1u, hdr, m);
+        i += n;
+    }
+    hw_const_load = cslot;
+}
+
+/* VERTEX_DATA4UB slot k: the current value of attribute k (used when the
+ * program reads a disabled input). Bytes from the lowest up are x, y, z, w. */
+static void attr_4ub(unsigned k, uint32_t v)
+{
+    float f[4] = { (float)(v & 255u) / 255.0f, (float)((v >> 8) & 255u) / 255.0f,
+                   (float)((v >> 16) & 255u) / 255.0f, (float)(v >> 24) / 255.0f };
+    nd3d_attr(k, f, 0);
+}
+
+/* ------------------------------------------------- vertex shader constants */
+
+/* 0x16A790 D3DDevice_SetVertexShaderConstant1: ECX = Kelvin slot (register+96,
+ * biased by the game wrapper 0x0F43A0), EDX = 4 floats; plain ret.
+ * The shadow at 0x176528+16*slot is written always (also on a pure device). */
+void n_0016A790(void)
+{
+    uint32_t slot = g_ecx, src = g_edx, w[4], sh = (slot << 4) + VS_CONST_SHADOW;
+    for (unsigned i = 0; i < 4; i++) w[i] = G32(src + 4u * i);
+    for (unsigned i = 0; i < 4; i++) G32(sh + 4u * i) = w[i];
+    hw_const_load = slot;                                   /* 0x1EA4 = slot */
+    route_constants(&hw_const_load, w, 4);                  /* 0xB80 x4 */
+    RET(0, 0);
+}
+
+/* 0x16A7F0 D3DDevice_SetVertexShaderConstant4: as Constant1 with 4 slots
+ * (64 bytes). The original reads all 64 bytes (MMX) before writing. */
+void n_0016A7F0(void)
+{
+    uint32_t slot = g_ecx, src = g_edx, w[16], sh = (slot << 4) + VS_CONST_SHADOW;
+    for (unsigned i = 0; i < 16; i++) w[i] = G32(src + 4u * i);
+    for (unsigned i = 0; i < 16; i++) G32(sh + 4u * i) = w[i];
+    hw_const_load = slot;
+    route_constants(&hw_const_load, w, 16);
+    RET(0, 0);
+}
+
+/* 0x16A8A0 D3DDevice_SetVertexShaderConstantNotInlineFast: ECX = slot,
+ * EDX = data, stack dwordCount; ret 4. No shadow. The original's 16-DWORD
+ * chunks all follow the auto-incrementing constant pointer, so the result is
+ * dwordCount words from `slot` onward. */
+void n_0016A8A0(void)
+{
+    uint32_t slot = g_ecx, src = g_edx, count = ARG(1);
+    hw_const_load = slot;
+    if (count) route_constants(&hw_const_load, (const uint32_t *)ND3D_GPTR(src), count);
+    RET(0, 4);
+}
+
+/* ---------------------------------------------------------- vertex shaders */
+
+/* 0x16AA50 D3DDevice_LoadVertexShader(Handle, Address), stdcall, ret 8.
+ * Internal: called only by SetVertexShader (Address 0). */
+void n_0016AA50(void)
+{
+    uint32_t dev = nd3d_device(), handle = ARG(1), addr = ARG(2), obj = handle - 1u;
+    if (!(G8(dev + DEV_FLAGS) & DEVF_PURE))
+        nd3d_call(sub_0016A290, 0, 0, 2, obj, addr);       /* program/constant shadows (skipped on this game's pure device) */
+    if (G32(obj + 4u) & 0x09u)   /* 'xw'/'xs' programs: constant writes from microcode are not translated */
+        G3_LOG(8, "g3: vertex shader %08X flags %X (write-enabled or state program)\n", handle, G32(obj + 4u));
+    unsigned load = addr;                                   /* 0x1E9C = Address */
+    route_shader_image(obj, &load);
+    RET(0, 8);
+}
+
+/* 0x16AAB0 D3DDevice_SelectVertexShader(Handle, Address), stdcall, ret 8.
+ * Internal: called only by SetVertexShader (Address 0). */
+void n_0016AAB0(void)
+{
+    uint32_t dev = nd3d_device(), handle = ARG(1), addr = ARG(2);
+    if (handle) {
+        uint32_t obj = handle - 1u;
+        G32(dev + DEV_VS_HANDLE) = handle;
+        G32(dev + DEV_VS) = obj;
+        G32(ND3D_DIRTY) |= 0x1070u;
+        nd3d_vp_mode(6);                                    /* program, privileged range */
+        ND3D_SET(0x1E98, G32(obj + 4u) & 1u);               /* constant write enable */
+        nd3d_call(nd3d_h_00167F80, dev, G32(dev + DEV_PUT), 0);
+    }
+    nd3d_vp_start(addr);                                    /* 0x1EA0 */
+    G32(dev + DEV_VS_START) = addr;
+    RET(0, 8);
+}
+
+/* 0x16AB30 D3DDevice_SetShaderConstantMode(Mode), stdcall, ret 4. */
+void n_0016AB30(void)
+{
+    static const uint32_t matrix_methods[4] = { 0x840u, 0x880u, 0x8C0u, 0x900u };
+    uint32_t mode = ARG(1), dev = nd3d_device(), f = G32(dev + DEV_FLAGS);
+    f = (mode & 0x10u) ? (f | DEVF_NORESERVED) : (f & ~DEVF_NORESERVED);
+    mode &= ~0x10u;
+    G32(dev + DEV_FLAGS) = f;
+    G32(dev + DEV_CONST_MODE) = mode;
+    if (mode) RET(mode, 4);                                 /* the original returns with EAX = mode */
+    G32(ND3D_DIRTY) |= 0x1600u;
+    /* Slots 60..62 = (0,0.5,1,2), (-1,0,1,2), (0,0,-1,0) from the XBE table. */
+    hw_const_load = 0x3Cu;
+    route_constants(&hw_const_load, (const uint32_t *)ND3D_GPTR(VS_RESERVED_CONSTS), 12);
+    /* Four 16-word blocks of the identity matrix, transposed as 0x16C640 does
+     * (word j = m[(j%4)*4 + j/4]), then the 4-word block at 0x9D0.
+     * ND3D-CHECK: these are kept as plain state only. On the hardware they may
+     * alias transform constants (texgen planes / texture matrices / fog plane);
+     * today's renderer does not alias them either. */
+    for (unsigned b = 0; b < 4; b++)
+        for (unsigned j = 0; j < 16; j++)
+            ND3D_SET(matrix_methods[b] + 4u * j, G32(IDENTITY_4X4 + 4u * ((j & 3u) * 4u + (j >> 2))));
+    ND3D_SET(0x9D0, 0);
+    ND3D_SET(0x9D4, 0);
+    ND3D_SET(0x9D8, 0x3F800000u);
+    ND3D_SET(0x9DC, 0);
+    RET(0, 4);
+}
+
+/* 0x16AC30 (internal) raw program load at slot 0: (pDwords, dwordCount),
+ * stdcall, ret 8. Used by Swap's anti-aliasing blit helpers (the 2-instruction
+ * blit program 0x174270). It overwrites program slots 0.. until the next
+ * SetVertexShader reloads them; the renderer translates from the program
+ * memory itself, so that hardware effect is reproduced. */
+void n_0016AC30(void)
+{
+    uint32_t src = ARG(1), count = ARG(2);
+    unsigned load = 0;                                      /* 0x1E9C = 0 */
+    if (count) route_program(&load, (const uint32_t *)ND3D_GPTR(src), count);
+    RET(0, 8);
+}
+
+/* 0x16AD90 D3DDevice_SetVertexShader(Handle), stdcall, ret 4. */
+void n_0016AD90(void)
+{
+    uint32_t handle = ARG(1), dev = nd3d_device();
+    uint32_t old = G32(dev + DEV_VS);
+    uint32_t old_flags = G32(old + 4u), old_texsizes = G32(old + 0x10u);   /* read before 0x16A150 may rebuild it */
+    uint32_t obj;
+    if (handle & 1u) obj = handle - 1u;
+    else {
+        obj = FVF_OBJECT;
+        nd3d_call(sub_0016A150, 0, 0, 2, FVF_OBJECT, handle);
+    }
+    G32(ND3D_DIRTY) |= 0x70u;
+    if (old_texsizes != G32(obj + 0x10u)) G32(ND3D_DIRTY) |= 0x400u;
+    if (old_flags != G32(obj + 4u)) G32(ND3D_DIRTY) |= 0x1600u;
+    G32(dev + DEV_VS) = obj;
+    G32(dev + DEV_VS_HANDLE) = handle;
+
+    if (G8(obj + 4u) & 0x10u) {                             /* programmable */
+        nd3d_call(sub_0016AA50, 0, 0, 2, handle, 0u);       /* LoadVertexShader(Handle, 0) */
+        nd3d_call(sub_0016AAB0, 0, 0, 2, handle, 0u);       /* SelectVertexShader(Handle, 0) */
+        RET(0, 4);
+    }
+
+    /* Fixed function (FVF or a declaration without a function). */
+    G32(dev + DEV_VS_START) = 0;
+    if (!(G32(obj + 4u) & 0x400u))  attr_4ub(3, 0xFFFFFFFFu);   /* 0x194C: v3 diffuse = white */
+    if (!(G32(obj + 4u) & 0x800u))  attr_4ub(4, 0);             /* 0x1950: v4 specular = 0 */
+    if (!(G32(obj + 4u) & 0x1000u)) attr_4ub(7, 0xFFFFFFFFu);   /* 0x195C: v7 = white */
+    if (!(G32(obj + 4u) & 0x2000u)) attr_4ub(8, 0);             /* 0x1960: v8 = 0 */
+    if (G8(obj + 4u) & 2u) {                                /* XYZRHW: pass-through program */
+        G3_LOG(4, "g3: XYZRHW pass-through vertex shader (handle %08X); not expected in this game\n", handle);
+        nd3d_vp_start(0);                                   /* 0x1EA0 = 0 */
+        nd3d_vp_mode(6);                                    /* 0x1E94 = 6 */
+        ND3D_SET(0x1E98, 0);
+        nd3d_call(nd3d_h_00167F80, dev, G32(dev + DEV_PUT), 0);
+        nd3d_call(nd3d_h_0016AC90, dev, G32(dev + DEV_PUT), 0);
+    } else {
+        nd3d_vp_mode(4);                                    /* 0x1E94 = 4: fixed function */
+        nd3d_call(nd3d_h_00167F80, dev, G32(dev + DEV_PUT), 0);
+    }
+    RET(0, 4);
+}
+
+/* ------------------------------------------------------------ pixel shaders */
+
+/* 0x16AF60 D3DDevice_SetPixelShader(pPS), stdcall, ret 4.
+ * pPS = {RefCount, OwnedFlag, pPSDef, inline D3DPIXELSHADERDEF}. The PSDEF
+ * fields go straight to the combiner slots (spec table 6.4). PSTextureModes
+ * (0x1E70) and the default final combiner are sent lazily by the state group
+ * (dirty 0x4000 / 0x2000). */
+void n_0016AF60(void)
+{
+    uint32_t dev = nd3d_device(), ps = ARG(1), old = G32(dev + DEV_PS);
+    G32(dev + DEV_PS) = ps;
+    if (!ps) {                                              /* fixed-function combiners */
+        G32(ND3D_DIRTY) |= 0x4800u;
+        if (G32(dev + DEV_PS_FC)) G32(ND3D_DIRTY) |= 0x2000u;   /* dev+0x374 is left as it is */
+        uint32_t tf = G32(RS_TEXTUREFACTOR);
+        nd3d_call(sub_001678A0, tf, 0, 1, tf);              /* SetRenderState_TextureFactor(RS[148]) */
+        nd3d_call(nd3d_h_00167F30, dev, G32(dev + DEV_PUT), 0);   /* bump-env, sources 0x175480+0x80*i */
+        ND3D_SET(0x1E78, 0x210000u);
+        RET(0, 4);
+    }
+    uint32_t def = G32(ps + 8u);
+    uint32_t fc = G32(def + 0x24u) | G32(def + 0x20u);
+    if (!fc && G32(dev + DEV_PS_FC)) G32(ND3D_DIRTY) |= 0x2000u;
+    G32(dev + DEV_PS_FC) = fc;
+    G32(dev + DEV_PS_TEXADJ) = G32(G32(ps + 8u) + 0xECu) & 0x100u;
+    def = G32(ps + 8u);
+    G32(dev + DEV_PS_TEXMODES) = G32(def + 0xD8u);
+    G32(ND3D_DIRTY) |= 0x4000u;
+    if (!(G8(dev + DEV_FLAGS) & DEVF_PURE)) {               /* g_RenderState PS mirror (skipped on a pure device) */
+        for (unsigned i = 0; i < 0x39u; i++) G32(ND3D_RENDERSTATE + 4u * i) = G32(def + 4u * i);
+        G32(RS_PSTEXMODES) = G32(def + 0xD8u);
+    }
+    if (!old) nd3d_call(nd3d_h_00167F30, dev, G32(dev + DEV_PUT), 0);   /* bump-env, sources 0x175500+0x80*i */
+    for (unsigned k = 0; k < 8; k++)  ND3D_SET(0x260u + 4u * k, G32(def + 4u * k));          /* PSAlphaInputs */
+    for (unsigned k = 0; k < 32; k++) ND3D_SET(0xA60u + 4u * k, G32(def + 0x28u + 4u * k));  /* PSConstant0/1, PSAlphaOutputs, PSRGBInputs */
+    ND3D_SET(0x17F8, G32(def + 0xA8u));                     /* PSCompareMode */
+    ND3D_SET(0x1E20, G32(def + 0xACu));                     /* PSFinalCombinerConstant0 */
+    ND3D_SET(0x1E24, G32(def + 0xB0u));                     /* PSFinalCombinerConstant1 */
+    for (unsigned k = 0; k < 9; k++)  ND3D_SET(0x1E40u + 4u * k, G32(def + 0xB4u + 4u * k)); /* PSRGBOutputs, PSCombinerCount */
+    ND3D_SET(0x1E74, G32(def + 0xDCu));                     /* PSDotMapping */
+    ND3D_SET(0x1E78, G32(def + 0xE0u));                     /* PSInputTexture */
+    if (G32(dev + DEV_PS_FC)) {
+        ND3D_SET(0x288, G32(def + 0x20u));                  /* PSFinalCombinerInputsABCD */
+        ND3D_SET(0x28C, G32(def + 0x24u));                  /* PSFinalCombinerInputsEFG */
+    }
+    RET(0, 4);
+}
+
+/* CVTSS2SI as the x86 instruction performs it: rounding by the MXCSR mode
+ * (round to nearest even, the Xbox default and the host default), with the
+ * result 0x80000000 for NaN and out-of-range values. The recompiled C uses a
+ * truncating cast here, which is a lifter bug (0.5 packs to 127, not 128). */
+#include <xmmintrin.h>
+static uint32_t cvt_ss2si(float f)
+{
+    return (uint32_t)_mm_cvtss_si32(_mm_set_ss(f));
+}
+
+/* SetPixelShaderConstant's packing: MINPS {1}, MAXPS [0x242CC0], MULPS {255},
+ * then x<<16 | y<<8 | z | w<<24. The three vectors are read from guest memory
+ * as the original does; the math is single precision (SSE). */
+static uint32_t ps_pack(const uint32_t raw[4])
+{
+    uint32_t lane[4];
+    for (unsigned c = 0; c < 4; c++) {
+        float x, one, lo, k255;
+        uint32_t t;
+        memcpy(&x, &raw[c], 4);
+        t = G32(PS_ONES + 4u * c);     memcpy(&one, &t, 4);
+        t = G32(PS_CLAMP_LO + 4u * c); memcpy(&lo, &t, 4);
+        t = G32(PS_255 + 4u * c);      memcpy(&k255, &t, 4);
+        x = (x < one) ? x : one;       /* MINPS: the second operand on NaN or equal */
+        x = (x > lo) ? x : lo;         /* MAXPS: likewise */
+        x = (float)(x * k255);
+        lane[c] = cvt_ss2si(x);
+    }
+    return (lane[0] << 16) | (lane[1] << 8) | lane[2] | (lane[3] << 24);
+}
+
+/* 0x16B160 D3DDevice_SetPixelShaderConstant(Register, pData, Count), stdcall,
+ * ret 12. Each register is packed to ARGB8 and routed to every stage constant
+ * whose PSC0Mapping/PSC1Mapping nibble names it, and to FC0/FC1 through
+ * PSFinalCombinerConstants; register 0 also sets the eye vector (raw floats). */
+void n_0016B160(void)
+{
+    uint32_t reg = ARG(1), src = ARG(2), count = ARG(3);
+    uint32_t dev = nd3d_device(), ps = G32(dev + DEV_PS);
+    /* ND3D-CHECK: the original has no NULL check; with no pixel shader it takes
+     * the PSDEF pointer from guest address 8. The recompiled C is followed (the
+     * spec suggested skipping the mapping); this is only logged. */
+    uint32_t def = G32(ps + 8u);
+    if (!ps && count) G3_LOG(4, "ND3D-CHECK g3: SetPixelShaderConstant(%u, n=%u) with no pixel shader set\n", reg, count);
+    for (; count; count--, reg++, src += 16u) {
+        uint32_t raw[4];
+        for (unsigned c = 0; c < 4; c++) raw[c] = G32(src + 4u * c);
+        uint32_t p = ps_pack(raw);
+        G32(dev + 4u * reg + DEV_PS_CONST) = p;
+        uint32_t m = G32(PS_NIBBLE_TABLE + 4u * reg);
+        uint32_t x = m ^ G32(def + 0xE4u);                  /* PSC0Mapping */
+        for (unsigned k = 0; k < 8; k++)
+            if (!((x >> (4u * k)) & 15u)) { G32(RS_PSCONST0 + 4u * k) = p; ND3D_SET(0xA60u + 4u * k, p); }
+        x = m ^ G32(def + 0xE8u);                           /* PSC1Mapping */
+        for (unsigned k = 0; k < 8; k++)
+            if (!((x >> (4u * k)) & 15u)) { G32(RS_PSCONST1 + 4u * k) = p; ND3D_SET(0xA80u + 4u * k, p); }
+        x = m ^ G32(def + 0xECu);                           /* PSFinalCombinerConstants */
+        if (!(x & 0x0Fu)) { G32(RS_PSFC0) = p; ND3D_SET(0x1E20, p); }
+        if (!(x & 0xF0u)) { G32(RS_PSFC1) = p; ND3D_SET(0x1E24, p); }
+        if (!reg) { ND3D_SET(0x181C, raw[0]); ND3D_SET(0x1820, raw[1]); ND3D_SET(0x1824, raw[2]); }
+    }
+    RET(0, 12);
+}

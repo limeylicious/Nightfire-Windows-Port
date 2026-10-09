@@ -40,8 +40,23 @@ void driving_flip204_wait(void){
   * caller of the original queue or change its vblank/timer due-time rules. */
 #ifdef DRIVING_LEAN_RENDERER
  /* Lean: the APU interrupt also wakes this worker (lean_kernel_wake_timer). */
- HANDLE events[2]={lean_wake_event(),driving_flip204_enabled()?wake204:NULL};
- DWORD result=WaitForMultipleObjects(events[1]?2:1,events,FALSE,10);
+ /* LEAN_VBLANK_WAIT=1 (experimental, default off): also wake exactly when the next 50 Hz vblank
+  * is due, using a high-resolution timer. The plain 10 ms wait rounds up to
+  * the 15.6 ms system tick, so vblanks (and the movie frames they pace)
+  * arrived 0-15 ms late and uneven. 0 restores the plain wait. */
+ static int vw=-1;static HANDLE vt;static LARGE_INTEGER vhz;
+ if(vw<0){const char *v=getenv("LEAN_VBLANK_WAIT");vw=v&&v[0]=='1';QueryPerformanceFrequency(&vhz);
+  if(vw){vt=CreateWaitableTimerExW(NULL,NULL,0x00000002/*CREATE_WAITABLE_TIMER_HIGH_RESOLUTION*/,TIMER_ALL_ACCESS);if(!vt)vw=0;}
+  fprintf(stderr,"[LEAN] vblank wait %s\n",vw?"high-resolution":"plain 10 ms");}
+ HANDLE events[3];DWORD n=0;
+ events[n++]=lean_wake_event();if(driving_flip204_enabled())events[n++]=wake204;
+ if(vw){extern volatile long long lean_vblank_next;long long nx=lean_vblank_next;LARGE_INTEGER t;QueryPerformanceCounter(&t);
+  long long left=nx?nx-t.QuadPart:0;
+  if(left>0){if(left>vhz.QuadPart/100)left=vhz.QuadPart/100;
+   LARGE_INTEGER d;d.QuadPart=-(left*10000000LL/vhz.QuadPart);if(!d.QuadPart)d.QuadPart=-1;
+   if(SetWaitableTimer(vt,&d,0,NULL,NULL,FALSE))events[n++]=vt;}
+  else return;}
+ DWORD result=WaitForMultipleObjects(n,events,FALSE,10);
  if(result==WAIT_FAILED)stop204("timer wake wait");
 #else
  if(driving_flip204_enabled()){

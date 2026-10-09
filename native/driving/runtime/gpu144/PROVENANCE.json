@@ -1,0 +1,25 @@
+{
+  "source": "nightfire-port/runtime, existing project action renderer; notices preserved",
+  "purpose": "Unlinked D3D11 and corrected action draw-preparation foundation; no Driving DMA/AA/scene correctness claim",
+  "files": {
+    "nightfire_hardware.c": "e6c7b6cb5e4df983b51887db6a72eed79302bb1ee305e342debd948050927a1e",
+    "nightfire_hardware.h": "469c3e74d2f6c86d1f0f9786ffd613ded88f38e24a792fef1af284232ca6f71e",
+    "nightfire_vertex_program.h": "4551fe64724bccf963794c84f9d48ddfaa8515d6df7fffd8e100cda1c1c24b7f",
+    "nightfire_vertex_hlsl.h": "70e1ec6ea6d78ad72e173bee8c70ebd6da0046dce9bcf3d518d77d3982a01187",
+    "nightfire_depth_transfer.h": "fd23b6ac3a6f769fb34069d34e115dac3db1170186e255ae054dd234ad3f695f",
+    "nightfire_fog.h": "23845866e87644ab1e41029e3f18171e04f7b3630434d7660236847df535ef9e",
+    "nightfire_bytes_equal.h": "d493ec2013a3f303b9f61632235b6481441d408aeb0913bbcd7c1c83728fa629",
+    "nightfire_constant_mask.h": "c99dcdc317d8ad4f11e67912ab83d7718493ddce30e29e979cc65530024f6427",
+    "nightfire_shader_cache99.h": "d5f8c5477f495d31857459326e472e0742f187ad3e6a3e5effc1ba5c0ee0fa83",
+    "nightfire_rgba_mips129.h": "7fc36ed20691e33b9218e9aff35abe9ca322429c15ba4681cbf40d0a59e1eaee",
+    "nightfire_swizzled_shadow131.h": "e60ecb67ccf762f1866ec07d3caaf6c1fd96f66d82f6c1bff147166f47b27102",
+    "nightfire_surface_probe83.h": "4b5977a0d4fb89e6d4916d303829d75c0703e53b5aaab3f6fc47a166d97cfb7f",
+    "nightfire_depth_observe83.h": "fd83edb50372114ac320f6b5f7c0d129417b9962f037491dd96611c235b73066",
+    "nightfire_gpu_timing84.h": "8d38e8f85562218e509dd49677654f6c9a8f79c92bbb7f12678f08786e41f1be",
+    "nv2a_pb_exec.c": "8edf24e6148c1e998d9173760d5ac5bda5decdd9bd00df5afd9a60f509afab26",
+    "nightfire_depth.h": "8fefe8c4c37e4b1a41c0014d9ba874b027928c3f5108ea8f7d4d4103f2ec2ddc",
+    "nightfire_index_guard120.h": "d5bd4a0fbbc9d5742615b1a65ce4c4d3132b27582f3b72e163fbf0abfeac33ba",
+    "nightfire_texture_cache.h": "b7cee08a008ceeb4aa6d7568a81dcea3093fcb0b180c971e23366af4c226b49d",
+    "nightfire_texture_filter.h": "9da4a976b8a1b0c694a9fb085c3b80e497c427dcd4fc0b1e04c82d73be6ba668"
+  }
+}

@@ -6,6 +6,13 @@ owner currently plays. Files are copied byte for byte from the
 `nightfire-driving-lean` workspace and listed with hashes in the root
 `SOURCE-MANIFEST.json` (group `driving-lean`).
 
+**Update 2026-10-09:** changed files and new launchers, scripts and reports
+from the same workspace were added (guided play sessions, crash and freeze
+capture in `runtime/lean/lean_session.c` and `lean_hang.c`, native sound in
+`runtime/lean/lean_dsound.c`, smooth-motion interpolation in
+`runtime/lean/lean_interp.inc`). The newer native builds that grew out of this
+renderer are in [`native/`](../../native/README.md).
+
 ## What it changes
 
 The older Driving bridge copied rendered frames from the GPU back into

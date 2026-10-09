@@ -62,7 +62,7 @@ target_sources(xbox_kernel PRIVATE runtime/kernel_bridge.c runtime/kernel_path.c
 option(DRIVING_LEAN_RENDERER "Build the lean GPU-resident renderer instead of the 491 bridge" OFF)
 target_sources(xbox_kernel PRIVATE runtime/xbox_memory_layout.c)
 if(DRIVING_LEAN_RENDERER)
-    target_sources(xbox_kernel PRIVATE runtime/lean/lean_gpu.c runtime/lean/lean_d3d.c runtime/lean/lean_sampler.c)
+    target_sources(xbox_kernel PRIVATE runtime/lean/lean_gpu.c runtime/lean/lean_d3d.c runtime/lean/lean_sampler.c runtime/lean/lean_hang.c runtime/lean/lean_session.c)
     target_include_directories(xbox_kernel PRIVATE ${XBOXRECOMP_DIR}/src/d3d)
     target_compile_definitions(xbox_kernel PRIVATE DRIVING_LEAN_RENDERER=1)
     target_link_libraries(xbox_kernel PRIVATE winmm)
@@ -80,8 +80,8 @@ if(DRIVING_LEAN_RENDERER)
     target_sources(xbox_apu PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_core.c
         ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_dsp.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_vp.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_xaudio2.c)
+        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_vp.c)
+    # XAudio2 output and audio stats moved to runtime/lean/lean_audio_out.c (native audio files)
 endif()
 target_sources(xbox_kernel PRIVATE runtime/driving_permissions264.c)
 target_sources(xbox_kernel PRIVATE runtime/driving_async295.c)
@@ -169,6 +169,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # Opt-in201 bridge; only the backend translation unit, never its copied executor.
 if(DRIVING_LEAN_RENDERER)
     target_sources(${PROJECT_NAME} PRIVATE runtime/driving_present201.c runtime/driving_flip204.c runtime/driving_input224.c)
+    target_sources(${PROJECT_NAME} PRIVATE runtime/lean/lean_fire_test.c)  # test-only LEAN_FIRE_TEST
+    target_sources(${PROJECT_NAME} PRIVATE runtime/lean/lean_dsound.c runtime/lean/lean_dsound_glue.c runtime/lean/lean_audio_out.c runtime/lean/lean_audio_dsp.c)  # LEAN_AUDIO_NATIVE
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME nightfire_driving_lean)
     target_compile_definitions(${PROJECT_NAME} PRIVATE DRIVING_LEAN_RENDERER=1)
 else()
