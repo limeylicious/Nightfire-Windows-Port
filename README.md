@@ -35,6 +35,12 @@ These are switched on only by the "overlay" launchers. The plain launchers stay 
 
 The goal remains a faithful version of the PAL game on Windows. Online multiplayer is not implemented, and nothing in this repository starts network play.
 
+## End goal
+
+A simple package for players: unpack it, copy the game folder from your own PAL disc into the folder it names, and play. The whole game would be there: both engines running natively, Action and Driving in one window, multiplayer, and the optional PC settings.
+
+The package itself would contain no game content. The recompiled game code is a translation of the game, so a set-up step would generate and build it on the player's own PC from their copy, and create Driving's save storage fresh.
+
 ## What is in this repository
 
 - [native/](native/README.md): the native Action and Driving sources, launchers and the in-game settings page (new in this update).
