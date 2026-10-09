@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 515,
+  "file_count": 510,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -2945,13 +2945,6 @@
       "sha256": "9a35aa62b7b6c137354b40e7c8d65927698d48e0a77bcdbe1362f8e5af5957e9"
     },
     {
-      "path": "nightfire-port/runtime/nightfire_adpcm.h",
-      "source": "nightfire-port/runtime/nightfire_adpcm.h",
-      "group": "normal-source",
-      "bytes": 3747,
-      "sha256": "d23379f94b1775d8bd28a9df0363eff74851ae940061188f0158dbc4cbe1c9e6"
-    },
-    {
       "path": "nightfire-port/runtime/nightfire_audio_spatial.h",
       "source": "nightfire-port/runtime/nightfire_audio_spatial.h",
       "group": "normal-source",
@@ -3510,34 +3503,6 @@
       "group": "driving-lean",
       "bytes": 241091,
       "sha256": "25ce2aa31514d4d9a0a5e793e8b661611e8717a489cc26e5315921304fcc7b85"
-    },
-    {
-      "path": "experiments/driving-lean/runtime/lean/apu/apu_core.c",
-      "source": "nightfire-driving-lean/runtime/lean/apu/apu_core.c",
-      "group": "driving-lean",
-      "bytes": 38044,
-      "sha256": "96363cf715cf5dbce5ba7e70079c4608900bbe7584d17cf02d351ab556ee48ff"
-    },
-    {
-      "path": "experiments/driving-lean/runtime/lean/apu/apu_dsp.c",
-      "source": "nightfire-driving-lean/runtime/lean/apu/apu_dsp.c",
-      "group": "driving-lean",
-      "bytes": 8838,
-      "sha256": "58c931563136cdc05e7542e773f05748ed88df26a945ffc8e61d6f0905852c29"
-    },
-    {
-      "path": "experiments/driving-lean/runtime/lean/apu/apu_vp.c",
-      "source": "nightfire-driving-lean/runtime/lean/apu/apu_vp.c",
-      "group": "driving-lean",
-      "bytes": 61660,
-      "sha256": "5b18f3ffda93720ed68d8bcd76b571e80c0c32130391699d95a1af5193a05b95"
-    },
-    {
-      "path": "experiments/driving-lean/runtime/lean/apu/apu_xaudio2.c",
-      "source": "nightfire-driving-lean/runtime/lean/apu/apu_xaudio2.c",
-      "group": "driving-lean",
-      "bytes": 7123,
-      "sha256": "836bb3cde26982e77dd97ff7a373141ae75c1ff3f9e01d9273a7b9600e061547"
     },
     {
       "path": "experiments/driving-lean/runtime/lean/lean_d3d.c",
