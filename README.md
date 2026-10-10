@@ -4,6 +4,9 @@ An AI-developed, standalone Windows static-recompilation project for the origina
 
 **This repository is a reviewed source snapshot, not a downloadable game or a complete build checkout.** The original Xbox executables, game data, media, generated translations, extracted shader/program tables, local logs, captures and release packages are deliberately excluded. Anyone building locally must supply their own compatible PAL copy and regenerate the excluded output. This repository does not grant rights to the game.
 
+## A Note from the author
+Yes, this is entirely done with AI. I simply wanted to see how feasible it was to decompile a game of my childhood. I wanted to transform the original game into something we could still play as we remember it as well as one that's a bit more modern, with nice QOL extras and things like online multiplayer. I personally don't want to claim any credit for anything here bar being a testing lab-rat for certain issues or moments that needed a moving hand. I personally give consent to reuse this for **anything** you desire. I didn't make the code, I have no right to tell anyone how to use it.
+
 ## Current progress (October 9, 2026)
 
 Both of the game's engines now run as native Windows code, without emulating the Xbox graphics or sound chips. The newest source is in [native/](native/README.md).
