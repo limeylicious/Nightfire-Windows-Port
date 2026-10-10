@@ -2259,35 +2259,6 @@ int driving_flip204_consumed(uint32_t context,uint32_t ticket)
 extern void driving_flip204_tick(void);
 extern void driving_flip204_wait(void);
 #ifdef DRIVING_LEAN_RENDERER
-/* Lean build: deliver the APU interrupt (MCPX IRQ 5). DirectSound traps the
- * front end on idle voices and signals buffer notifies through it; with no
- * delivery the APU stays trapped and voices never advance. Level-triggered:
- * called on every timer pass while the line is asserted. LEAN_APU_IRQ=0
- * disables. */
-extern int lean_apu_irq_pending(void);
-#define MCPX_APU_VECTOR 5u
-static void lean_apu_interrupt_tick(void)
-{
-    static int on = -1;
-    static unsigned long long raised, claimed;
-    if (on < 0) { const char *v = getenv("LEAN_APU_IRQ"); on = !(v && v[0] == '0'); }
-    if (!on || !lean_apu_irq_pending() || !xbox_GetConnectedInterrupt(MCPX_APU_VECTOR))
-        return;
-    static unsigned long long deferred;
-    if (lean_irql_enabled() && !TryEnterCriticalSection(&lean_interrupt_cs)) {
-        deferred++; return;   /* a KeSynchronizeExecution is running; next pass */
-    }
-    int saved_irql = lean_irql_shadow; lean_irql_shadow = 28;
-    int r = kernel_raise_interrupt(MCPX_APU_VECTOR);
-    lean_irql_shadow = saved_irql;
-    if (lean_irql_enabled()) LeaveCriticalSection(&lean_interrupt_cs);
-    raised++; if (r > 0) claimed++;
-    if (deferred && !(raised % 2000)) fprintf(stderr, "[LEAN-IRQL] APU ISR deferred %llu times\n", deferred);
-    if (raised <= 8 || !(raised % 2000))
-        fprintf(stderr, "[LEAN-APU] interrupt raised=%llu claimed=%llu last=%d\n", raised, claimed, r);
-}
-#endif
-#ifdef DRIVING_LEAN_RENDERER
 #include <timeapi.h>
 #pragma comment(lib, "winmm.lib")
 #endif
@@ -2751,11 +2722,6 @@ static DWORD WINAPI kernel_timer_thread(LPVOID unused)
         driving_flip204_tick();
         kernel_vblank_tick();  /* the GPU's frame clock */
         driving_flip204_tick();
-#ifdef DRIVING_LEAN_RENDERER
-        { static int nochip = -1; extern int lean_audio_no_chip(void);
-          if (nochip < 0) nochip = lean_audio_no_chip();
-          if (!nochip) lean_apu_interrupt_tick(); }   /* LEAN_AUDIO_NO_CHIP: no emulated APU, no APU interrupt */
-#endif
         kernel_drain_dpcs();   /* deferred work, before due timers */
         now = (long long)GetTickCount64();
         if (timer_precise()) now_q = timer_qpc();

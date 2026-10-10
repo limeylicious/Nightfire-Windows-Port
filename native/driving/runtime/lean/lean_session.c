@@ -29,7 +29,7 @@ extern volatile int lean_audio_peak, lean_audio_nonsilent;
 extern volatile float lean_audio_rms;
 extern void xa2_get_stats(int *queued, int *dropped, int *submitted);
 extern void xa2_get_health(int *glitches, int *min_queued);
-extern void lean_apu_state_line(char *buf, size_t n);
+extern void lean_ds_state_line(char *buf, size_t n);
 
 volatile LONG lean_mark_request;            /* mark number whose picture is still to be saved */
 volatile ULONGLONG lean_mark_flash_until;   /* window title shows "MARK n saved" until then */
@@ -245,19 +245,19 @@ void lean_session_freeze(unsigned secs, long presents)
 /* F9 from the game window (driving_present201.c). */
 void lean_session_mark(void)
 {
-    char apu[256];
+    char snd[256];
     LONG n;
     int queued = 0, dropped = 0, submitted = 0, glitches = 0, minq = 0;
     if (s_on <= 0) return;
     n = InterlockedIncrement(&lean_mark_count);
-    lean_apu_state_line(apu, sizeof apu);
+    lean_ds_state_line(snd, sizeof snd);
     xa2_get_stats(&queued, &dropped, &submitted); xa2_get_health(&glitches, &minq);
     if (s_marks) {
         EnterCriticalSection(&s_lock);
         fprintf(s_marks, "mark %ld  t=%.3f s  game_frame=%ld  presented_fps=%.1f game_fps=%.1f  audio peak=%d rms=%.1f nonsilent=%d/188 queued=%d dropped=%d glitches=%d  picture=mark-%02ld.bmp\n"
-                         "        apu: %s\n",
+                         "        sound: %s\n",
                 n, ms_now() / 1000.0, lean_present_count, s_pfps10 / 10.0, s_gfps10 / 10.0,
-                lean_audio_peak, lean_audio_rms, lean_audio_nonsilent, queued, dropped, glitches, n, apu);
+                lean_audio_peak, lean_audio_rms, lean_audio_nonsilent, queued, dropped, glitches, n, snd);
         fflush(s_marks);
         LeaveCriticalSection(&s_lock);
     }

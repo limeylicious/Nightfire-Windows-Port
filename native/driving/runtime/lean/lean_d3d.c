@@ -1046,6 +1046,8 @@ static const uint32_t *interp_cur_cmask;   /* constant rows the current draw's p
 static const int *interp_cur_prows;        /* its position-transform rows (VSE.prows) */
 static int vis_active_flag(void);          /* a visibility test is counting (diagnostics) */
 static ID3D11Buffer *interp_cur_vb;        /* vertex buffer the current draw used (ring or cache) */
+static const uint8_t *interp_cur_verts;    /* its vertices in memory (NULL: not available) */
+int lean_d3d_vc_hit;                       /* set by the native path (nd3d_draw.c) while it submits a vertex-cache hit: d->verts is then stale */
 static void lean_d3d_draw_impl(const LeanDraw *d){
     if(!ready||!d->nidx)return;
     const uint32_t *K=d->K;const NFVertexProgram *vp=(const NFVertexProgram*)d->vp;
@@ -1220,7 +1222,7 @@ static void lean_d3d_draw_impl(const LeanDraw *d){
         }
     }
     ID3D11DeviceContext_DrawIndexed(ctx,d->nidx,0,0);
-    interp_cur_cmask=vs->cmask;interp_cur_prows=vs->prows;interp_cur_vb=vbuf;
+    interp_cur_cmask=vs->cmask;interp_cur_prows=vs->prows;interp_cur_vb=vbuf;interp_cur_verts=lean_d3d_vc_hit?NULL:(const uint8_t*)d->verts;
     if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,rss,d->topo,color,depth,
         bt_vw,bt_vh,stride,voff,d->nverts,ioff,d->nidx,interp_vconst,interp_pconst);
     if(sprite_bound){ID3D11DeviceContext_GSSetShader(ctx,NULL,NULL,0);sprite_bound=0;}

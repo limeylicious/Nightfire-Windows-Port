@@ -1,0 +1,5 @@
+Put the contents of your extracted PAL 007 Nightfire disc in this folder, so that
+default.xbe and Driving.xbe sit directly inside it (next to this note), then run Setup.cmd.
+
+On the workshop laptop you can leave this folder empty: Setup links it to the workshop's
+nightfire-port\game_files instead.

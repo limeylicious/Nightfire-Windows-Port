@@ -374,6 +374,27 @@ long long lean_fist_rc(double x, uint32_t site)
     return fix ? hw : old;
 }
 
+/* frndint rounds by the x87 control word (2026-10-10, the Paris hook). The lifter emits
+ * rint() for frndint, so the CRT ceil/floor (sub_00133040/sub_0013310E: _ctrlfp sets the
+ * rounding field, then _frnd) rounded to nearest. The bullet grid walk sub_000C64B0 takes its
+ * first cell boundary from them: with nearest, a shot could start one cell row off and skip
+ * the hook's cell (runs\20261010-161226-lean-paris, every logged walk reproduced). The 11
+ * frndint sites call this through scripts/nf_frndint_fix.py. LEAN_FIX_FRNDINT=0: nearest (old). */
+double lean_frndint_rc(double x)
+{
+    extern __declspec(thread) uint16_t g_fp_control_word;
+    static int fix = -1;
+    if (fix < 0) { const char *e = getenv("LEAN_FIX_FRNDINT"); fix = !(e && e[0] == '0');
+        fprintf(stderr, "[LEAN-ROUND] frndint %s\n", fix ? "rounds by the x87 control word (LEAN_FIX_FRNDINT)" : "rounds to nearest (old, LEAN_FIX_FRNDINT=0)"); }
+    if (fix) switch ((g_fp_control_word >> 10) & 3) {
+    case 1: return floor(x);
+    case 2: return ceil(x);
+    case 3: return trunc(x);
+    default: break;
+    }
+    return rint(x);   /* nearest-even, as the host's default mode */
+}
+
 /* LEAN_RIFLE_PROBE=1 (diagnostic, native copy; probes patched into sub_000BB2B0 in
  * recomp_0007.c, see native-driving/rifle-gate): kind 0 = fire attempt at the tick gates
  * (type, [edi+0x40], tick 0x234E34, last fire + cooldown, tick snapshot); kind 1 = scope

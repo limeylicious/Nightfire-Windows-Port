@@ -23,6 +23,10 @@
  *   interp_thread                                           - display loop
  * Switches: LEAN_INTERP=1, LEAN_INTERP_HZ (target rate without vsync, default
  * 120), LEAN_PRESENT_VSYNC=1 (pace to the monitor instead).
+ * With NF_OVERLAY=1 the settings decide instead (lean_overlay.inc): Smooth motion
+ * (when the launcher sets no LEAN_INTERP), and the frame rate, re-read every
+ * picture: match the screen (vsync), a cap (timer) or uncapped. Display only:
+ * the game's own update clock is never touched.
  */
 #include <d3d11_4.h>
 #include <math.h>
@@ -38,6 +42,7 @@ typedef struct IOp {
     UINT topo;ID3D11Texture2D *ct,*dt;UINT vw,vh;
     UINT stride,nverts,nidx;size_t voff,ioff,coff;
     uint64_t key;int match;
+    size_t vcpu;                        /* 1 + offset of a copy of the vertices (screen-placed draws), 0: none */
     /* clear */
     float col[4];float zv;UINT sv,flags,cmask;D3D11_RECT rect;int full;
     /* blit */
@@ -49,6 +54,8 @@ typedef struct IOp {
 #define IF_SLOTS 4
 #define IV_FLOATS (192*4+12)
 #define IP_FLOATS (96)
+#define IGLOW_MAX 65536u                /* largest screen-placed draw whose vertices are kept (bytes) */
+#define IGLOW_PTS 512u                  /* most vertices a screen-placed draw may have to be slid */
 typedef struct IFrame {
     IOp *ops;unsigned nops,cap;
     uint8_t *mem;size_t used,memcap;
@@ -66,6 +73,7 @@ static int if_rec=-1;static volatile LONG if_latest=-1;static unsigned if_serial
 static int interp_on=-1;static HANDLE interp_event;
 static volatile int ihb_stage;static volatile uint64_t ihb_t;   /* display-thread heartbeat */
 static LARGE_INTEGER interp_hz;
+static struct {uint64_t refused,groups,glows,glow_jumps,glow_reordered,glow_big,cuts,glow_copies;} ipx;   /* pairing and glow counters (display thread) */
 static struct {uint64_t frames,replays,draws,matched,snapped,rec_ticks,exec_ticks,rec_bytes,rec_ops,blend_ticks,match_ticks;double replay_ms;} ist;
 
 static uint64_t iqpc(void){LARGE_INTEGER t;QueryPerformanceCounter(&t);return (uint64_t)t.QuadPart;}
@@ -109,7 +117,9 @@ static IOp *if_op(void){
 }
 static int interp_enabled(void){
     if(interp_on<0){const char *v=getenv("LEAN_INTERP");interp_on=v&&*v=='1';
-        if(interp_on)LOG("[LEAN-INTERP] in-between frames on (game logic stays at 50 Hz)\n");}
+        if(!(v&&*v)&&nfo_enabled()){nfo_load();interp_on=nfo_smooth!=0;}   /* NF_OVERLAY: the Smooth motion setting, read once */
+        InterlockedExchange(&nfo_smooth_told,interp_on);
+        if(interp_on)LOG("[LEAN-INTERP] in-between frames on (game logic keeps its own rate)\n");}
     return interp_on;
 }
 
@@ -153,6 +163,12 @@ static void interp_rec_draw(ID3D11VertexShader *vs,ID3D11InputLayout *il,ID3D11P
     /* geometry stays in the renderer's ring buffers (offsets recorded) */
     o->voff=voff;o->ioff=ioff;o->vbuf=interp_cur_vb;
     uint8_t *p=if_alloc(f,(IV_FLOATS+IP_FLOATS)*4);if(!p){o->kind=255;return;}o->coff=p-f->mem;memcpy(p,vconst,IV_FLOATS*4);memcpy(p+IV_FLOATS*4,pconst,IP_FLOATS*4);
+    /* Geometry the game placed on screen itself (no position transform: headlight
+     * and lamp glows, flares) has nothing in its constants to blend, so it was drawn
+     * where frame N has it while the car under it was drawn in between. Keep a copy
+     * of its vertices; the replay slides their positions (interp_glow_vertices). */
+    if(interp_cur_verts&&o->prows&&o->prows[0]<0&&nverts&&(size_t)nverts*stride<=IGLOW_MAX){
+        uint8_t *vc=if_alloc(f,(size_t)nverts*stride);if(vc){memcpy(vc,interp_cur_verts,(size_t)nverts*stride);o->vcpu=(size_t)(vc-f->mem)+1;ipx.glow_copies++;}}
     /* Key: shaders, the textures as bound (not this frame's snapshot copies, which
      * are new every frame) and the draw's size. The target is added when matching
      * (interp_key): the screen surface alternates between two buffers each frame. */
@@ -261,11 +277,61 @@ static float interp_const_distance(IFrame *f,IOp *a,IFrame *p,IOp *b,float limit
     for(unsigned k=0;k<48*4;k++){float t=x[k]-y[k];d+=t<0?-t:t;if(d>limit)return d;}
     return d;
 }
+/* How far apart two draws of a repeated object are, for pairing them across a
+ * game step (2026-10-10, the Paris tyres: wheels floating beside the cars, doubled
+ * wheels, a rim slipping inside its tyre). A spinning wheel turns further in one
+ * step than it moves, so by all its constants another wheel's previous pose could
+ * be nearer than its own and the replay slid wheels toward each other. Measured
+ * by where the object's origin lands (the position transform's fourth column);
+ * the other constants only break ties. Draws without a position transform keep
+ * the plain constant distance. LEAN_INTERP_PAIRSPIN=0: all constants (old). */
+static float interp_pair_distance(IFrame *f,IOp *a,IFrame *p,IOp *b,float limit){
+    static int on=-1;if(on<0){const char *v=getenv("LEAN_INTERP_PAIRSPIN");on=!(v&&v[0]=='0');
+        LOG("[LEAN-INTERP] repeated objects paired by: %s\n",on?"where they are (turning ignored)":"all constants (old)");}
+    if(!on||!a->prows||!b->prows)return interp_const_distance(f,a,p,b,limit);
+    for(int i=0;i<4;i++)if(a->prows[i]!=b->prows[i]||a->prows[i]<0||a->prows[i]>=192)return interp_const_distance(f,a,p,b,limit);
+    const float *x=(const float*)(f->mem+a->coff),*y=(const float*)(p->mem+b->coff);float d=0;
+    for(int i=0;i<4;i++){float t=x[a->prows[i]*4+3]-y[a->prows[i]*4+3];d+=t<0?-t:t;}
+    if(d>limit)return d;
+    return d+0.001f*interp_const_distance(f,a,p,b,(limit-d)*1000.0f);
+}
 /* A draw's matching key: its recorded key plus its target, where the frame's
  * own screen surface counts as one target whichever flip buffer it is. */
 static uint64_t interp_key(const IFrame *fr,const IOp *o){
     uint64_t t=(o->ct&&o->ct==(void*)fr->scanout)?1:(uint64_t)(uintptr_t)o->ct;
     return hash_bytes(&t,sizeof t,o->key);
+}
+/* 2026-10-10 (the Paris "flickering buildings"): within a group of draws with
+ * the same key, each draw used to take the nearest unused candidate in draw
+ * order. When a copy of a repeated building piece came into view, it could take
+ * another copy's partner, that copy then took the next one, and so on: for one
+ * in-between picture whole blocks were drawn part-way toward other copies
+ * (runs\20261010-143538-lean-paris rec3, picture 45). Now the closest pairs of
+ * the whole group are made first, and a pair whose object would jump across
+ * the screen in one game step (beyond the camera's own motion) is refused:
+ * that draw uses frame N unblended, like any object that just came into view.
+ * LEAN_INTERP_PAIRFIX=0: the old pairing. LEAN_INTERP_PAIR_JUMP: the limit in
+ * screen units (2 = the screen's width), default 0.5. */
+typedef struct {float d;unsigned a,b,gap;} IPair;   /* gap: distance from the draw's place in its group */
+static int ipair_cmp(const void *x,const void *y){
+    const IPair *s=x,*t=y;if(s->d!=t->d)return s->d<t->d?-1:1;if(s->gap!=t->gap)return s->gap<t->gap?-1:1;return s->a<t->a?-1:s->a>t->a;
+}
+static int ifloat_cmp(const void *x,const void *y){float s=*(const float*)x,t=*(const float*)y;return s<t?-1:s>t;}
+/* Where a draw's object origin lands on screen (x/w, y/w) by its position
+ * transform rows; 0 without them or behind the camera. */
+static int interp_origin(const IFrame *fr,const IOp *o,float *x,float *y){
+    if(!o->prows||o->prows[0]<0)return 0;
+    const float *c=(const float*)(fr->mem+o->coff);float w=c[o->prows[3]*4+3];
+    if(!(w>1e-6f))return 0;
+    *x=c[o->prows[0]*4+3]/w;*y=c[o->prows[1]*4+3]/w;return 1;
+}
+/* How far a screen-placed draw's vertices moved (sum over vertices of |dx|+|dy|);
+ * 0 when either has no copy or they differ in size. */
+static float interp_vert_distance(const IFrame *f,const IOp *a,const IFrame *p,const IOp *b){
+    if(!a->vcpu||!b->vcpu||a->nverts!=b->nverts||a->stride!=b->stride)return 0;
+    const uint8_t *x=f->mem+a->vcpu-1,*y=p->mem+b->vcpu-1;float d=0;
+    for(unsigned v=0;v<a->nverts;v++){const float *s=(const float*)(x+(size_t)v*a->stride),*t=(const float*)(y+(size_t)v*a->stride);d+=fabsf(s[0]-t[0])+fabsf(s[1]-t[1]);}
+    return d;
 }
 static void interp_match(IFrame *f,IFrame *p){
     static int smart=-1;if(smart<0){const char *v=getenv("LEAN_INTERP_MATCH");smart=!(v&&v[0]=='0');}
@@ -278,12 +344,21 @@ static void interp_match(IFrame *f,IFrame *p){
         for(unsigned i=0;i<p->nops;i++)if(p->ops[i].kind==0){b[nb].key=interp_key(p,&p->ops[i]);b[nb++].idx=i;}
         qsort(a,na,sizeof *a,ikey_cmp);qsort(b,nb,sizeof *b,ikey_cmp);
         memset(used,0,p->nops+1);
+        static int fix=-1;static float jump=0.5f,cutlim=0.35f;
+        if(fix<0){const char *v=getenv("LEAN_INTERP_PAIRFIX");fix=!(v&&v[0]=='0');v=getenv("LEAN_INTERP_PAIR_JUMP");if(v)jump=(float)atof(v);
+            v=getenv("LEAN_INTERP_CUT");if(v)cutlim=(float)atof(v);
+            LOG("[LEAN-INTERP] repeated objects: %s\n",fix?"closest pairs first, screen jumps refused":"paired in draw order (old)");
+            if(fix&&cutlim>0)LOG("[LEAN-INTERP] camera cuts: drawn without blending (objects off the camera's motion by more than %.2f)\n",cutlim);}
+        unsigned (*amb)[4]=NULL;unsigned namb=0;float *mdx=NULL,*mdy=NULL;unsigned nm=0;int fx=fix&&smart;
+        if(fx){amb=malloc(sizeof *amb*(na+1));mdx=malloc(sizeof(float)*(na+1));mdy=malloc(sizeof(float)*(na+1));if(!amb||!mdx||!mdy)fx=0;}
         for(unsigned i=0,j=0;i<na&&j<nb;){
             if(a[i].key<b[j].key){i++;continue;}
             if(a[i].key>b[j].key){j++;continue;}
             unsigned i1=i,j1=j;while(i1<na&&a[i1].key==a[i].key)i1++;while(j1<nb&&b[j1].key==b[j].key)j1++;
             unsigned ga=i1-i,gb=j1-j;
-            if(!smart||(ga==1&&gb==1)){for(unsigned k=0;k<ga&&k<gb;k++)f->ops[a[i+k].idx].match=(int)b[j+k].idx;}
+            if(!smart||(ga==1&&gb==1)){for(unsigned k=0;k<ga&&k<gb;k++)f->ops[a[i+k].idx].match=(int)b[j+k].idx;
+                if(fx){float x0,y0,x1,y1;if(interp_origin(f,&f->ops[a[i].idx],&x1,&y1)&&interp_origin(p,&p->ops[b[j].idx],&x0,&y0)){mdx[nm]=x1-x0;mdy[nm]=y1-y0;nm++;}}}
+            else if(fx){amb[namb][0]=i;amb[namb][1]=i1;amb[namb][2]=j;amb[namb][3]=j1;namb++;}
             else for(unsigned k=0;k<ga;k++){
                 IOp *o=&f->ops[a[i+k].idx];
                 unsigned centre=(unsigned)((uint64_t)k*gb/ga),lo=centre>32?centre-32:0,hi=centre+33<gb?centre+33:gb;
@@ -295,9 +370,49 @@ static void interp_match(IFrame *f,IFrame *p){
             }
             i=i1;j=j1;
         }
+        /* The camera's own motion: the median screen step of the objects drawn once.
+         * A camera cut (driving to a cutscene, one cutscene shot to the next) moves
+         * them every which way: when the typical object is far off that motion, the
+         * in-between pictures of this step show frame N unblended (2026-10-10, Paris
+         * rec1 picture 37 blended the crane view into the street view).
+         * LEAN_INTERP_CUT: the limit in screen units (2 = width), default 0.35, 0: off. */
+        float cx=0,cy=0;int cut=0;
+        if(fx&&nm){float *t=malloc(sizeof(float)*nm);
+            if(t){memcpy(t,mdx,sizeof(float)*nm);qsort(t,nm,sizeof *t,ifloat_cmp);cx=t[nm/2];
+                memcpy(t,mdy,sizeof(float)*nm);qsort(t,nm,sizeof *t,ifloat_cmp);cy=t[nm/2];
+                if(cutlim>0&&nm>=8){for(unsigned k=0;k<nm;k++)t[k]=fabsf(mdx[k]-cx)+fabsf(mdy[k]-cy);
+                    qsort(t,nm,sizeof *t,ifloat_cmp);if(t[nm/2]>cutlim)cut=1;}
+                free(t);}}
+        if(cut){for(unsigned i=0;i<f->nops;i++)f->ops[i].match=-1;ipx.cuts++;}
+        else if(fx&&namb){
+            IPair *pl=NULL;unsigned cap=0;
+            for(unsigned g=0;g<namb;g++){
+                unsigned i=amb[g][0],j=amb[g][2],ga=amb[g][1]-i,gb=amb[g][3]-j,np=0;
+                if(cap<ga*4u+4u){cap=ga*4u+4u;IPair *q=realloc(pl,sizeof *pl*cap);if(!q)break;pl=q;}
+                for(unsigned k=0;k<ga;k++){
+                    IOp *o=&f->ops[a[i+k].idx];
+                    unsigned centre=(unsigned)((uint64_t)k*gb/ga),lo=centre>32?centre-32:0,hi=centre+33<gb?centre+33:gb;
+                    float bv[4]={0};unsigned bm[4]={0},nbst=0;   /* this draw's 4 nearest candidates */
+                    for(unsigned m=lo;m<hi;m++){unsigned bi=b[j+m].idx;
+                        float v=interp_pair_distance(f,o,p,&p->ops[bi],nbst==4?bv[3]:3.4e38f);if(nbst==4&&v>=bv[3])continue;
+                        v+=interp_vert_distance(f,o,p,&p->ops[bi]);
+                        unsigned q=nbst<4?nbst++:3;while(q>0&&bv[q-1]>v){bv[q]=bv[q-1];bm[q]=bm[q-1];q--;}bv[q]=v;bm[q]=m;}
+                    for(unsigned q=0;q<nbst;q++){IPair *e=&pl[np++];e->d=bv[q];e->a=a[i+k].idx;e->b=b[j+bm[q]].idx;e->gap=bm[q]>centre?bm[q]-centre:centre-bm[q];}
+                }
+                qsort(pl,np,sizeof *pl,ipair_cmp);ipx.groups++;
+                for(unsigned q=0;q<np;q++){IPair *e=&pl[q];IOp *o=&f->ops[e->a];if(o->match>=0||used[e->b])continue;
+                    float x0,y0,x1,y1;
+                    if(interp_origin(f,o,&x1,&y1)&&interp_origin(p,&p->ops[e->b],&x0,&y0)&&fabsf(x1-x0-cx)+fabsf(y1-y0-cy)>jump){ipx.refused++;continue;}
+                    o->match=(int)e->b;used[e->b]=1;}
+            }
+            free(pl);
+        }
+        free(amb);free(mdx);free(mdy);
     }
     free(a);free(b);free(used);f->matched_with=p->serial;
 }
+
+
 
 /* Which resource a texture view shows; looked up on the display thread and
  * cached (views are kept alive by the frames that reference them). */
@@ -311,6 +426,45 @@ static ID3D11Resource *srv_resource(ID3D11ShaderResourceView *v){
 }
 static ID3D11Buffer *rvb,*rib,*rvcb,*rpcb,*rclear_cb;static UINT rvb_size=64u<<20,rib_size=16u<<20;
 static ID3D11DeviceContext *dc;static ID3D11DeviceContext1 *dc1;
+
+/* The vertices a screen-placed draw (glow, flare) is drawn with in an in-between
+ * picture: frame N's, with each position slid from its matching draw in frame
+ * N-1. Returns the buffer to bind (offset 0), or NULL to draw frame N's own.
+ * A vertex moving more than a quarter of the screen in one game step is a cut
+ * or a different glow: the draw then keeps frame N's. So does a draw whose points
+ * the game re-ordered between the two steps (a spark dying and another starting
+ * shifts every later one), where each point would slide toward a neighbour: the
+ * points must be about as near their own old places as to the nearest old point.
+ * LEAN_INTERP_GLOWS=0: off. */
+static ID3D11Buffer *iglow_vb[4];static const UINT iglow_size[4]={1024,4096,16384,IGLOW_MAX};
+static uint8_t iglow_tmp[IGLOW_MAX];
+static ID3D11Buffer *interp_glow_vertices(IFrame *f,IFrame *p,IOp *o,float alpha){
+    static int on=-1;if(on<0){const char *v=getenv("LEAN_INTERP_GLOWS");on=!(v&&v[0]=='0');LOG("[LEAN-INTERP] screen-placed glows: %s\n",on?"slid between game steps":"drawn at the newest step (old)");}
+    if(!on||!p||o->match<0||!(alpha<1.0f)||!o->vcpu)return NULL;
+    IOp *m=&p->ops[o->match];if(!m->vcpu||m->nverts!=o->nverts||m->stride!=o->stride)return NULL;
+    if(o->nverts>IGLOW_PTS){ipx.glow_big++;return NULL;}
+    size_t n=(size_t)o->nverts*o->stride;unsigned c=0;while(c<4&&iglow_size[c]<n)c++;if(c==4)return NULL;
+    const float *k=(const float*)(f->mem+o->coff);float w=k[192*4]>0?2.0f/k[192*4]:640.0f;   /* the target's width (surf.x = 2/width) */
+    const uint8_t *cur=f->mem+o->vcpu-1,*old=p->mem+m->vcpu-1;
+    float own=0;int moved=0;
+    for(unsigned v=0;v<o->nverts;v++){const float *d=(const float*)(cur+(size_t)v*o->stride),*a=(const float*)(old+(size_t)v*o->stride);
+        float t=fabsf(d[0]-a[0])+fabsf(d[1]-a[1]);if(t>0.25f*w){ipx.glow_jumps++;return NULL;}
+        own+=t;if(!moved)for(unsigned q=0;q<4;q++)if(a[q]!=d[q])moved=1;}
+    if(!moved)return NULL;
+    if(own>0.002f*w*(float)o->nverts){   /* moved more than a pixel or so: check the order held */
+        float nearest=0;
+        for(unsigned v=0;v<o->nverts;v++){const float *d=(const float*)(cur+(size_t)v*o->stride);float bn=3.4e38f;
+            for(unsigned u=0;u<o->nverts&&bn>0;u++){const float *b=(const float*)(old+(size_t)u*o->stride);float t=fabsf(d[0]-b[0])+fabsf(d[1]-b[1]);if(t<bn)bn=t;}
+            nearest+=bn;}
+        if(own>2.0f*nearest+0.002f*w*(float)o->nverts){ipx.glow_reordered++;return NULL;}}
+    memcpy(iglow_tmp,cur,n);
+    for(unsigned v=0;v<o->nverts;v++){float *d=(float*)(iglow_tmp+(size_t)v*o->stride);const float *a=(const float*)(old+(size_t)v*o->stride);
+        for(unsigned q=0;q<4;q++)d[q]=a[q]+(d[q]-a[q])*alpha;}
+    if(!iglow_vb[c]&&!(iglow_vb[c]=mkbuf(iglow_size[c],D3D11_BIND_VERTEX_BUFFER,0)))return NULL;
+    if(n<iglow_size[c])memset(iglow_tmp+n,0,iglow_size[c]-n);
+    ID3D11DeviceContext_UpdateSubresource(dc,(ID3D11Resource*)iglow_vb[c],0,NULL,iglow_tmp,0,0);
+    ipx.glows++;return iglow_vb[c];
+}
 
 /* Rotating objects (2026-10-08, the "bouncing tyres"): blending the four rows of a
  * draw's position transform one number at a time is right for movement but not for
@@ -356,6 +510,8 @@ static int interp_rotate(const float *pv,const float *cv,const int *pr,float alp
     if(fabs(D[3][0])+fabs(D[3][1])+fabs(D[3][2])+fabs(D[3][3]-1)>0.02){irs.not_rigid++;return 0;}
     for(int j=0;j<3;j++){double n=D[0][j]*D[0][j]+D[1][j]*D[1][j]+D[2][j]*D[2][j];if(fabs(n-1)>0.08){irs.not_rigid++;return 0;}
         for(int k=j+1;k<3;k++){double d=D[0][j]*D[0][k]+D[1][j]*D[1][k]+D[2][j]*D[2][k];if(fabs(d)>0.05){irs.not_rigid++;return 0;}}}
+    /* a mirror image (a left wheel against a right one) is not a rotation */
+    if(D[0][0]*(D[1][1]*D[2][2]-D[1][2]*D[2][1])-D[0][1]*(D[1][0]*D[2][2]-D[1][2]*D[2][0])+D[0][2]*(D[1][0]*D[2][1]-D[1][1]*D[2][0])<0){irs.not_rigid++;return 0;}
     /* quaternion of the rotation part (Shepperd) */
     double w,x,y,z,tr=D[0][0]+D[1][1]+D[2][2];
     if(tr>0){double S=sqrt(tr+1)*2;w=0.25*S;x=(D[2][1]-D[1][2])/S;y=(D[0][2]-D[2][0])/S;z=(D[1][0]-D[0][1])/S;}
@@ -449,6 +605,81 @@ static int ring_ready(unsigned n){
     return 1;
 }
 
+/* Screen recorder (2026-10-09, diagnostic; NF_RECORD=1 from a test launcher, off
+ * otherwise). Keeps the last REC_N pictures the window showed (the replayed game
+ * picture, scaled to REC_W x REC_H) on the GPU. F9 or a time in NF_RECORD_MS=t1,t2,..
+ * (ms since the first replay, up to 16) saves them REC_AFTER pictures later, so a
+ * flicker seen in play can be looked at picture by picture: rec<n>-<k>.bmp plus
+ * rec<n>.txt (game frame, blend position, time of each picture) in DRIVING_CAPTURE_DIR.
+ * Saving copies on the GPU, then writes the files on a thread of its own. */
+#define REC_N 72
+#define REC_AFTER 24
+#define REC_W 800
+#define REC_H 600
+static ID3D11Texture2D *rec_tex[REC_N],*rec_stg;static ID3D11RenderTargetView *rec_rtv[REC_N];
+static struct {unsigned serial;float alpha;double ms;} rec_meta[REC_N];
+static unsigned rec_count,rec_save_at,rec_saves;static uint64_t rec_t0;
+typedef struct {unsigned n,frames;uint8_t *px;char dir[MAX_PATH];struct {unsigned serial;float alpha;double ms;} meta[REC_N];} RecJob;
+static DWORD WINAPI rec_writer(void *arg){
+    RecJob *j=arg;char path[MAX_PATH+32];
+    snprintf(path,sizeof path,"%s/rec%u.txt",j->dir,j->n);FILE *t=fopen(path,"w");
+    for(unsigned k=0;k<j->frames;k++){
+        if(t)fprintf(t,"rec%u-%02u.bmp game frame %u, blend %.2f, %.1f ms\n",j->n,k,j->meta[k].serial,j->meta[k].alpha,j->meta[k].ms);
+        snprintf(path,sizeof path,"%s/rec%u-%02u.bmp",j->dir,j->n,k);FILE *fo=fopen(path,"wb");if(!fo)continue;
+        uint32_t row=(REC_W*3+3)&~3u,img=row*REC_H;uint8_t hd[54]={'B','M'};
+        *(uint32_t*)(hd+2)=54+img;*(uint32_t*)(hd+10)=54;*(uint32_t*)(hd+14)=40;*(int32_t*)(hd+18)=REC_W;*(int32_t*)(hd+22)=-(int32_t)REC_H;
+        *(uint16_t*)(hd+26)=1;*(uint16_t*)(hd+28)=24;*(uint32_t*)(hd+34)=img;fwrite(hd,1,54,fo);
+        uint8_t pad[4]={0};const uint8_t *src=j->px+(size_t)k*REC_W*REC_H*3;
+        for(unsigned y=0;y<REC_H;y++){fwrite(src+(size_t)y*REC_W*3,1,REC_W*3,fo);fwrite(pad,1,row-REC_W*3,fo);}
+        fclose(fo);
+    }
+    if(t)fclose(t);
+    LOG("[NF-RECORD] saved rec%u: %u pictures\n",j->n,j->frames);
+    free(j->px);free(j);return 0;
+}
+static void rec_frame(ID3D11ShaderResourceView *src,unsigned serial,float alpha){
+    static int on=-1;static unsigned tms[16],nt;static int f9;
+    if(on<0){const char *v=getenv("NF_RECORD");on=v&&v[0]=='1'&&getenv("DRIVING_CAPTURE_DIR");
+        if(on){for(unsigned i=0;i<REC_N&&on;i++){D3D11_TEXTURE2D_DESC td={REC_W,REC_H,1,1,DXGI_FORMAT_B8G8R8A8_UNORM,{1,0},D3D11_USAGE_DEFAULT,D3D11_BIND_RENDER_TARGET,0,0};
+                if(FAILED(ID3D11Device_CreateTexture2D(dev,&td,NULL,&rec_tex[i]))||FAILED(ID3D11Device_CreateRenderTargetView(dev,(ID3D11Resource*)rec_tex[i],NULL,&rec_rtv[i])))on=0;}
+            D3D11_TEXTURE2D_DESC sd={REC_W,REC_H,1,REC_N,DXGI_FORMAT_B8G8R8A8_UNORM,{1,0},D3D11_USAGE_STAGING,0,D3D11_CPU_ACCESS_READ,0};
+            if(on&&FAILED(ID3D11Device_CreateTexture2D(dev,&sd,NULL,&rec_stg)))on=0;
+            v=getenv("NF_RECORD_MS");while(on&&v&&*v&&nt<16){tms[nt++]=(unsigned)strtoul(v,(char**)&v,10);if(*v==',')v++;else break;}
+            rec_t0=iqpc();}
+        LOG("[NF-RECORD] screen recorder %s\n",on?"on: F9 saves the last pictures shown":"off");}
+    if(!on||!src)return;
+    unsigned i=rec_count%REC_N;D3D11_RECT r={0,0,REC_W,REC_H};
+    rt_stretch(dc,1,rec_rtv[i],r,src,0,0,1,1);
+    double ms=(double)(iqpc()-rec_t0)*1000.0/interp_hz.QuadPart;
+    rec_meta[i].serial=serial;rec_meta[i].alpha=alpha;rec_meta[i].ms=ms;rec_count++;
+    {int down=(GetAsyncKeyState(VK_F9)&0x8000)!=0;int trig=down&&!f9;f9=down;   /* F9, or a set time */
+     for(unsigned k=0;k<nt;k++)if(tms[k]&&ms>=tms[k]){tms[k]=0;trig=1;}
+     if(trig&&!rec_save_at)rec_save_at=rec_count+REC_AFTER;}
+    if(!rec_save_at||rec_count<rec_save_at)return;
+    rec_save_at=0;
+    /* the pictures so far are drawn by command lists not yet executed: run this one first */
+    ID3D11CommandList *cl=NULL;if(FAILED(ID3D11DeviceContext_FinishCommandList(dc,FALSE,&cl)))return;
+    unsigned frames=rec_count<REC_N?rec_count:REC_N,first=rec_count-frames;
+    RecJob *j=calloc(1,sizeof *j);uint8_t *px=j?malloc((size_t)frames*REC_W*REC_H*3):NULL;   /* 24-bit */
+    CTX_LOCK();ID3D11DeviceContext_ExecuteCommandList(ctx,cl,TRUE);
+    if(px)for(unsigned k=0;k<frames;k++)ID3D11DeviceContext_CopySubresourceRegion(ctx,(ID3D11Resource*)rec_stg,k,0,0,0,(ID3D11Resource*)rec_tex[(first+k)%REC_N],0,NULL);
+    CTX_UNLOCK();ID3D11CommandList_Release(cl);
+    if(!px){free(j);return;}
+    for(unsigned k=0;k<frames;k++){D3D11_MAPPED_SUBRESOURCE m;HRESULT hr;int tries=0;
+        do{CTX_LOCK();   /* never wait for the GPU while holding the game's lock */
+            hr=ID3D11DeviceContext_Map(ctx,(ID3D11Resource*)rec_stg,k,D3D11_MAP_READ,D3D11_MAP_FLAG_DO_NOT_WAIT,&m);
+            if(SUCCEEDED(hr)){for(unsigned y=0;y<REC_H;y++){const uint8_t *in=(const uint8_t*)m.pData+(size_t)y*m.RowPitch;uint8_t *out=px+((size_t)k*REC_H+y)*REC_W*3;
+                    for(unsigned x=0;x<REC_W;x++){out[x*3]=in[x*4];out[x*3+1]=in[x*4+1];out[x*3+2]=in[x*4+2];}}
+                ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)rec_stg,k);}
+            CTX_UNLOCK();
+            if(hr==DXGI_ERROR_WAS_STILL_DRAWING)Sleep(1);
+        }while(hr==DXGI_ERROR_WAS_STILL_DRAWING&&++tries<2000);
+        j->meta[k].serial=rec_meta[(first+k)%REC_N].serial;j->meta[k].alpha=rec_meta[(first+k)%REC_N].alpha;j->meta[k].ms=rec_meta[(first+k)%REC_N].ms;}
+    j->n=++rec_saves;j->frames=frames;j->px=px;snprintf(j->dir,sizeof j->dir,"%s",getenv("DRIVING_CAPTURE_DIR"));
+    LOG("[NF-RECORD] saving rec%u (%u pictures up to %.1f ms)\n",j->n,frames,ms);
+    HANDLE h=CreateThread(NULL,0,rec_writer,j,0,NULL);if(h)CloseHandle(h);else{free(px);free(j);}
+}
+
 static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
     for(unsigned i=0;i<MAX_SHADOW;i++)shadows[i].written=0;
     shadow_replays++;
@@ -528,7 +759,8 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
                 ID3D11DeviceContext_UpdateSubresource(dc,(ID3D11Resource*)rpcb,0,NULL,cv+IV_FLOATS,0,0);}
             UINT vofs=(UINT)o->voff;
             if(!rc.valid||rc.il!=(void*)o->il){ID3D11DeviceContext_IASetInputLayout(dc,o->il);rc.il=o->il;}
-            {ID3D11Buffer *vbb=o->vbuf?o->vbuf:vb;ID3D11DeviceContext_IASetVertexBuffers(dc,0,1,&vbb,&o->stride,&vofs);}
+            {ID3D11Buffer *vbb=o->vbuf?o->vbuf:vb,*gv=interp_glow_vertices(f,p,o,alpha);if(gv){vbb=gv;vofs=0;}
+             ID3D11DeviceContext_IASetVertexBuffers(dc,0,1,&vbb,&o->stride,&vofs);}
             ID3D11DeviceContext_IASetIndexBuffer(dc,ib,DXGI_FORMAT_R32_UINT,(UINT)o->ioff);
             if(!rc.valid||rc.topo!=o->topo){ID3D11DeviceContext_IASetPrimitiveTopology(dc,o->topo==1?D3D11_PRIMITIVE_TOPOLOGY_LINELIST:o->topo==2?D3D11_PRIMITIVE_TOPOLOGY_POINTLIST:D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);rc.topo=o->topo;}
             if(!rc.valid||rc.vs!=(void*)o->vs){ID3D11DeviceContext_VSSetShader(dc,o->vs,NULL,0);rc.vs=o->vs;}
@@ -589,6 +821,7 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
     if(scan&&!ssrv){if(cpu_srv_tex!=scan){if(cpu_srv)ID3D11ShaderResourceView_Release(cpu_srv);cpu_srv=NULL;
         ID3D11Device_CreateShaderResourceView(dev,(ID3D11Resource*)scan,NULL,&cpu_srv);cpu_srv_tex=scan;}ssrv=cpu_srv;}
     if(!scan)return;
+    rec_frame(ssrv,f->serial,alpha);   /* NF_RECORD (diagnostic) */
     if(nfo_enabled()){nfo_present(dc,back,ssrv);return;}   /* NF_OVERLAY (lean_overlay.inc) */
     if(present_gamma>0&&present_gamma!=1.0f&&gamma_vs&&ssrv){
         ID3D11RenderTargetView *rtv=NULL;
@@ -618,28 +851,51 @@ static DWORD WINAPI interp_thread(void *unused){
     rvb=mkbuf(rvb_size,D3D11_BIND_VERTEX_BUFFER,1);rib=mkbuf(rib_size,D3D11_BIND_INDEX_BUFFER,1);
     rvcb=mkbuf(192*16+48,D3D11_BIND_CONSTANT_BUFFER,0);rpcb=mkbuf(sizeof(float)*4*(8+8+4+4),D3D11_BIND_CONSTANT_BUFFER,0);rclear_cb=mkbuf(32,D3D11_BIND_CONSTANT_BUFFER,0);
     QueryPerformanceFrequency(&interp_hz);
-    const char *v=getenv("LEAN_INTERP_HZ");double target=v?atof(v):120.0;if(target<1)target=0;
-    v=getenv("LEAN_PRESENT_UNCAPPED");int uncapped=v&&*v=='1';if(uncapped)target=0;   /* uncapped: no pacing */
-    /* Uncapped must not slow the game: the display thread runs below it. */
-    if(uncapped)SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
+    const char *v=getenv("LEAN_INTERP_HZ");double env_target=v?atof(v):120.0;if(env_target<1)env_target=0;
+    v=getenv("LEAN_PRESENT_UNCAPPED");int env_uncapped=v&&*v=='1';
+    v=getenv("LEAN_PRESENT_VSYNC");int env_vsync=v&&*v=='1'&&!env_uncapped;
+    /* The frame rate (display only): the launcher's switches, or with NF_OVERLAY=1 the
+     * settings, re-read every picture (nfo_frame_mode). */
+    int uncapped=-1;double target=0;int fmode=-2,fhz=0;
+    #define FRAME_MODE() do{int hz_=0,m_=nfo_frame_mode(&hz_);if(m_!=fmode||hz_!=fhz){ \
+        fmode=m_;fhz=hz_;int unc_=m_<0?env_uncapped:m_==2;int vs_=m_<0?env_vsync:m_==0; \
+        target=unc_?0:m_==1?(double)hz_:env_target;swap_vsync=vs_;next=iqpc(); \
+        if(unc_!=uncapped){uncapped=unc_;unc_gap_ms=0;unc_best=0;unc_maxed=0;unc_t=iqpc();unc_w=lean_game_lock_wait;unc_f=if_serial; \
+            /* Uncapped must not slow the game: the display thread runs below it. */ \
+            SetThreadPriority(GetCurrentThread(),unc_?THREAD_PRIORITY_BELOW_NORMAL:THREAD_PRIORITY_NORMAL);} \
+        LOG("[LEAN-INTERP] frame rate (display only): %s\n",unc_?"uncapped":vs_?"match the screen (vsync)":m_==1?"cap":"timer"); \
+        if(!unc_&&!vs_)LOG("[LEAN-INTERP]   %.0f pictures a second\n",target);}}while(0)
     /* Uncapped self-limit: every 250 ms compare the game's lock wait per game
      * frame; above 2.5 ms the pause between in-between frames grows, below
      * 1.0 ms it shrinks (90 Hz smooth mode costs the game 1.3-2 ms without
      * slowing it). The presented rate is then the headroom left while
      * the game keeps its own speed. */
-    double unc_gap_ms=0;uint64_t unc_t=iqpc();LONG64 unc_w=lean_game_lock_wait;unsigned unc_f=if_serial;
-    HANDLE unc_timer=uncapped?CreateWaitableTimerExW(NULL,NULL,2,TIMER_ALL_ACCESS):NULL;
+    double unc_gap_ms=0,unc_best=0,unc_gfps=0;int unc_maxed=0;uint64_t unc_t=iqpc();LONG64 unc_w=lean_game_lock_wait;unsigned unc_f=if_serial;
+    HANDLE unc_timer=CreateWaitableTimerExW(NULL,NULL,2,TIMER_ALL_ACCESS);   /* uncapped can be chosen later (NF_OVERLAY) */
     {D3D11_FEATURE_DATA_THREADING th={0};ID3D11Device_CheckFeatureSupport(dev,D3D11_FEATURE_THREADING,&th,sizeof th);
      LOG("[LEAN-INTERP] driver command lists %s, concurrent creates %s\n",th.DriverCommandLists?"native":"emulated by the runtime",th.DriverConcurrentCreates?"yes":"no");}
-    LOG("[LEAN-INTERP] display thread: %s, target %.0f Hz\n",swap_vsync?"vsync":"timer",swap_vsync?0.0:target);
+    LOG("[LEAN-INTERP] display thread: launcher %s, target %.0f Hz%s\n",env_uncapped?"uncapped":env_vsync?"vsync":"timer",env_vsync?0.0:env_target,
+        nfo_enabled()?" (the settings overlay chooses while the game runs)":"");
     extern int lean_vblank_hz(void);   /* LEAN_VBLANK_HZ: the game tick follows the vblank rate */
     uint64_t tick=interp_hz.QuadPart/lean_vblank_hz(),last_report=iqpc(),next=iqpc();unsigned presents=0;
     for(;;){
         if(interp_quit){InterlockedExchange(&interp_quit_done,1);return 0;}
-        if(uncapped){uint64_t t=iqpc();
+        if(swap)FRAME_MODE();   /* after the swap chain exists (it reads LEAN_PRESENT_VSYNC when made) */
+        if(uncapped>0){uint64_t t=iqpc();
             if(t-unc_t>=(uint64_t)interp_hz.QuadPart/4){LONG64 w=lean_game_lock_wait;unsigned fr=if_serial-unc_f;
                 double per=fr?(double)(w-unc_w)*1000.0/interp_hz.QuadPart/fr:0.0;
-                if(per>2.5)unc_gap_ms=unc_gap_ms*1.5+0.2;else if(per<1.0)unc_gap_ms*=0.8;
+                /* The game's own frames a second: a drop of more than 15% below the
+                 * recent best (GPU or CPU shared with the in-between frames, which the
+                 * lock wait does not show; 10-09 Paris: 62 -> 30 game frames a second
+                 * while 95 were presented) also backs off. If backing off all the way
+                 * does not bring it back within 2 s, the game is simply slower there (a
+                 * heavier scene, menus at the screen rate then play at 60): that becomes
+                 * the new best. */
+                double gfps=(double)fr*(double)interp_hz.QuadPart/(double)(t-unc_t);unc_gfps=gfps;
+                if(gfps>unc_best)unc_best=gfps;else unc_best=unc_best*0.998+gfps*0.002;
+                int game_slow=unc_best>20&&gfps<unc_best*0.85;
+                if(game_slow&&unc_gap_ms>=20){if(++unc_maxed>=8){unc_best=gfps;unc_maxed=0;game_slow=0;}}else unc_maxed=0;
+                if(per>2.5||game_slow)unc_gap_ms=unc_gap_ms*1.5+0.2;else if(per<1.0&&gfps>=unc_best*0.95)unc_gap_ms*=0.8;
                 if(unc_gap_ms>20)unc_gap_ms=20;if(unc_gap_ms<0.05)unc_gap_ms=0;
                 unc_t=t;unc_w=w;unc_f=if_serial;}
             if(unc_gap_ms>0&&unc_timer){LARGE_INTEGER due;due.QuadPart=-(LONGLONG)(unc_gap_ms*10000.0);
@@ -711,11 +967,11 @@ static DWORD WINAPI interp_thread(void *unused){
         {uint64_t pall=iqpc();int busy=0,done=0;   /* NF_PRESENT_STATS: whole retry loop, including the Sleep(1)s */
         for(int tries=0;tries<25;tries++){
             if(dbg<6)LOG("[LEAN-INTERP] present call %d try %d\n",dbg,tries);
-            uint64_t p0=iqpc();ihb_stage=7;CTX_LOCK();ihb_stage=8;HRESULT phr=IDXGISwapChain1_Present(swap,swap_vsync?1:0,DXGI_PRESENT_DO_NOT_WAIT|(swap_tear?DXGI_PRESENT_ALLOW_TEARING:0));CTX_UNLOCK();
+            uint64_t p0=iqpc();ihb_stage=7;CTX_LOCK();ihb_stage=8;HRESULT phr=IDXGISwapChain1_Present(swap,swap_vsync?1:0,DXGI_PRESENT_DO_NOT_WAIT|((swap_tear&&!swap_vsync&&uncapped>0)?DXGI_PRESENT_ALLOW_TEARING:0));CTX_UNLOCK();   /* a cap shows whole pictures; only uncapped may tear */
             if(dbg<6)LOG("[LEAN-INTERP] present returned %08lX after %.2f ms\n",(unsigned long)phr,(double)(iqpc()-p0)*1000.0/interp_hz.QuadPart);
             if(phr!=DXGI_ERROR_WAS_STILL_DRAWING){if(SUCCEEDED(phr))InterlockedIncrement(&lean_screen_presents);done=1;break;}busy++;Sleep(1);}
         if(nf_pstats){nf_present_note(iqpc()-pall,busy,!done);nf_present_report("display thread (smooth mode)");}}
-        if(uncapped)SwitchToThread();   /* let the game thread in between frames */
+        if(uncapped>0)SwitchToThread();   /* let the game thread in between frames */
         presents++;if(dbg<6)LOG("[LEAN-INTERP] present %d ok\n",dbg++);
         now=iqpc();
         if(now-last_report>=(uint64_t)interp_hz.QuadPart*5){
@@ -726,17 +982,21 @@ static DWORD WINAPI interp_thread(void *unused){
             {static LONG64 lw;LONG64 w=lean_game_lock_wait;   /* how long the game waited for the renderer lock */
              LOG("[LEAN-INTERP] game waited %.2f ms per game frame for the renderer; per present: constants %.2f ms, matching %.2f ms\n",ist.frames?(double)(w-lw)*1000.0/interp_hz.QuadPart/ist.frames:0.0,
                  ist.replays?(double)ist.blend_ticks*1000.0/interp_hz.QuadPart/ist.replays:0.0,ist.replays?(double)ist.match_ticks*1000.0/interp_hz.QuadPart/ist.replays:0.0);lw=w;}
-            if(uncapped)LOG("[LEAN-INTERP] uncapped: pause between in-between frames %.2f ms\n",unc_gap_ms);
+            if(uncapped>0)LOG("[LEAN-INTERP] uncapped: pause between in-between frames %.2f ms (game %.0f frames a second, recent best %.0f)\n",unc_gap_ms,unc_gfps,unc_best);
             if(irs.rotated||irs.not_rigid||irs.jump)LOG("[LEAN-INTERP] turning draws: %llu blended by angle, %llu not rigid, %llu screen jumps, %llu below 2 degrees\n",
                 (unsigned long long)irs.rotated,(unsigned long long)irs.not_rigid,(unsigned long long)irs.jump,(unsigned long long)irs.tiny);
             memset(&irs,0,sizeof irs);
+            if(ipx.groups||ipx.glows||ipx.glow_jumps||ipx.glow_reordered||ipx.glow_big||ipx.cuts||ipx.glow_copies)
+                LOG("[LEAN-INTERP] repeated-object groups %llu, pairs refused (screen jump) %llu, camera cuts %llu; screen-placed draws kept %llu, glows slid %llu, kept at the newest step: %llu jumps, %llu re-ordered, %llu too many points\n",
+                (unsigned long long)ipx.groups,(unsigned long long)ipx.refused,(unsigned long long)ipx.cuts,(unsigned long long)ipx.glow_copies,(unsigned long long)ipx.glows,(unsigned long long)ipx.glow_jumps,
+                (unsigned long long)ipx.glow_reordered,(unsigned long long)ipx.glow_big);
+            memset(&ipx,0,sizeof ipx);
             presents=0;memset(&ist,0,sizeof ist);last_report=now;
         }
         if(!swap_vsync&&target>0){
             next+=(uint64_t)(interp_hz.QuadPart/target);
             if((int64_t)(next-now)<0)next=now;
-            for(;;){int64_t left=(int64_t)(next-iqpc());if(left<=0)break;   /* signed: the clock may pass next */
-                int64_t ms=left*1000/(int64_t)interp_hz.QuadPart;if(ms>1)Sleep((DWORD)(ms-1));else Sleep(0);}
+            lean_wait_until(next,unc_timer,interp_hz.QuadPart);   /* high-resolution timer: a cap is kept to ~0.5 ms */
         }
     }
     return 0;

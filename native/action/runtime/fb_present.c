@@ -12,6 +12,7 @@
 #include "nightfire_surface_probe83.h"
 #include "nightfire_pc_input.h"
 #include "nightfire_host_window.h"   /* NIGHTFIRE_HOST_HWND one-window play */
+#include "lean/nf_binds.h"            /* key binds (NF_OVERLAY=1) */
 extern ptrdiff_t xbox_GetMemoryOffset(void);
 static SRWLOCK config_lock=SRWLOCK_INIT, pixels_lock=SRWLOCK_INIT;
 static uint32_t framebuffer,pitch,captured_address;
@@ -60,8 +61,53 @@ unsigned nightfire_window_buttons(void) {
     if(modern_controls140())return 0;
     AcquireSRWLockShared(&input_lock);unsigned b=nf_pc_buttons(&pc_controls);ReleaseSRWLockShared(&input_lock);return b;
 }
+/* Key binds (NF_OVERLAY=1, runtime/lean/lean_binds.inc; the store lives with the
+ * renderer, so builds without it link these stand-ins and keep the fixed keys).
+ * With the modern keys, every action reads the keys chosen on the Key Binds page.
+ * The defaults are the fixed keys above, so an untouched page plays as before,
+ * except that a keyboard key on Fire or Aim also works while the mouse is free.
+ * Mouse buttons and the wheel count only while the mouse is captured. */
+int nf_binds_on_default(void) { return 0; }
+void nf_binds_get_default(int game,int action,unsigned char out[2]) { (void)game;(void)action;out[0]=out[1]=0; }
+void nf_binds_wheel_default(int notches) { (void)notches; }
+int nf_binds_wheel_down_default(int code) { (void)code;return 0; }
+#pragma comment(linker, "/alternatename:nf_binds_on=nf_binds_on_default")
+#pragma comment(linker, "/alternatename:nf_binds_get=nf_binds_get_default")
+#pragma comment(linker, "/alternatename:nf_binds_wheel=nf_binds_wheel_default")
+#pragma comment(linker, "/alternatename:nf_binds_wheel_down=nf_binds_wheel_down_default")
+static int bind_down(const nf_pc_controls *s,unsigned code) {
+    if(!code)return 0;
+    if(code==VK_LBUTTON)return s->left;
+    if(code==VK_RBUTTON)return s->right;
+    if(code==NFB_WHEEL_UP||code==NFB_WHEEL_DOWN)return s->captured&&nf_binds_wheel_down((int)code);
+    return code<256&&s->keys[code];
+}
+static int bound(const nf_pc_controls *s,int action) {
+    unsigned char c[2];nf_binds_get(NFB_ACTION,action,c);
+    return bind_down(s,c[0])||bind_down(s,c[1]);
+}
+static void binds_apply(const nf_pc_controls *s,unsigned layout,nf_pc_packet *p) {
+#define A(a) bound(s,(a))
+    unsigned b=(A(NFA_PAUSE)?16:0)|(A(NFA_DUP)?1:0)|(A(NFA_DDOWN)?2:0)|(A(NFA_DLEFT)?4:0)|(A(NFA_DRIGHT)?8:0);
+    if(A(NFA_SELECT))b|=0x10000;
+    if(A(NFA_MENUBACK))b|=0x20000;
+    if(A(NFA_OBJECTIVES))b|=0x20;
+    p->buttons=b|nf_pc_actions140(layout,A(NFA_USE),A(NFA_JUMP),A(NFA_CROUCH),A(NFA_ALTFIRE),A(NFA_WEAPON),A(NFA_GADGET));
+    /* Movement: the same axes nf_pc_sample gives W/A/S/D for this layout. */
+    unsigned turn=(layout==2||layout==4||layout==5||layout==7)?0:2;
+    unsigned strafe=2-turn,forward=layout==4?3:1;
+    int side=A(NFA_RIGHT)-A(NFA_LEFT),ahead=A(NFA_FORWARD)-A(NFA_BACK);
+    p->axis_mask&=~((1u<<strafe)|(1u<<forward));p->axes[strafe]=p->axes[forward]=0;
+    if(side){p->axis_mask|=1u<<strafe;p->axes[strafe]=(int16_t)(side*32767);}
+    if(ahead){p->axis_mask|=1u<<forward;p->axes[forward]=(int16_t)(ahead*32767);}
+    p->lt=A(NFA_AIM)?255:0;p->rt=A(NFA_FIRE)?255:0;
+#undef A
+}
 void nightfire_window_input_begin(unsigned layout,int direct) {
-    AcquireSRWLockExclusive(&input_lock);nf_pc_sample140(&pc_controls,layout,&pc_packet,&mouse_pending122,direct,modern_controls140());ReleaseSRWLockExclusive(&input_lock);
+    int modern=modern_controls140(),binds=modern&&nf_binds_on();
+    AcquireSRWLockExclusive(&input_lock);nf_pc_sample140(&pc_controls,layout,&pc_packet,&mouse_pending122,direct,modern);
+    if(binds)binds_apply(&pc_controls,layout,&pc_packet);
+    ReleaseSRWLockExclusive(&input_lock);
 }
 void nightfire_window_mouse_take122(int *x,int *y) {
     AcquireSRWLockExclusive(&input_lock);
@@ -197,6 +243,12 @@ static LRESULT CALLBACK window_proc(HWND h,UINT m,WPARAM w,LPARAM l)
         ReleaseSRWLockExclusive(&input_lock);
         return 0;
     }
+    if(mouse_captured && (m==WM_MBUTTONDOWN || m==WM_MBUTTONUP || m==WM_XBUTTONDOWN || m==WM_XBUTTONUP)) {   /* key binds: middle and side buttons */
+        unsigned vk=(m==WM_MBUTTONDOWN||m==WM_MBUTTONUP)?VK_MBUTTON:GET_XBUTTON_WPARAM(w)==XBUTTON1?VK_XBUTTON1:VK_XBUTTON2;
+        AcquireSRWLockExclusive(&input_lock);pc_controls.keys[vk]=(m==WM_MBUTTONDOWN||m==WM_XBUTTONDOWN);ReleaseSRWLockExclusive(&input_lock);
+        return (m==WM_XBUTTONDOWN||m==WM_XBUTTONUP)?TRUE:0;
+    }
+    if(m==WM_MOUSEWHEEL && mouse_captured) {nf_binds_wheel(GET_WHEEL_DELTA_WPARAM(w)/WHEEL_DELTA);return 0;}   /* key binds: wheel up/down */
     if(m==WM_LBUTTONDOWN || m==WM_RBUTTONDOWN || m==WM_LBUTTONUP || m==WM_RBUTTONUP) {
         if(m==WM_LBUTTONDOWN && !mouse_captured) {SetFocus(h);mouse_acquire(h);return 0;}
         AcquireSRWLockExclusive(&input_lock);

@@ -81,5 +81,20 @@ class ExportPolicyTests(unittest.TestCase):
                 read_allowlist(data(dict(source=source, path=path, group=group)))
 
 
+    def test_release_mapping(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        read_allowlist(data(dict(source='releases/Nightfire-PC-Alpha/engine/setup.py',
+                                 path='release/alpha/engine/setup.py', group='release-alpha')))
+        for source, path in (
+                ('releases/Nightfire-PC-Alpha/engine/setup.py', 'release/alpha/setup.py'),
+                ('releases/Nightfire-Preview/Nightfire.cmd', 'release/alpha/Nightfire.cmd'),
+                ('releases/Nightfire-PC-Alpha/engine/action/nightfire_native.exe', 'release/alpha/engine/action/nightfire_native.exe'),
+                ('releases/Nightfire-PC-Alpha/engine/action/game_files/default.xbe', 'release/alpha/engine/action/game_files/default.xbe'),
+                ('releases/Nightfire-PC-Alpha/engine/action/sessions/a/crash.txt', 'release/alpha/engine/action/sessions/a/crash.txt')):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                read_allowlist(data(dict(source=source, path=path, group='release-alpha')))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -43,9 +43,6 @@
 #include <string.h>
 #include <math.h>
 #include <stdbool.h>
-#include "apu.h"
-extern MCPXAPUState *g_apu_state;
-extern bool apu_hook_handle_mmio(PCONTEXT, uintptr_t, uint32_t, int);
 
 /* xboxrecomp runtime headers */
 #include <xbox/xboxrecomp.h>
@@ -214,22 +211,16 @@ static LONG CALLBACK veh_handler(PEXCEPTION_POINTERS ep)
             extern volatile LONG lean_present_count;
             static volatile LONG touches; LONG k=InterlockedIncrement(&touches);
             static int log=-1; if(log<0){const char *e=getenv("LEAN_APU_TOUCH_LOG");log=e&&e[0]=='1';}
-            if(!g_apu_state || (log && (k<=40 || !(k%10000)))){
+            if(k<=40 || (log && !(k%10000))){
                 char sb[sizeof(SYMBOL_INFO)+256]; SYMBOL_INFO *sy=(SYMBOL_INFO *)sb; DWORD64 dp=0;
                 memset(sb,0,sizeof sb); sy->SizeOfStruct=sizeof(SYMBOL_INFO); sy->MaxNameLen=255;
-                fprintf(stderr,"[%s] APU register %s %08X (#%ld) in %s+0x%llX f=%ld\n",g_apu_state?"LEAN-APU-TOUCH":"LEAN-NOCHIP",
+                fprintf(stderr,"[%s] APU register %s %08X (#%ld) in %s+0x%llX f=%ld\n","LEAN-NOCHIP",
                         ep->ExceptionRecord->ExceptionInformation[0]==1?"write":"read",(uint32_t)guest_fault,k,
                         SymFromAddr(GetCurrentProcess(),(DWORD64)ep->ContextRecord->Rip,&dp,sy)?sy->Name:"?",(unsigned long long)dp,
                         (long)lean_present_count);
             }
         }
 #endif
-        if(g_apu_state && guest_fault>=0xFE800000u && guest_fault<0xFE880000u){
-            if(apu_hook_handle_mmio(ep->ContextRecord,fault_addr,(uint32_t)guest_fault,
-                   ep->ExceptionRecord->ExceptionInformation[0]==1))
-                return EXCEPTION_CONTINUE_EXECUTION;
-            fprintf(stderr,"[APU147] Unsupported host MMIO instruction; preserving fault.\n");
-        }
 
         /*
          * GPU register probe at 0xFD000000 range.
@@ -368,23 +359,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     }
 #endif
     printf("Xbox memory mapped. Offset: 0x%llX\n", (unsigned long long)g_xbox_mem_offset);
-    /* Same host/MMIO connection used by the action executable. Physical audio
-     * DMA refers to the contiguous arena, not the low image/heap window.
-     * Keep the existing diagnostic opt-in; DSP programs remain stubbed. */
-#ifdef DRIVING_LEAN_RENDERER
-    int start_apu=1;
-    { extern int lean_audio_no_chip(void); if(lean_audio_no_chip()) start_apu=0; }   /* LEAN_AUDIO_NO_CHIP */
-#else
-    int start_apu=1;
-#endif
-    if(start_apu && getenv("RECOMP_AC97_READY")){
-        g_apu_state=mcpx_apu_init_standalone((uint8_t *)((uintptr_t)g_xbox_mem_offset+0x80000000u));
-        if(!g_apu_state){
-            fprintf(stderr,"[APU147] Host initialization failed; stopping before guest startup.\n");
-            xbox_MemoryLayoutShutdown();free(xbe_data);return 1;
-        }
-        fprintf(stderr,"[APU147] Connected register access and contiguous DMA; DSP programs remain stubbed.\n");
-    }
+    /* No emulated sound chip: sound is our own mixer (runtime/lean/lean_dsound.c),
+     * started by the game's first DirectSound call. */
 
     /* Step 3: Initialize Xbox kernel */
     printf("Initializing Xbox kernel replacement...\n");
@@ -470,7 +446,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     printf("\nGame returned. Cleaning up...\n");
 
     /* Cleanup */
-    if(g_apu_state){mcpx_apu_shutdown(g_apu_state);g_apu_state=NULL;}
     xbox_kernel_shutdown();
     xbox_MemoryLayoutShutdown();
     free(xbe_data);
