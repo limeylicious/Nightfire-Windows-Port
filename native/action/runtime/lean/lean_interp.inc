@@ -23,6 +23,10 @@
  *   interp_thread                                           - display loop
  * Switches: LEAN_INTERP=1, LEAN_INTERP_HZ (target rate without vsync, default
  * 120), LEAN_PRESENT_VSYNC=1 (pace to the monitor instead).
+ * With NF_OVERLAY=1 the settings decide instead (lean_overlay.inc): Smooth motion
+ * (when the launcher sets no LEAN_INTERP), and the frame rate, re-read every
+ * picture: match the screen (vsync), a cap (timer) or uncapped. Display only:
+ * the game's own update clock is never touched.
  */
 #include <d3d11_4.h>
 #include <math.h>
@@ -109,7 +113,9 @@ static IOp *if_op(void){
 }
 static int interp_enabled(void){
     if(interp_on<0){const char *v=getenv("LEAN_INTERP");interp_on=v&&*v=='1';
-        if(interp_on)LOG("[LEAN-INTERP] in-between frames on (game logic stays at 50 Hz)\n");}
+        if(!(v&&*v)&&nfo_enabled()){nfo_load();interp_on=nfo_smooth!=0;}   /* NF_OVERLAY: the Smooth motion setting, read once */
+        InterlockedExchange(&nfo_smooth_told,interp_on);
+        if(interp_on)LOG("[LEAN-INTERP] in-between frames on (game logic keeps its own rate)\n");}
     return interp_on;
 }
 
@@ -618,28 +624,51 @@ static DWORD WINAPI interp_thread(void *unused){
     rvb=mkbuf(rvb_size,D3D11_BIND_VERTEX_BUFFER,1);rib=mkbuf(rib_size,D3D11_BIND_INDEX_BUFFER,1);
     rvcb=mkbuf(192*16+48,D3D11_BIND_CONSTANT_BUFFER,0);rpcb=mkbuf(sizeof(float)*4*(8+8+4+4),D3D11_BIND_CONSTANT_BUFFER,0);rclear_cb=mkbuf(32,D3D11_BIND_CONSTANT_BUFFER,0);
     QueryPerformanceFrequency(&interp_hz);
-    const char *v=getenv("LEAN_INTERP_HZ");double target=v?atof(v):120.0;if(target<1)target=0;
-    v=getenv("LEAN_PRESENT_UNCAPPED");int uncapped=v&&*v=='1';if(uncapped)target=0;   /* uncapped: no pacing */
-    /* Uncapped must not slow the game: the display thread runs below it. */
-    if(uncapped)SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
+    const char *v=getenv("LEAN_INTERP_HZ");double env_target=v?atof(v):120.0;if(env_target<1)env_target=0;
+    v=getenv("LEAN_PRESENT_UNCAPPED");int env_uncapped=v&&*v=='1';
+    v=getenv("LEAN_PRESENT_VSYNC");int env_vsync=v&&*v=='1'&&!env_uncapped;
+    /* The frame rate (display only): the launcher's switches, or with NF_OVERLAY=1 the
+     * settings, re-read every picture (nfo_frame_mode). */
+    int uncapped=-1;double target=0;int fmode=-2,fhz=0;
+    #define FRAME_MODE() do{int hz_=0,m_=nfo_frame_mode(&hz_);if(m_!=fmode||hz_!=fhz){ \
+        fmode=m_;fhz=hz_;int unc_=m_<0?env_uncapped:m_==2;int vs_=m_<0?env_vsync:m_==0; \
+        target=unc_?0:m_==1?(double)hz_:env_target;swap_vsync=vs_;next=iqpc(); \
+        if(unc_!=uncapped){uncapped=unc_;unc_gap_ms=0;unc_best=0;unc_maxed=0;unc_t=iqpc();unc_w=lean_game_lock_wait;unc_f=if_serial; \
+            /* Uncapped must not slow the game: the display thread runs below it. */ \
+            SetThreadPriority(GetCurrentThread(),unc_?THREAD_PRIORITY_BELOW_NORMAL:THREAD_PRIORITY_NORMAL);} \
+        LOG("[LEAN-INTERP] frame rate (display only): %s\n",unc_?"uncapped":vs_?"match the screen (vsync)":m_==1?"cap":"timer"); \
+        if(!unc_&&!vs_)LOG("[LEAN-INTERP]   %.0f pictures a second\n",target);}}while(0)
     /* Uncapped self-limit: every 250 ms compare the game's lock wait per game
      * frame; above 2.5 ms the pause between in-between frames grows, below
      * 1.0 ms it shrinks (90 Hz smooth mode costs the game 1.3-2 ms without
      * slowing it). The presented rate is then the headroom left while
      * the game keeps its own speed. */
-    double unc_gap_ms=0;uint64_t unc_t=iqpc();LONG64 unc_w=lean_game_lock_wait;unsigned unc_f=if_serial;
-    HANDLE unc_timer=uncapped?CreateWaitableTimerExW(NULL,NULL,2,TIMER_ALL_ACCESS):NULL;
+    double unc_gap_ms=0,unc_best=0,unc_gfps=0;int unc_maxed=0;uint64_t unc_t=iqpc();LONG64 unc_w=lean_game_lock_wait;unsigned unc_f=if_serial;
+    HANDLE unc_timer=CreateWaitableTimerExW(NULL,NULL,2,TIMER_ALL_ACCESS);   /* uncapped can be chosen later (NF_OVERLAY) */
     {D3D11_FEATURE_DATA_THREADING th={0};ID3D11Device_CheckFeatureSupport(dev,D3D11_FEATURE_THREADING,&th,sizeof th);
      LOG("[LEAN-INTERP] driver command lists %s, concurrent creates %s\n",th.DriverCommandLists?"native":"emulated by the runtime",th.DriverConcurrentCreates?"yes":"no");}
-    LOG("[LEAN-INTERP] display thread: %s, target %.0f Hz\n",swap_vsync?"vsync":"timer",swap_vsync?0.0:target);
+    LOG("[LEAN-INTERP] display thread: launcher %s, target %.0f Hz%s\n",env_uncapped?"uncapped":env_vsync?"vsync":"timer",env_vsync?0.0:env_target,
+        nfo_enabled()?" (the settings overlay chooses while the game runs)":"");
     extern int lean_vblank_hz(void);   /* LEAN_VBLANK_HZ: the game tick follows the vblank rate */
     uint64_t tick=interp_hz.QuadPart/lean_vblank_hz(),last_report=iqpc(),next=iqpc();unsigned presents=0;
     for(;;){
         if(interp_quit){InterlockedExchange(&interp_quit_done,1);return 0;}
-        if(uncapped){uint64_t t=iqpc();
+        if(swap)FRAME_MODE();   /* after the swap chain exists (it reads LEAN_PRESENT_VSYNC when made) */
+        if(uncapped>0){uint64_t t=iqpc();
             if(t-unc_t>=(uint64_t)interp_hz.QuadPart/4){LONG64 w=lean_game_lock_wait;unsigned fr=if_serial-unc_f;
                 double per=fr?(double)(w-unc_w)*1000.0/interp_hz.QuadPart/fr:0.0;
-                if(per>2.5)unc_gap_ms=unc_gap_ms*1.5+0.2;else if(per<1.0)unc_gap_ms*=0.8;
+                /* The game's own frames a second: a drop of more than 15% below the
+                 * recent best (GPU or CPU shared with the in-between frames, which the
+                 * lock wait does not show; 10-09 Paris: 62 -> 30 game frames a second
+                 * while 95 were presented) also backs off. If backing off all the way
+                 * does not bring it back within 2 s, the game is simply slower there (a
+                 * heavier scene, menus at the screen rate then play at 60): that becomes
+                 * the new best. */
+                double gfps=(double)fr*(double)interp_hz.QuadPart/(double)(t-unc_t);unc_gfps=gfps;
+                if(gfps>unc_best)unc_best=gfps;else unc_best=unc_best*0.998+gfps*0.002;
+                int game_slow=unc_best>20&&gfps<unc_best*0.85;
+                if(game_slow&&unc_gap_ms>=20){if(++unc_maxed>=8){unc_best=gfps;unc_maxed=0;game_slow=0;}}else unc_maxed=0;
+                if(per>2.5||game_slow)unc_gap_ms=unc_gap_ms*1.5+0.2;else if(per<1.0&&gfps>=unc_best*0.95)unc_gap_ms*=0.8;
                 if(unc_gap_ms>20)unc_gap_ms=20;if(unc_gap_ms<0.05)unc_gap_ms=0;
                 unc_t=t;unc_w=w;unc_f=if_serial;}
             if(unc_gap_ms>0&&unc_timer){LARGE_INTEGER due;due.QuadPart=-(LONGLONG)(unc_gap_ms*10000.0);
@@ -711,11 +740,11 @@ static DWORD WINAPI interp_thread(void *unused){
         {uint64_t pall=iqpc();int busy=0,done=0;   /* NF_PRESENT_STATS: whole retry loop, including the Sleep(1)s */
         for(int tries=0;tries<25;tries++){
             if(dbg<6)LOG("[LEAN-INTERP] present call %d try %d\n",dbg,tries);
-            uint64_t p0=iqpc();ihb_stage=7;CTX_LOCK();ihb_stage=8;HRESULT phr=IDXGISwapChain1_Present(swap,swap_vsync?1:0,DXGI_PRESENT_DO_NOT_WAIT|(swap_tear?DXGI_PRESENT_ALLOW_TEARING:0));CTX_UNLOCK();
+            uint64_t p0=iqpc();ihb_stage=7;CTX_LOCK();ihb_stage=8;HRESULT phr=IDXGISwapChain1_Present(swap,swap_vsync?1:0,DXGI_PRESENT_DO_NOT_WAIT|((swap_tear&&!swap_vsync&&uncapped>0)?DXGI_PRESENT_ALLOW_TEARING:0));CTX_UNLOCK();   /* a cap shows whole pictures; only uncapped may tear */
             if(dbg<6)LOG("[LEAN-INTERP] present returned %08lX after %.2f ms\n",(unsigned long)phr,(double)(iqpc()-p0)*1000.0/interp_hz.QuadPart);
             if(phr!=DXGI_ERROR_WAS_STILL_DRAWING){if(SUCCEEDED(phr))InterlockedIncrement(&lean_screen_presents);done=1;break;}busy++;Sleep(1);}
         if(nf_pstats){nf_present_note(iqpc()-pall,busy,!done);nf_present_report("display thread (smooth mode)");}}
-        if(uncapped)SwitchToThread();   /* let the game thread in between frames */
+        if(uncapped>0)SwitchToThread();   /* let the game thread in between frames */
         presents++;if(dbg<6)LOG("[LEAN-INTERP] present %d ok\n",dbg++);
         now=iqpc();
         if(now-last_report>=(uint64_t)interp_hz.QuadPart*5){
@@ -726,7 +755,7 @@ static DWORD WINAPI interp_thread(void *unused){
             {static LONG64 lw;LONG64 w=lean_game_lock_wait;   /* how long the game waited for the renderer lock */
              LOG("[LEAN-INTERP] game waited %.2f ms per game frame for the renderer; per present: constants %.2f ms, matching %.2f ms\n",ist.frames?(double)(w-lw)*1000.0/interp_hz.QuadPart/ist.frames:0.0,
                  ist.replays?(double)ist.blend_ticks*1000.0/interp_hz.QuadPart/ist.replays:0.0,ist.replays?(double)ist.match_ticks*1000.0/interp_hz.QuadPart/ist.replays:0.0);lw=w;}
-            if(uncapped)LOG("[LEAN-INTERP] uncapped: pause between in-between frames %.2f ms\n",unc_gap_ms);
+            if(uncapped>0)LOG("[LEAN-INTERP] uncapped: pause between in-between frames %.2f ms (game %.0f frames a second, recent best %.0f)\n",unc_gap_ms,unc_gfps,unc_best);
             if(irs.rotated||irs.not_rigid||irs.jump)LOG("[LEAN-INTERP] turning draws: %llu blended by angle, %llu not rigid, %llu screen jumps, %llu below 2 degrees\n",
                 (unsigned long long)irs.rotated,(unsigned long long)irs.not_rigid,(unsigned long long)irs.jump,(unsigned long long)irs.tiny);
             memset(&irs,0,sizeof irs);
@@ -735,8 +764,7 @@ static DWORD WINAPI interp_thread(void *unused){
         if(!swap_vsync&&target>0){
             next+=(uint64_t)(interp_hz.QuadPart/target);
             if((int64_t)(next-now)<0)next=now;
-            for(;;){int64_t left=(int64_t)(next-iqpc());if(left<=0)break;   /* signed: the clock may pass next */
-                int64_t ms=left*1000/(int64_t)interp_hz.QuadPart;if(ms>1)Sleep((DWORD)(ms-1));else Sleep(0);}
+            lean_wait_until(next,unc_timer,interp_hz.QuadPart);   /* high-resolution timer: a cap is kept to ~0.5 ms */
         }
     }
     return 0;

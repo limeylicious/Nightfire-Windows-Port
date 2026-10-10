@@ -175,6 +175,7 @@ static size_t expand(unsigned prim, const uint32_t *si, unsigned count, unsigned
 
 /* Submit one draw: verts (nslot float4 per vertex, slots in `slots`), list indices in ibuf. */
 static void *submit_vb;   /* cached vertex buffer for the next submit (NULL: vbuf) */
+extern int lean_d3d_vc_hit;   /* lean_d3d.c: vbuf is stale for this submit (smooth replay keeps no vertex copy) */
 static void submit(unsigned prim, unsigned nv, unsigned mask, const uint32_t *si, unsigned count)
 {
     unsigned topo;
@@ -247,7 +248,7 @@ static void draw_from_arrays(unsigned prim, const uint32_t *si, unsigned count, 
             if (g) vhash = vh64(g, umax - umin, vkey); else ok = 0;
         } else ok = 0;
         if (ok) { void *b = NULL; int r = lean_d3d_vcache_find(vkey, vhash, &b);
-            if (r == 1) { submit_vb = b; submit(prim, nv, mask, si, count); return; }
+            if (r == 1) { submit_vb = b; lean_d3d_vc_hit = 1; submit(prim, nv, mask, si, count); lean_d3d_vc_hit = 0; return; }
             if (r < 0) vkey = 0; }
         else vkey = 0;
     }

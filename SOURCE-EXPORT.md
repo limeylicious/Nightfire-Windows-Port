@@ -20,6 +20,10 @@ Current local references: frozen Action241 and normal Driving321; the last verif
 
 `native/` (groups `native-action`, `native-driving`, `native-launch`) records the hand-written source of the native Action and Driving builds and their launchers, copied byte for byte on 2026-10-09 from the owner's `nightfire-port-native`, `nightfire-driving-native` and `native-driving` workspaces. The same update refreshed `experiments/driving-lean/` and the crash-capture files under `nightfire-port/`. Left out on purpose: lifted-code test fixtures, address maps and disassembly dumps, game text and menu dumps, the menu extractor and its helper library, launch data captured from the game, internal hand-off notes, files containing local paths, and every file adapted from xemu. The xemu-derived lean APU copies, `nightfire-port/runtime/nightfire_adpcm.h` and the LGPL licence text that accompanied them were removed from this repository on 2026-10-09; the builds that still use such code take it from the pinned toolkit. Some files whose comments name the owner were held back pending the owner's decision.
 
+On 2026-10-10 `native/` was refreshed from the same workspaces: key binds, frame rate options, Smooth Motion fixes, the grappling-hook and new-profile fixes, four controllers and split-screen, the Multiplayer Local / Online pages, the lockstep record-and-replay test and Driving's own sound output. Files whose comments name the owner stay out, including `lean_present.inc`, and so do the xemu-derived files the Action build still compiles.
+
+`release/alpha/` (group `release-alpha`) records the launchers and set-up scripts of the owner's first alpha folder, copied byte for byte from `releases/Nightfire-PC-Alpha`. Only text files are listed; the engines that its Setup copies, the game files it links and every output folder (sessions, runs, saves, lockstep) are excluded by the export policy.
+
 Run from this repository using Python3.9 or newer:
 
 ```text

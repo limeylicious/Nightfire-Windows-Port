@@ -1,6 +1,6 @@
 {
   "schema": "reviewed-source-export-v2",
-  "reviewed_on": "2026-10-09",
+  "reviewed_on": "2026-10-10",
   "through_checkpoint": 510,
   "files": [
     {
@@ -3211,13 +3211,13 @@
       "path": "native/action/CMakeLists.txt",
       "source": "nightfire-port-native/CMakeLists.txt",
       "group": "native-action",
-      "reviewed_sha256": "cb71ed502d780d149dfb9fedb154bd740deee60f34681e062eb014c60ea3d0e4"
+      "reviewed_sha256": "785df28068b8aab3ad4c16e76a24cb88df074fd788101f7b53e69e167bdd0555"
     },
     {
       "path": "native/action/build-native.cmd",
       "source": "nightfire-port-native/build-native.cmd",
       "group": "native-action",
-      "reviewed_sha256": "5f26b7669795f04aa28b3e3b09614701595a7c41a7147c43e4e801c1d3df3971"
+      "reviewed_sha256": "399c5849afcba8174bfdcf48f3092c6662796c8335d908992ebff97527ca14dd"
     },
     {
       "path": "native/action/native-cache.cmake",
@@ -3235,7 +3235,7 @@
       "path": "native/action/runtime/fb_present.c",
       "source": "nightfire-port-native/runtime/fb_present.c",
       "group": "native-action",
-      "reviewed_sha256": "457bdc5ee949ece56b798e813d7759abfd6f5881b08bb5c254e3715f81b56af7"
+      "reviewed_sha256": "faf7cbb3f32d76b1639b0d66f810b6bc4e3a34b88e65aea5691c6d75e47af7f9"
     },
     {
       "path": "native/action/runtime/kernel_bridge.c",
@@ -3253,7 +3253,7 @@
       "path": "native/action/runtime/lean/lean_d3d.c",
       "source": "nightfire-port-native/runtime/lean/lean_d3d.c",
       "group": "native-action",
-      "reviewed_sha256": "e00938bddc9301fb49049d360d60ff9a3063a87114ec542439c0ae044d8809b3"
+      "reviewed_sha256": "8f687961cd928ba0f2df0958fbe25f1d9a67f13ee42ac156c24592760e83b6e6"
     },
     {
       "path": "native/action/runtime/lean/lean_d3d.h",
@@ -3265,13 +3265,13 @@
       "path": "native/action/runtime/lean/lean_interp.inc",
       "source": "nightfire-port-native/runtime/lean/lean_interp.inc",
       "group": "native-action",
-      "reviewed_sha256": "6d5b1633ed72dcda1f0c6479e2306c09ea35a60a942505b6c68a74b703373ed6"
+      "reviewed_sha256": "8e6be3dbcfeabc0ef5b116e3adf78d8982519a39775e926688a75611249e9acf"
     },
     {
       "path": "native/action/runtime/lean/lean_overlay.inc",
       "source": "nightfire-port-native/runtime/lean/lean_overlay.inc",
       "group": "native-action",
-      "reviewed_sha256": "d8d9bd837cb52932adac7dbdaaa6f1baa7ace04bb3a861d746866f8228b2d81a"
+      "reviewed_sha256": "1435e4d3a76787d4b6f369ae61e883d3a6a4bf539a13febc757d2f97569dfd93"
     },
     {
       "path": "native/action/runtime/lean/lean_sampler.c",
@@ -3313,7 +3313,7 @@
       "path": "native/action/runtime/native/nd3d_draw.c",
       "source": "nightfire-port-native/runtime/native/nd3d_draw.c",
       "group": "native-action",
-      "reviewed_sha256": "13b4713a9a6c2c499bdfe76649410517c8a7c6bd3810db32922f9bd5154cc25a"
+      "reviewed_sha256": "5831554c79241abc0d0a7ed70a38ddbcaa384b999839c45423051da47437c8e0"
     },
     {
       "path": "native/action/runtime/native/nd3d_g1_state.c",
@@ -3421,7 +3421,7 @@
       "path": "native/action/runtime/native_action/pcg_menu.c",
       "source": "nightfire-port-native/runtime/native_action/pcg_menu.c",
       "group": "native-action",
-      "reviewed_sha256": "6384d21ca8fff2adeb1e38f67d22f4877e0e9e1a10d510e1ca4efffaf3394b71"
+      "reviewed_sha256": "1bd80b162b41169da792bcc39fbd7f4478569dee227e4c3dca329b7c0a0796fd"
     },
     {
       "path": "native/action/runtime/nightfire_camera_recorder.h",
@@ -3463,13 +3463,13 @@
       "path": "native/action/runtime/nightfire_video_audio.c",
       "source": "nightfire-port-native/runtime/nightfire_video_audio.c",
       "group": "native-action",
-      "reviewed_sha256": "fdfd6992e28a0d1d164d47ef51c7b41e9521d65f9ae3edc7e8ea502351d746be"
+      "reviewed_sha256": "ca3d05bf9d07e9c614453579384a2fcb87a90e6ee930d5ad4eb7f927320bcd00"
     },
     {
       "path": "native/action/runtime/xbox_memory_layout.c",
       "source": "nightfire-port-native/runtime/xbox_memory_layout.c",
       "group": "native-action",
-      "reviewed_sha256": "8554cf4a45bcb5bf1fea8973ba5b8ffe3ee1ed03f0b707a7bb6dca5694ae0298"
+      "reviewed_sha256": "979aa534310ad90733c35e661bf5503eb6740eb85d51a4c736120a35da08ec97"
     },
     {
       "path": "native/action/scripts/attribute_sample_exports.py",
@@ -3589,7 +3589,7 @@
       "path": "native/action/scripts/pcg_menu_rename.py",
       "source": "nightfire-port-native/scripts/pcg_menu_rename.py",
       "group": "native-action",
-      "reviewed_sha256": "d0eefa494c7ba416fe862a8ac009345049badff26b972b1fe4fe752d1599855e"
+      "reviewed_sha256": "b5748a7c343e148edc8ffd4ce6127d4a0c9801248bbc895c727e534d9fc15d66"
     },
     {
       "path": "native/action/scripts/prepare_analysis.py",
@@ -4009,13 +4009,13 @@
       "path": "native/driving/CMakeLists.txt",
       "source": "nightfire-driving-native/CMakeLists.txt",
       "group": "native-driving",
-      "reviewed_sha256": "a28c3a583341de35323ffe734aabf70e0ac475b6a36c2f1c85f80780bc30bf8d"
+      "reviewed_sha256": "c61a6cbfc04f0b479c03bb723c94e2340a6b88dc325956609ae0e01e5a33f1fb"
     },
     {
       "path": "native/driving/build-native.cmd",
       "source": "nightfire-driving-native/build-native.cmd",
       "group": "native-driving",
-      "reviewed_sha256": "80bd377a8f8d4213d98b7e123f2c1d2136d7bb68aa5c8fcefb03206f48f1271c"
+      "reviewed_sha256": "0f824e423b5253d6587f9e2f1df9cc73aa161f604b83ea474c43beab97c7b573"
     },
     {
       "path": "native/driving/launch-data/README.md",
@@ -4069,7 +4069,7 @@
       "path": "native/driving/runtime/driving_input224.c",
       "source": "nightfire-driving-native/runtime/driving_input224.c",
       "group": "native-driving",
-      "reviewed_sha256": "81a810ed50bcb91d134e5171009bd35abf42c2b1f2b23f68f41ee0462a46eecc"
+      "reviewed_sha256": "67da3757f72b6639c78103386b821dee72bd6f9580419c4919b929203fbab1bf"
     },
     {
       "path": "native/driving/runtime/driving_launch144.c",
@@ -4159,7 +4159,7 @@
       "path": "native/driving/runtime/kernel_bridge.c",
       "source": "nightfire-driving-native/runtime/kernel_bridge.c",
       "group": "native-driving",
-      "reviewed_sha256": "64632737334e34f279dea51d0bc2e6126459ec9a9d695d92982338b445196be6"
+      "reviewed_sha256": "ce0c455ec8c5f97a2ddcd096d72df235c654e9acdef2f38356273cc0e7cdf0ff"
     },
     {
       "path": "native/driving/runtime/lean/lean_audio_dsp.c",
@@ -4171,7 +4171,7 @@
       "path": "native/driving/runtime/lean/lean_d3d.c",
       "source": "nightfire-driving-native/runtime/lean/lean_d3d.c",
       "group": "native-driving",
-      "reviewed_sha256": "e00938bddc9301fb49049d360d60ff9a3063a87114ec542439c0ae044d8809b3"
+      "reviewed_sha256": "83290d2b5843e937620b4729f3d63f2b4cc7afa3499340c7712d2cd5466b8a21"
     },
     {
       "path": "native/driving/runtime/lean/lean_d3d.h",
@@ -4183,7 +4183,7 @@
       "path": "native/driving/runtime/lean/lean_dsound.c",
       "source": "nightfire-driving-native/runtime/lean/lean_dsound.c",
       "group": "native-driving",
-      "reviewed_sha256": "297a3b6f7fb65d42e054ae624893f8d1565e78e5815a5b0c7fc1b74d090363e5"
+      "reviewed_sha256": "6a0c70169e4b7286b27fc4266bfbf2491c804a2ea9ad72f556ca8aceea11fa2c"
     },
     {
       "path": "native/driving/runtime/lean/lean_dsound_glue.c",
@@ -4201,25 +4201,25 @@
       "path": "native/driving/runtime/lean/lean_flags.c",
       "source": "nightfire-driving-native/runtime/lean/lean_flags.c",
       "group": "native-driving",
-      "reviewed_sha256": "902b2aa93f5723fb6a3d89f6567cdf8ab714b3d4f9e1fc1ee9165dc9415798f9"
+      "reviewed_sha256": "9e31ae4daa7438bdb0f71bf531e6fe12826c275ee9035b0f87e82e70fabfcfe3"
     },
     {
       "path": "native/driving/runtime/lean/lean_hang.c",
       "source": "nightfire-driving-native/runtime/lean/lean_hang.c",
       "group": "native-driving",
-      "reviewed_sha256": "7ce99eb5e2e40f6e1fa57f1d2bcd15566139d0ade6f1c217eba3dbc71c7711f4"
+      "reviewed_sha256": "f37bd5422988b11f35ffe588aa3c770dd3b42f3791bee0e27b6a9f88209f76d4"
     },
     {
       "path": "native/driving/runtime/lean/lean_interp.inc",
       "source": "nightfire-driving-native/runtime/lean/lean_interp.inc",
       "group": "native-driving",
-      "reviewed_sha256": "6d5b1633ed72dcda1f0c6479e2306c09ea35a60a942505b6c68a74b703373ed6"
+      "reviewed_sha256": "d5fb355bb541748db5b302bf4be2c1daaa271e995ad463d70c47f8a3c96d9fb4"
     },
     {
       "path": "native/driving/runtime/lean/lean_overlay.inc",
       "source": "nightfire-driving-native/runtime/lean/lean_overlay.inc",
       "group": "native-driving",
-      "reviewed_sha256": "d8d9bd837cb52932adac7dbdaaa6f1baa7ace04bb3a861d746866f8228b2d81a"
+      "reviewed_sha256": "1435e4d3a76787d4b6f369ae61e883d3a6a4bf539a13febc757d2f97569dfd93"
     },
     {
       "path": "native/driving/runtime/lean/lean_sampler.c",
@@ -4231,7 +4231,7 @@
       "path": "native/driving/runtime/lean/lean_session.c",
       "source": "nightfire-driving-native/runtime/lean/lean_session.c",
       "group": "native-driving",
-      "reviewed_sha256": "b7449f1390ae66d8e84621d0c56185e9c8127ed4560d8ab196357bca179a9e15"
+      "reviewed_sha256": "3bc89809a5aab428397842a443dcff8e8e0a2b83307e9fde1242404e6e4271e6"
     },
     {
       "path": "native/driving/runtime/native/nd3d-replace-set.json",
@@ -4261,7 +4261,7 @@
       "path": "native/driving/runtime/native/nd3d_draw.c",
       "source": "nightfire-driving-native/runtime/native/nd3d_draw.c",
       "group": "native-driving",
-      "reviewed_sha256": "5a28010c38d8f27717d9c30c661efb4657470ff1018b00dd8cc7b48ca6c580b7"
+      "reviewed_sha256": "f8d388caee5afd0ba8e5b8a3028156c015b25582da50ba1b680773de1680c692"
     },
     {
       "path": "native/driving/runtime/native/nd3d_g1_state.c",
@@ -4699,7 +4699,7 @@
       "path": "native/driving/src/main.c",
       "source": "nightfire-driving-native/src/main.c",
       "group": "native-driving",
-      "reviewed_sha256": "2b5ee5dd58834a616c0d263d62cc8154f60c92ca29a1744f220330d078af4e46"
+      "reviewed_sha256": "7f5ab9b3c52594a6970ccd695cb31a1eb5403c86e4217836274d54df8e0d6f51"
     },
     {
       "path": "native/launchers/action-audio/ACTION-3D-CALC.md",
@@ -4958,6 +4958,270 @@
       "source": "nightfire-port/show-nightfire-session242.cmd",
       "group": "normal-source",
       "reviewed_sha256": "94707ff4dca56126c0c7daad23ac299648f1630e626f6706815fb535f2a20e06"
+    },
+    {
+      "path": "native/action/runtime/kernel_hal.c",
+      "source": "nightfire-port-native/runtime/kernel_hal.c",
+      "group": "native-action",
+      "reviewed_sha256": "4b2c958778c91221135631ceb13a144002a6ad063029a5bb5b1f1e505d0c72b1"
+    },
+    {
+      "path": "native/action/runtime/lean/lean_binds.inc",
+      "source": "nightfire-port-native/runtime/lean/lean_binds.inc",
+      "group": "native-action",
+      "reviewed_sha256": "f919646dc7644cbbd7902017f20b5aad88f79ef2ad698a9b2b6b367bd032d7e8"
+    },
+    {
+      "path": "native/action/runtime/lean/nf_binds.h",
+      "source": "nightfire-port-native/runtime/lean/nf_binds.h",
+      "group": "native-action",
+      "reviewed_sha256": "7dde4bb19e8eca7dc6a62e17164356c54f046d89e07ece2cd63412c49aa5dcd5"
+    },
+    {
+      "path": "native/action/runtime/native_action/nf_lockstep.c",
+      "source": "nightfire-port-native/runtime/native_action/nf_lockstep.c",
+      "group": "native-action",
+      "reviewed_sha256": "907ba851a48a9a53f68a2a80c912d7435f755c7e6cd84f6559db976c7ae92099"
+    },
+    {
+      "path": "native/action/runtime/nightfire_direct_mouse122.h",
+      "source": "nightfire-port-native/runtime/nightfire_direct_mouse122.h",
+      "group": "native-action",
+      "reviewed_sha256": "39744a3e1ed2805059a1460bdd0f942f5d4b74ac4fdc46f8e1e5fe93d1a5c3b1"
+    },
+    {
+      "path": "native/action/runtime/nightfire_input.c",
+      "source": "nightfire-port-native/runtime/nightfire_input.c",
+      "group": "native-action",
+      "reviewed_sha256": "79ed6e5a8c5608f642b95e87f9456fc1f905c9885645e1ec9284253834657a55"
+    },
+    {
+      "path": "native/action/runtime/nightfire_pc_input.h",
+      "source": "nightfire-port-native/runtime/nightfire_pc_input.h",
+      "group": "native-action",
+      "reviewed_sha256": "f9bf2a3664f5299b7ac3fb09c15b738522defccdb941d4902ef9166bbf74f77a"
+    },
+    {
+      "path": "native/action/scripts/nf_rcr_fix.py",
+      "source": "nightfire-port-native/scripts/nf_rcr_fix.py",
+      "group": "native-action",
+      "reviewed_sha256": "c915010b1f5c1f4afdbd9ac13d8ea9b29bf94f4aca6ef401e2ca7ea6ed6c6a25"
+    },
+    {
+      "path": "native/action/scripts/nf_state_diff.py",
+      "source": "nightfire-port-native/scripts/nf_state_diff.py",
+      "group": "native-action",
+      "reviewed_sha256": "910fb3c0980fd57b9cc81aae7055e7625ed34c290596ca096af8175e9a1e2a13"
+    },
+    {
+      "path": "native/action/show-nightfire-native-4pads.cmd",
+      "source": "nightfire-port-native/show-nightfire-native-4pads.cmd",
+      "group": "native-action",
+      "reviewed_sha256": "2009fec261a4305a8d0f639cf96b5701c3a9348fe268af647d9c61ab51afe72e"
+    },
+    {
+      "path": "native/action/show-nightfire-native-lockstep-record.cmd",
+      "source": "nightfire-port-native/show-nightfire-native-lockstep-record.cmd",
+      "group": "native-action",
+      "reviewed_sha256": "8c9fa107950ab9411beff4834e0c552537525123f01592c4c53dbbf29c224ee5"
+    },
+    {
+      "path": "native/action/show-nightfire-native-lockstep-replay.cmd",
+      "source": "nightfire-port-native/show-nightfire-native-lockstep-replay.cmd",
+      "group": "native-action",
+      "reviewed_sha256": "b9413a23f84b95c22b594e958ddefafeb66d926911647277f0ef12f1181c422a"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_binds.inc",
+      "source": "nightfire-driving-native/runtime/lean/lean_binds.inc",
+      "group": "native-driving",
+      "reviewed_sha256": "f919646dc7644cbbd7902017f20b5aad88f79ef2ad698a9b2b6b367bd032d7e8"
+    },
+    {
+      "path": "native/driving/runtime/lean/nf_audio_out.c",
+      "source": "nightfire-driving-native/runtime/lean/nf_audio_out.c",
+      "group": "native-driving",
+      "reviewed_sha256": "a9eb621998792f411c43d1ec410b4865593c1c43a3e570e384c5fc31868acd7e"
+    },
+    {
+      "path": "native/driving/runtime/lean/nf_binds.h",
+      "source": "nightfire-driving-native/runtime/lean/nf_binds.h",
+      "group": "native-driving",
+      "reviewed_sha256": "7dde4bb19e8eca7dc6a62e17164356c54f046d89e07ece2cd63412c49aa5dcd5"
+    },
+    {
+      "path": "native/driving/scripts/nf_frndint_fix.py",
+      "source": "nightfire-driving-native/scripts/nf_frndint_fix.py",
+      "group": "native-driving",
+      "reviewed_sha256": "990cbd417571d8ce5ee6fd1f4ec22e367a34647f0669680f6fd12bab10e99bca"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Full Logging.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Full Logging.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "022a790d7debd35620f1f7315ffb1a08548b94512047c266e09647522c339afb"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Lockstep Test 1 Record.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Lockstep Test 1 Record.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "efc1b651ae522d9720f91198edcd07dd1b604c542e7537a20ba96cf35336f04b"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Lockstep Test 2 Replay.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Lockstep Test 2 Replay.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "3ceade2612de21e49835afc3e656cffe14cfa02be07ead2141e6aeb39c1acbdd"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Record Pictures (F9).cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Record Pictures (F9).cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "513a2109a80556bce2916d9f89d03a48f3fb66e09a0c8a5b4424394cd6326b82"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Skip Opening Drive.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Skip Opening Drive.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "cb0d60db75a5c529bc27bb26684d7604dc4d1dbaf0630f9681570be8772f107e"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Smooth Motion Off.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Smooth Motion Off.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "6c9ab88d925c14ceaa931aad25847c499c9511cd2137a9b14c81f915a45bdd0c"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Split-screen With New Sound.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Split-screen With New Sound.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "a68dfa3dcd7f0b912390516550d62adf4aca227b0e80a13c1bf9dc6afe77a3fc"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Split-screen, Keyboard As Own Player.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Split-screen, Keyboard As Own Player.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "c4a5f6f7c1c39f744bee20c99619c510b365a0916a62c4b82641de7702596001"
+    },
+    {
+      "path": "release/alpha/Debug/Debug - Two Windows.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Debug/Debug - Two Windows.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "505cf9c9bf4b6f715b1b3f6213529af911f13c8047c0de7287cfa2dfd841fb8e"
+    },
+    {
+      "path": "release/alpha/Debug/README.txt",
+      "source": "releases/Nightfire-PC-Alpha/Debug/README.txt",
+      "group": "release-alpha",
+      "reviewed_sha256": "6f8fdc874fa19e95e09a88b0a2bc1a40c4708f565ec1e8f6531c704184a1e08d"
+    },
+    {
+      "path": "release/alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
+      "source": "releases/Nightfire-PC-Alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
+      "group": "release-alpha",
+      "reviewed_sha256": "0725b1cdf1cc38e0bdb14937960138b97aa7629075d007bcd82798c8c795ffed"
+    },
+    {
+      "path": "release/alpha/Play Nightfire (Fullscreen).cmd",
+      "source": "releases/Nightfire-PC-Alpha/Play Nightfire (Fullscreen).cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "e6d27aa0435c420a628962130c8281b9a79fe43ce37f063b4719ca47c14ffe84"
+    },
+    {
+      "path": "release/alpha/Play Nightfire.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Play Nightfire.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "a37c68ccfe4fc5293ecb0e7478c0341baff4610ce676a36e798dd787f065879d"
+    },
+    {
+      "path": "release/alpha/README.txt",
+      "source": "releases/Nightfire-PC-Alpha/README.txt",
+      "group": "release-alpha",
+      "reviewed_sha256": "1e886fc7209ee2ccc5c5cf87a815670f204f928815737bee11ed9462eda53f70"
+    },
+    {
+      "path": "release/alpha/Setup.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Setup.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "96761a89a81db5125aee2259af0377c689e4f26b7055324335e7b78d606b42b1"
+    },
+    {
+      "path": "release/alpha/Split-screen Multiplayer.cmd",
+      "source": "releases/Nightfire-PC-Alpha/Split-screen Multiplayer.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "a2fd5feaa9d026f2140bac1bc6c08ec3fa01a47b808de946a154139d758531f4"
+    },
+    {
+      "path": "release/alpha/engine/action/output-paths.cmd",
+      "source": "releases/Nightfire-PC-Alpha/engine/action/output-paths.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "f5ad7c7e439456025d0ce5f5c74eed946038e0b69f78d8e70312aedb7cab7fa7"
+    },
+    {
+      "path": "release/alpha/engine/action/run-windows.cmd",
+      "source": "releases/Nightfire-PC-Alpha/engine/action/run-windows.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "273c08d4afe141adeee588c12d7386fac7d9f28cab6760e77cd9a3c5cbd60115"
+    },
+    {
+      "path": "release/alpha/engine/action/start-action.cmd",
+      "source": "releases/Nightfire-PC-Alpha/engine/action/start-action.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "683272663550719cab1a5c4f21286c6f097a3c4048e058d248b6fb96e0993871"
+    },
+    {
+      "path": "release/alpha/engine/driving/base-environment-paris.json",
+      "source": "releases/Nightfire-PC-Alpha/engine/driving/base-environment-paris.json",
+      "group": "release-alpha",
+      "reviewed_sha256": "81c9584acb5c9473b9ca73ca0fb22011fd7068cc7754c6835a7dab7d49461fde"
+    },
+    {
+      "path": "release/alpha/engine/driving/run-lean-guided.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/driving/run-lean-guided.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "a6b891d086130196bdf19560d1e1f1e714ef8b8e8ee5c512c627b62662ccd4fa"
+    },
+    {
+      "path": "release/alpha/engine/driving/run-lean-scene.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/driving/run-lean-scene.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "9e7fdab84d66b878dbdf74983e5aaed0795b79b611bc88892a253ebbf368ed49"
+    },
+    {
+      "path": "release/alpha/engine/driving/run-windows.cmd",
+      "source": "releases/Nightfire-PC-Alpha/engine/driving/run-windows.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "4ceea0b0369224e6531ca969d62bb2ff84d176e6439023440351990b409bb2c0"
+    },
+    {
+      "path": "release/alpha/engine/find-python.cmd",
+      "source": "releases/Nightfire-PC-Alpha/engine/find-python.cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "c942706b47545512974bd4f07f53d588aa0e1968a4ac303eab948b8f36c44c15"
+    },
+    {
+      "path": "release/alpha/engine/launcher/nightfire.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/launcher/nightfire.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "7ddacb8598a14eb18c84370fe02da494137926ce3dd91fbfe701ab1f1032a2d5"
+    },
+    {
+      "path": "release/alpha/engine/launcher/one_window_host.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/launcher/one_window_host.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "e2d5de088178c05af3de7568a3cf37db8994e00e164a4a8764f5699ff1eb7f61"
+    },
+    {
+      "path": "release/alpha/engine/setup.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/setup.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "2cb082d9ec5139c7d761d6b22c10715f401f0b62a38d90c88a90e00da29765a8"
+    },
+    {
+      "path": "release/alpha/engine/tools/nf_state_diff.py",
+      "source": "releases/Nightfire-PC-Alpha/engine/tools/nf_state_diff.py",
+      "group": "release-alpha",
+      "reviewed_sha256": "910fb3c0980fd57b9cc81aae7055e7625ed34c290596ca096af8175e9a1e2a13"
     }
   ]
 }

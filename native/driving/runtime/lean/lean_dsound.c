@@ -1,7 +1,9 @@
-/* LEAN_AUDIO_NATIVE=1 (off by default): native audio for the Driving build.
+/* Native audio for the Driving build. Always on: since 2026-10-09 the emulated
+ * sound chip is no longer built, so LEAN_AUDIO_NATIVE, LEAN_AUDIO_NO_CHIP and
+ * LEAN_AUDIO_OWN_DSP are on whatever they are set to.
  *
  * The game talks to its statically linked Xbox DirectSound library through 19
- * XDK C-API wrappers (surveyed 2026-10-06). With this switch on, those wrappers
+ * XDK C-API wrappers (surveyed 2026-10-06). Those wrappers
  * call the functions below instead (one-line prologues in
  * src/recomp/gen/recomp_0017.c / recomp_0018.c), so the DSOUND internals, the
  * MCPX front end / voice processor emulation and the APU frame thread never run:
@@ -24,23 +26,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-int lean_adpcm_decode_block(int16_t *out, const uint8_t *in, size_t n, int channels);   /* apu_vp.c */
-void *lean_svf_new(void); void lean_svf_setup(void *f, float fc, float q); float lean_svf_run(void *f, float x);   /* apu_vp.c */
-/* LEAN_AUDIO_OWN_DSP=1 (off by default): our own decoder and filter (lean_audio_dsp.c) instead of
- * the APU-file helpers above; bit-exact on the tools/audio_dsp_equiv.c sweep (2026-10-07). */
+/* Our own decoder and filter (lean_audio_dsp.c), bit-exact with the old voice-processor
+ * helpers on the tools/audio_dsp_equiv.c sweep (2026-10-07); those are no longer built. */
 int lean_own_adpcm_decode_block(int16_t *out, const uint8_t *in, size_t n, int channels);
 void *lean_own_svf_new(void); void lean_own_svf_setup(void *f, float fc, float q); float lean_own_svf_run(void *f, float x);
-static int own_dsp(void)
-{
-    static int on = -1;
-    if (on < 0) { const char *e = getenv("LEAN_AUDIO_OWN_DSP"); on = e && e[0] == '1';
-        if (on) fprintf(stderr, "[LEAN-NATIVE] own ADPCM decoder and filter (LEAN_AUDIO_OWN_DSP)\n"); }
-    return on;
-}
-static int nat_adpcm(int16_t *out, const uint8_t *in, size_t n, int ch) { return own_dsp() ? lean_own_adpcm_decode_block(out, in, n, ch) : lean_adpcm_decode_block(out, in, n, ch); }
-static void *nat_svf_new(void) { return own_dsp() ? lean_own_svf_new() : lean_svf_new(); }
-static void nat_svf_setup(void *f, float fc, float q) { if (own_dsp()) lean_own_svf_setup(f, fc, q); else lean_svf_setup(f, fc, q); }
-static float nat_svf_run(void *f, float x) { return own_dsp() ? lean_own_svf_run(f, x) : lean_svf_run(f, x); }
+static int nat_adpcm(int16_t *out, const uint8_t *in, size_t n, int ch) { return lean_own_adpcm_decode_block(out, in, n, ch); }
+static void *nat_svf_new(void) { return lean_own_svf_new(); }
+static void nat_svf_setup(void *f, float fc, float q) { lean_own_svf_setup(f, fc, q); }
+static float nat_svf_run(void *f, float x) { return lean_own_svf_run(f, x); }
 
 extern ptrdiff_t g_xbox_mem_offset;
 uint32_t xbox_HeapAlloc(uint32_t size, uint32_t alignment);
@@ -66,26 +59,26 @@ int lean_audio_native = -1;
 int lean_audio_native_on(void)
 {
     if (lean_audio_native < 0) {
-        const char *e = getenv("LEAN_AUDIO_NATIVE");
-        lean_audio_native = e && e[0] == '1';
-        if (lean_audio_native) fprintf(stderr, "[LEAN-NATIVE] native DirectSound replacement on\n");
+        lean_audio_native = 1;
+        fprintf(stderr, "[LEAN-NATIVE] native DirectSound replacement on; own ADPCM decoder and filter\n");
+        static const char *const old[] = { "LEAN_AUDIO_NATIVE", "LEAN_AUDIO_NO_CHIP", "LEAN_AUDIO_OWN_DSP" };
+        for (int i = 0; i < 3; i++) {
+            const char *e = getenv(old[i]);
+            if (e && e[0] == '0') fprintf(stderr, "[LEAN-NATIVE] %s=0 ignored: the emulated sound chip is no longer built\n", old[i]);
+        }
     }
     return lean_audio_native;
 }
 
-/* LEAN_AUDIO_NO_CHIP=1 (with LEAN_AUDIO_NATIVE=1; off by default): don't create the emulated
- * MCPX APU at all (src/main.c). Any later access to its registers, the DSP start-up handshake
- * or the AC97 reset is logged as [LEAN-NOCHIP], so we can see whether anything still needs it. */
+/* The emulated MCPX APU is never created. Any access to its registers, the DSP start-up
+ * handshake or the AC97 reset is logged as [LEAN-NOCHIP], so we can see whether anything
+ * still asks for it. */
 int lean_audio_no_chip(void)
 {
-    static int on = -1;
-    if (on < 0) {
-        const char *e = getenv("LEAN_AUDIO_NO_CHIP");
-        on = e && e[0] == '1' && lean_audio_native_on();
-        if (e && e[0] == '1' && !on) fprintf(stderr, "[LEAN-NOCHIP] ignored: needs LEAN_AUDIO_NATIVE=1\n");
-        if (on) fprintf(stderr, "[LEAN-NOCHIP] emulated APU/DSP/AC97 not started (native audio only)\n");
-    }
-    return on;
+    static int said;
+    if (!said) { said = 1; lean_audio_native_on();
+        fprintf(stderr, "[LEAN-NOCHIP] emulated APU/DSP/AC97 not built (native audio only)\n"); }
+    return 1;
 }
 
 typedef struct {
@@ -143,8 +136,7 @@ static BOOL CALLBACK nat_init(PINIT_ONCE o, PVOID p, PVOID *c)
     InitializeCriticalSectionAndSpinCount(&s_lock, 4000);
     const char *g = getenv("LEAN_AUDIO_NATIVE_GAIN");
     if (g && *g) s_master = (float)atof(g);
-    /* XAudio2 output: the emulated chip starts it when present; start it here too, so
-     * native audio also works without the chip (LEAN_AUDIO_NO_CHIP). No-op if already up. */
+    /* Open the XAudio2 output (no-op if it is already open). */
     { extern int xa2_init(void); if (!xa2_init()) fprintf(stderr, "[LEAN-NATIVE] XAudio2 output could not be started\n"); }
     return TRUE;
 }
@@ -542,3 +534,13 @@ uint32_t lean_ds_OutCall2(uint32_t buf, uint32_t pstatus)   /* 0x17B690 = GetSta
 
 /* blocks mixed so far (for diagnostics) */
 long long lean_ds_mixed_blocks(void) { return s_mixed_blocks; }
+
+/* One line for F9 marks (lean_session.c): what our own mixer is doing. Read
+ * without the lock: a mark must never wait on a stuck sound thread. */
+void lean_ds_state_line(char *buf, size_t n)
+{
+    int used = 0, playing = 0;
+    for (int i = 0; i < NAT_MAX_VOICES; i++) if (s_v[i].handle) { used++; if (s_v[i].playing) playing++; }
+    snprintf(buf, n, "native mixer: blocks=%lld voices=%d playing=%d queued=%d",
+             (long long)s_mixed_blocks, used, playing, xa2_queued_now());
+}

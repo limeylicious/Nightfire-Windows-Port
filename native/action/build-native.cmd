@@ -21,6 +21,9 @@ if errorlevel 1 exit /b 1
 rem PC Graphics page (runtime/native_action/pcg_menu.c; idempotent).
 python scripts\pcg_menu_rename.py --apply >> logs\build-native-prep.log 2>&1
 if errorlevel 1 exit /b 1
+rem Profile crash fix: rcr in the 64-bit divide helpers (scripts/nf_rcr_fix.py; idempotent).
+python scripts\nf_rcr_fix.py --apply >> logs\build-native-prep.log 2>&1
+if errorlevel 1 exit /b 1
 set /p NATIVE_ARGS=<native-cmake-args.txt
 cmake -S . -B build-native -G "Visual Studio 17 2022" -A x64 -C native-cache.cmake -DNIGHTFIRE_HOST_EXE_NAME:STRING=nightfire_native -DNIGHTFIRE_NATIVE_D3D=ON > logs\build-configure.log 2>&1
 if errorlevel 1 exit /b 1

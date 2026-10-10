@@ -12,7 +12,7 @@ MANUAL_FILES = {
     'tools/export_policy.py', 'tools/source_allowlist.json', 'tools/test_export_policy.py',
     'licenses/xboxrecomp-MIT.txt', 'licenses/xboxrecomp-NOTICE.txt',
     'docs/STATUS-510.md', 'experiments/driving-510/README.md',
-    'experiments/driving-lean/README.md', 'native/README.md',
+    'experiments/driving-lean/README.md', 'native/README.md', 'release/README.md',
 }
 DENIED_NAMES = {
     'recomp_manual.c', 'driving_native247.h', 'driving_admission283.h',
@@ -22,12 +22,17 @@ DENIED_NAMES = {
 DENIED_PARTS = {
     'game_files', 'recomp', 'gen', 'analysis', 'captures', 'logs', 'recovery',
     'cache', 'releases', 'generic263', 'packaging', 'node_modules', '__pycache__',
+    'sessions', 'linked-sessions', 'runs', 'saves', 'lockstep',
 }
 # Native workspaces: source prefix -> repository prefix, relative paths kept.
 NATIVE_GROUPS = {
     'native-driving': ('nightfire-driving-native/', 'native/driving/'),
     'native-action': ('nightfire-port-native/', 'native/action/'),
     'native-launch': ('native-driving/', 'native/launchers/'),
+}
+# The owner's alpha folder (launchers and set-up scripts only; Setup copies engines built locally).
+RELEASE_GROUPS = {
+    'release-alpha': ('releases/Nightfire-PC-Alpha/', 'release/alpha/'),
 }
 ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json', '.cmake'}
 SECRET = re.compile(
@@ -114,6 +119,13 @@ def read_allowlist(data: bytes) -> list[dict]:
             if not source.startswith(prefix) or destination != target + suffix:
                 raise ValueError(f'invalid native mapping: {destination}')
             check_destination(source)
+        elif group in RELEASE_GROUPS:
+            # The source sits under the workspace's releases folder, so only the destination is
+            # checked against the denied names; the exact prefix keeps it to that one folder.
+            prefix, target = RELEASE_GROUPS[group]
+            suffix = source.removeprefix(prefix)
+            if not source.startswith(prefix) or destination != target + suffix:
+                raise ValueError(f'invalid release mapping: {destination}')
         else:
             raise ValueError(f'unknown source group: {group}')
     return config['files']

@@ -4,7 +4,7 @@
  * (once per stall):
  *   - every other thread's host call chain, symbolised (the recompiled
  *     sub_XXXXXXXX frames are the guest call chain);
- *   - the APU front-end/interrupt state (lean_apu_dump_state);
+ *   - our own mixer's output ring (lean_ds_ring_dump);
  *   - the IRQL lock owners and the pending DPC queue (lean_kernel_dump_state).
  * Each thread is suspended only while its stack is unwound; names are looked
  * up after it is resumed, so a suspended thread holding the heap or the
@@ -18,7 +18,6 @@
 #include <string.h>
 
 volatile LONG lean_present_count;
-extern void lean_apu_dump_state(void);
 extern void lean_kernel_dump_state(void);
 
 #define HANG_FRAMES 48
@@ -95,13 +94,11 @@ static DWORD WINAPI hang_thread(LPVOID p)
           if (now < arm) continue; }   /* startup loading stalls are normal (LEAN_HANG_ARM=frames, default 200) */
         if (++still == secs * 2) {
             fprintf(stderr, "[LEAN-HANG] no game frame for %lu s (game frames=%ld; smooth-mode presents may continue); dumping state\n", secs, now);
-            lean_apu_dump_state();
             lean_kernel_dump_state();
-            { extern int lean_audio_native_on(void); extern void lean_ds_ring_dump(void); if (lean_audio_native_on()) lean_ds_ring_dump(); }
+            { extern void lean_ds_ring_dump(void); lean_ds_ring_dump(); }
             dump_threads();
             { extern void lean_strm_dump(uint32_t); lean_strm_dump(0); }
-            lean_apu_dump_state();   /* again, to show whether anything moved */
-            lean_kernel_dump_state();
+            lean_kernel_dump_state();   /* again, to show whether anything moved */
             fprintf(stderr, "[LEAN-HANG] dump end\n");
             { extern void lean_session_freeze(unsigned, long); lean_session_freeze(secs, now); }
             fflush(stderr);

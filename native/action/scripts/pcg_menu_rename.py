@@ -1,5 +1,5 @@
 """PC Graphics page (native-driving/ingame-menu/BUILD.md): rename the generated
-definitions of the five menu routines that runtime/native_action/pcg_menu.c
+definitions of the six menu routines that runtime/native_action/pcg_menu.c
 replaces, so the native versions take every call, tail jump and dispatch entry:
 
     0x06D460 Txt_BindLabel          (native text for string group 0x7F)
@@ -7,6 +7,7 @@ replaces, so the native versions take every call, tail jump and dispatch entry:
     0x092B50 MenuManager_Load       (front-end menu blob with the PC Graphics page)
     0x0959E0 Page_SetHelpText       (description line for the PC Graphics button and rows)
     0x095A80 Page_Update            (mouse in the menus)
+    0x092C40 Manager_SendMessage    (page changes for the Multiplayer Local / Online pages)
 
     void sub_XXXXXXXX(void)  ->  void orig_sub_XXXXXXXX(void)   /* PC_GRAPHICS: renamed */
 
@@ -16,7 +17,7 @@ import re, sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GEN = ROOT / 'src/recomp/gen'
-VAS = [0x0006D460, 0x0008E320, 0x00092B50, 0x000959E0, 0x00095A80]
+VAS = [0x0006D460, 0x0008E320, 0x00092B50, 0x000959E0, 0x00095A80, 0x00092C40]
 mode = sys.argv[1] if len(sys.argv) > 1 else '--apply'
 done = {va: None for va in VAS}
 for f in sorted(GEN.glob('*.c')):

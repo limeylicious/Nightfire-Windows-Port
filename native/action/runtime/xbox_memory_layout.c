@@ -712,6 +712,13 @@ static void xbox_Nv2aAckStart(void)
 {
     g_nv2a_ack_stop = 0;
     {   const char *e = getenv("LEAN_NO_REGPOLL");
+        extern int nf_lockstep_on(void); extern void nf_lockstep_tick_start(volatile uint32_t *tick);
+        if (nf_lockstep_on() && e && e[0] == '1') {   /* KeTickCount counts game frames */
+            nf_lockstep_tick_start((volatile uint32_t *)((uintptr_t)(XBOX_KERNEL_DATA_BASE + KDATA_TICK_COUNT) + g_memory_offset));
+            fprintf(stderr, "  [LEAN] graphics register poll off\n");
+            return;
+        }
+        if (nf_lockstep_on()) fprintf(stderr, "[LOCKSTEP] WARNING: needs LEAN_NO_REGPOLL=1, or KeTickCount stays on real time\n");
         if (e && e[0] == '1') {
             g_nv2a_ack_stop = 0;
             g_nv2a_ack_thread = CreateThread(NULL, 0, tick_only_thread, NULL, 0, NULL);

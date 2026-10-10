@@ -70,19 +70,11 @@ if(DRIVING_LEAN_RENDERER)
 else()
     target_sources(xbox_kernel PRIVATE runtime/driving_gpu143.c)
 endif()
-# Lean build only: APU output fix. The toolkit's monitor frame discarded the
-# voice-processor output, so no game audio reached XAudio2. Lean copies in
-# runtime/lean/apu replace those four files; ../xboxrecomp stays untouched.
-if(DRIVING_LEAN_RENDERER)
-    get_target_property(driving_apu_sources xbox_apu SOURCES)
-    list(FILTER driving_apu_sources EXCLUDE REGEX "(^|/)(apu_core|apu_dsp|apu_vp|apu_xaudio2)\\.c$")
-    set_property(TARGET xbox_apu PROPERTY SOURCES "${driving_apu_sources}")
-    target_sources(xbox_apu PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_core.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_dsp.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/runtime/lean/apu/apu_vp.c)
-    # XAudio2 output and audio stats moved to runtime/lean/lean_audio_out.c (native audio files)
-endif()
+# Sound: the game's DirectSound calls are answered by our own mixer
+# (runtime/lean/lean_dsound.c, lean_audio_dsp.c). The toolkit's emulated sound
+# chip (xbox_apu) and its DirectSound layer (xbox_dsound) are neither built nor
+# linked; runtime/lean/apu keeps the old copies only as a test reference.
+set_target_properties(xbox_apu xbox_dsound PROPERTIES EXCLUDE_FROM_ALL TRUE)
 target_sources(xbox_kernel PRIVATE runtime/driving_permissions264.c)
 target_sources(xbox_kernel PRIVATE runtime/driving_async295.c)
 set_source_files_properties(runtime/driving_gpu143.c TARGET_DIRECTORY xbox_kernel PROPERTIES COMPILE_DEFINITIONS "DRIVING_BATCH236=1;NIGHTFIRE_BATCH_TIMING244=1;DRIVING_COMMAND245=1;DRIVING_COMMAND262=1;DRIVING_COMMAND_READ265=1;DRIVING_DRAIN_MAP274=1;NIGHTFIRE_PAIR_BATCH248=1;DRIVING_TIMING250=1;DRIVING_DESCRIPTOR252=1;DRIVING_MAPPING259=1")
@@ -97,7 +89,7 @@ target_sources(xbox_kernel PRIVATE runtime/driving_dsp149.c)
 target_sources(xbox_kernel PRIVATE runtime/driving_scanout152.c)
 
 if(MSVC)
-    foreach(runtime_target xbox_kernel xbox_apu)
+    foreach(runtime_target xbox_kernel)
         target_compile_options(${runtime_target} PRIVATE
             /FI"${CMAKE_CURRENT_SOURCE_DIR}/runtime/compile_compat.h")
     endforeach()
@@ -156,8 +148,10 @@ add_executable(${PROJECT_NAME}
 )
 target_compile_definitions(${PROJECT_NAME} PRIVATE DRIVING_CALL_HISTORY=1)
 
-# Link against the xboxrecomp umbrella target (all 6 runtime libraries)
-target_link_libraries(${PROJECT_NAME} PRIVATE xboxrecomp)
+# The xboxrecomp runtime libraries, without the emulated sound chip and the
+# DirectSound layer built on it (the umbrella target would pull both in).
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    xbox_kernel xbox_d3d8 xbox_input xbox_usb xbox_nv2a xbox_video)
 
 # Include paths for generated recomp headers
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -166,11 +160,19 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${XBOXRECOMP_DIR}/include
 )
 
+# src/main.c includes xboxrecomp.h, which still names the DirectSound layer's
+# and the sound chip's headers (dsound_xbox.h, apu.h). Their folders are added for
+# those declarations only: no chip or DirectSound code is compiled or linked.
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${XBOXRECOMP_DIR}/src/audio
+    ${XBOXRECOMP_DIR}/src/apu
+)
+
 # Opt-in201 bridge; only the backend translation unit, never its copied executor.
 if(DRIVING_LEAN_RENDERER)
     target_sources(${PROJECT_NAME} PRIVATE runtime/driving_present201.c runtime/driving_flip204.c runtime/driving_input224.c)
     target_sources(${PROJECT_NAME} PRIVATE runtime/lean/lean_fire_test.c)  # test-only LEAN_FIRE_TEST
-    target_sources(${PROJECT_NAME} PRIVATE runtime/lean/lean_dsound.c runtime/lean/lean_dsound_glue.c runtime/lean/lean_audio_out.c runtime/lean/lean_audio_dsp.c)  # LEAN_AUDIO_NATIVE
+    target_sources(${PROJECT_NAME} PRIVATE runtime/lean/lean_dsound.c runtime/lean/lean_dsound_glue.c runtime/lean/nf_audio_out.c runtime/lean/lean_audio_dsp.c)  # LEAN_AUDIO_NATIVE
     set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME nightfire_driving_lean)
     target_compile_definitions(${PROJECT_NAME} PRIVATE DRIVING_LEAN_RENDERER=1)
 else()
@@ -188,6 +190,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     dxguid
     xinput
     winmm
+    # sound output (XAudio2), formerly pulled in with the sound chip
+    xaudio2
+    ole32
     # Lets the fault handler resolve the host RIP back to the generated
     # function's symbol, i.e. to the guest function that faulted.
     dbghelp

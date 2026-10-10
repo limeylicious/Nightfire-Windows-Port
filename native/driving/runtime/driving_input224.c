@@ -44,6 +44,24 @@ static int16_t mouse_axis224(int delta,ULONGLONG ms){
  return (int16_t)(delta<0?-n:n);
 }
 static int key224(unsigned key,const unsigned char *keys){return keys[key]&&!blocked224[key];}
+#ifdef DRIVING_LEAN_RENDERER
+/* Key binds (NF_OVERLAY=1, runtime/lean/lean_binds.inc): each pad input reads the
+ * keys chosen on the Key Binds page (Driving list). The defaults are the fixed keys
+ * below, so an untouched page plays as before, except that a keyboard key on a
+ * trigger also works while the mouse is free. Mouse buttons and the wheel count
+ * only while the mouse is captured. */
+#include "lean/nf_binds.h"
+static int bind224(unsigned code,const unsigned char *keys,int captured){
+ if(!code)return 0;
+ if(code==NFB_WHEEL_UP||code==NFB_WHEEL_DOWN)return captured&&nf_binds_wheel_down((int)code);
+ if((code==VK_LBUTTON||code==VK_RBUTTON||code==VK_MBUTTON||code==VK_XBUTTON1||code==VK_XBUTTON2)&&!captured)return 0;
+ return key224(code,keys);
+}
+static int act224(int action,const unsigned char *keys,int captured){
+ unsigned char c[2];nf_binds_get(NFB_DRIVING,action,c);
+ return bind224(c[0],keys,captured)||bind224(c[1],keys,captured);
+}
+#endif
 /* Pure sample conversion is separately exercised without reading live input. */
 static void map224(unsigned char out[18],const unsigned char keys[256],int focus,int captured,
                    int dx,int dy,ULONGLONG now){
@@ -51,7 +69,22 @@ static void map224(unsigned char out[18],const unsigned char keys[256],int focus
  if(!focus){focused224=0;memset(blocked224,1,sizeof blocked224);mouse_axes224[0]=mouse_axes224[1]=0;mouse_time224=now;return;}
  if(!focused224){memcpy(blocked224,keys,sizeof blocked224);focused224=1;mouse_axes224[0]=mouse_axes224[1]=0;mouse_time224=now;dx=dy=0;}
  for(unsigned i=0;i<256;i++)if(!keys[i])blocked224[i]=0;
+ int binds=0;int16_t bound_axes[2]={0,0};(void)bound_axes;
+ #ifdef DRIVING_LEAN_RENDERER
+ if(nf_binds_on()){
+  #define B(a) act224((a),keys,captured)
+  out[0]=(unsigned char)((B(NFD_DUP)?1:0)|(B(NFD_DDOWN)?2:0)|(B(NFD_DLEFT)?4:0)|(B(NFD_DRIGHT)?8:0)|
+   (B(NFD_START)?16:0)|(B(NFD_BACK)?32:0)|(B(NFD_LS)?64:0)|(B(NFD_RS)?128:0));
+  out[2]=(B(NFD_A)||B(NFD_SELECT))?255:0;out[3]=(B(NFD_B)||B(NFD_MENUBACK))?255:0;
+  out[4]=B(NFD_X)?255:0;out[5]=B(NFD_Y)?255:0;out[6]=B(NFD_BLACK)?255:0;out[7]=B(NFD_WHITE)?255:0;
+  out[8]=B(NFD_LT)?255:0;out[9]=B(NFD_RT)?255:0;
+  bound_axes[0]=(int16_t)((B(NFD_RIGHT)-B(NFD_LEFT))*32767);bound_axes[1]=(int16_t)((B(NFD_UP)-B(NFD_DOWN))*32767);
+  #undef B
+  binds=1;
+ }
+ #endif
  #define K(k) key224((k),keys)
+ if(!binds){
  unsigned digital=(K(VK_UP)?1:0)|(K(VK_DOWN)?2:0)|(K(VK_LEFT)?4:0)|(K(VK_RIGHT)?8:0)|
   (K(VK_RETURN)?16:0)|(K(VK_TAB)?32:0)|(K(VK_SHIFT)?64:0)|(K('V')?128:0);
  out[0]=(unsigned char)digital;
@@ -59,7 +92,9 @@ static void map224(unsigned char out[18],const unsigned char keys[256],int focus
  out[4]=(K(VK_CONTROL)||K('C'))?255:0;out[5]=K(VK_SPACE)?255:0;
  out[6]=K('G')?255:0;out[7]=K('F')?255:0;
  out[8]=(captured&&(K(VK_RBUTTON)||K('T')))?255:0;out[9]=(captured&&K(VK_LBUTTON))?255:0;
+ }
  int16_t axes[4]={(int16_t)((K('D')-K('A'))*32767),(int16_t)((K('W')-K('S'))*32767),0,0};
+ if(binds){axes[0]=bound_axes[0];axes[1]=bound_axes[1];}
  ULONGLONG elapsed=now-mouse_time224;
  if(!captured){mouse_axes224[0]=mouse_axes224[1]=0;mouse_time224=now;dx=dy=0;elapsed=0;}
  /* Repeated reads retain a sample for 8 ms; an idle subsequent sample is zero. */
@@ -108,6 +143,9 @@ void driving_input224_window(HWND h,UINT m,WPARAM w,LPARAM l){
   if((m==WM_SIZE||m==WM_MOVE)&&captured)clip224(h,1);
  }
  if(m==WM_KILLFOCUS||m==WM_DESTROY){capture224(h,0);AcquireSRWLockExclusive(&lock224);focused224=0;memset(blocked224,1,sizeof blocked224);if(m==WM_DESTROY)window224=NULL;ReleaseSRWLockExclusive(&lock224);}
+ #ifdef DRIVING_LEAN_RENDERER
+ if(m==WM_MOUSEWHEEL&&captured)nf_binds_wheel(GET_WHEEL_DELTA_WPARAM(w)/WHEEL_DELTA);   /* key binds: wheel up/down */
+ #endif
  if(m==WM_INPUT&&captured&&nf_host_foreground(h)){RAWINPUT r;UINT n=sizeof r;
   if(GetRawInputData((HRAWINPUT)l,RID_INPUT,&r,&n,sizeof(RAWINPUTHEADER))!=UINT_MAX&&r.header.dwType==RIM_TYPEMOUSE&&!(r.data.mouse.usFlags&MOUSE_MOVE_ABSOLUTE)){
    AcquireSRWLockExclusive(&lock224);int64_t x=(int64_t)mouse_x224+r.data.mouse.lLastX,y=(int64_t)mouse_y224+r.data.mouse.lLastY;

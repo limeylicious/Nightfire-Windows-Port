@@ -1046,6 +1046,7 @@ static const uint32_t *interp_cur_cmask;   /* constant rows the current draw's p
 static const int *interp_cur_prows;        /* its position-transform rows (VSE.prows) */
 static int vis_active_flag(void);          /* a visibility test is counting (diagnostics) */
 static ID3D11Buffer *interp_cur_vb;        /* vertex buffer the current draw used (ring or cache) */
+int lean_d3d_vc_hit;                       /* written by runtime/native/nd3d_draw.c (shared with Driving, where the smooth replay reads it); unused here */
 static void lean_d3d_draw_impl(const LeanDraw *d){
     if(!ready||!d->nidx)return;
     const uint32_t *K=d->K;const NFVertexProgram *vp=(const NFVertexProgram*)d->vp;
@@ -1165,7 +1166,19 @@ static void lean_d3d_draw_impl(const LeanDraw *d){
     ID3D11BlendState *bs=blend_state(K[0x304/4]!=0,K[0x344/4],K[0x348/4],K[0x350/4],mask);
     float bf[4];argb4(bf,K[0x34c/4]);
     ID3D11DeviceContext_OMSetBlendState(ctx,bs,bf,0xffffffffu);
-    ID3D11DepthStencilState *dss=depth_state(K,depth!=NULL);ID3D11RasterizerState *rss=raster_state(K,0,d->topo,d->t.zeta_fmt==1?256u:1u);
+    /* Split-screen: the game limits each player's view with window clip 0
+     * (SetScissors/SetViewport, methods 0x2B4/0x2C0/0x2E0, inclusive ends in
+     * multisampled pixels). Apply it as the D3D11 scissor, scaled to the stored
+     * target. Unset, inverted or exclusive clips draw unclipped as before. */
+    int sc=0;
+    if(!K[0x2b4/4]){uint32_t h=K[0x2c0/4],v=K[0x2e0/4];
+        LONG x0=(LONG)(h&0xffff),x1=(LONG)(h>>16)+1,y0=(LONG)(v&0xffff),y1=(LONG)(v>>16)+1;
+        if(x1>x0+1&&y1>y0+1){
+            D3D11_RECT r={(LONG)rt_scaled((unsigned)x0,bt_k),(LONG)rt_scaled((unsigned)y0,bt_k),(LONG)rt_scaled((unsigned)x1,bt_k),(LONG)rt_scaled((unsigned)y1,bt_k)};
+            if(r.right>(LONG)bt_vw)r.right=(LONG)bt_vw;if(r.bottom>(LONG)bt_vh)r.bottom=(LONG)bt_vh;
+            /* Only clip when it is smaller than the target: full-screen views keep today's state. */
+            if(r.left>0||r.top>0||r.right<(LONG)bt_vw||r.bottom<(LONG)bt_vh){sc=1;ID3D11DeviceContext_RSSetScissorRects(ctx,1,&r);}}}
+    ID3D11DepthStencilState *dss=depth_state(K,depth!=NULL);ID3D11RasterizerState *rss=raster_state(K,sc,d->topo,d->t.zeta_fmt==1?256u:1u);
     ID3D11DeviceContext_OMSetDepthStencilState(ctx,dss,K[0x368/4]&255);
     ID3D11DeviceContext_RSSetState(ctx,rss);
     {   /* census for the stats line: what kinds of draws a scene uses */
@@ -1221,7 +1234,7 @@ static void lean_d3d_draw_impl(const LeanDraw *d){
     }
     ID3D11DeviceContext_DrawIndexed(ctx,d->nidx,0,0);
     interp_cur_cmask=vs->cmask;interp_cur_prows=vs->prows;interp_cur_vb=vbuf;
-    if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,rss,d->topo,color,depth,
+    if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,sc?raster_state(K,0,d->topo,d->t.zeta_fmt==1?256u:1u):rss,d->topo,color,depth,
         bt_vw,bt_vh,stride,voff,d->nverts,ioff,d->nidx,interp_vconst,interp_pconst);
     if(sprite_bound){ID3D11DeviceContext_GSSetShader(ctx,NULL,NULL,0);sprite_bound=0;}
     if(color){color->gpu_written=1;color->gen++;color->gen_frame=lean_frame_no;}if(depth)depth->gpu_written=1;

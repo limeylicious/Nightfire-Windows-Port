@@ -19,7 +19,14 @@
 #include "recomp_types.h"
 #include "recomp_funcs.h"
 #include "nightfire_diagnostics.h"
+#ifdef NIGHTFIRE_NATIVE_D3D
+/* Native build: movie sound uses the project's own IMA ADPCM decoder
+ * (runtime/native_action/nds_dsp.c); nothing xemu-derived is included. */
+int nds_own_adpcm_decode_block(int16_t *out,const uint8_t *in,size_t n,int channels);
+#define adpcm_decode_block(out,in,n,channels) nds_own_adpcm_decode_block(out,in,n,channels)
+#else
 #include "nightfire_adpcm.h"
+#endif
 
 #define MAX_STREAMS 8
 #define MAX_PACKETS 8
