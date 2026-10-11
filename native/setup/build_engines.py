@@ -59,8 +59,14 @@ ENGINES = {
 GENERATORS = {'16': 'Visual Studio 16 2019', '17': 'Visual Studio 17 2022', '18': 'Visual Studio 18 2026'}
 
 
+LOG = None   # <workshop>\logs\setup.log once the workshop exists
+
+
 def say(text=''):
     print(text, flush=True)
+    if LOG:
+        with open(LOG, 'a', encoding='utf-8', errors='replace') as fh:
+            fh.write(text + '\n')
 
 
 def sha256(p):
@@ -340,10 +346,12 @@ def main():
     game, ws = Path(a.game).resolve(), Path(a.workshop).resolve()
     if nightfire_running():
         raise SystemExit('A Nightfire game is running. Close it, then run Setup again.')
-    say(f'Building the Nightfire engines\n  source:   {REPO}\n  workshop: {ws}\n')
+    global LOG
+    (ws / 'logs').mkdir(parents=True, exist_ok=True)
+    LOG = ws / 'logs' / 'setup.log'
+    say(f'\n=== {time.strftime("%Y-%m-%d %H:%M:%S")}\nBuilding the Nightfire engines\n  source:   {REPO}\n  workshop: {ws}\n')
     git, cmake, generator = check_tools(a)
     check_game(game)
-    (ws / 'logs').mkdir(parents=True, exist_ok=True)
     trees = json.loads((HERE / 'trees.json').read_text())
     wanted = {e: tree_files(e, trees) for e in engines}
     deps = capstone_folder(ws, a)
@@ -377,4 +385,10 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except SystemExit as stop:
+        if isinstance(stop.code, str) and LOG:   # also keep the reason in setup.log
+            with open(LOG, 'a', encoding='utf-8', errors='replace') as fh:
+                fh.write('STOPPED: ' + stop.code + '\n')
+        raise
