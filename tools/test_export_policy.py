@@ -95,6 +95,14 @@ class ExportPolicyTests(unittest.TestCase):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 read_allowlist(data(dict(source=source, path=path, group='release-alpha')))
 
+    def test_reviewed_recomp_manual_paths_only(self):
+        check_text('native/action/src/recomp_manual.c', b'int x;\n')
+        check_text('native/driving/src/recomp_manual.c', b'int x;\n')
+        for name in ('native/action/runtime/recomp_manual.c', 'nightfire-port/src/recomp_manual.c',
+                     'native/action/src/RECOMP_MANUAL.C', 'native/action/regen/own-src/recomp_manual.c'):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                check_text(name, b'int x;\n')
+
     def test_regen_mapping(self):
         def data(row):
             return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()

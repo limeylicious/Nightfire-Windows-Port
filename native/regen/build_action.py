@@ -144,10 +144,12 @@ def stage_hand(ctx):
         write(ctx['gen'] / name, read(ctx['recipe_dir'] / 'own' / name))
     for name in ctx['recipe'].get('own_src', []):   # src/recomp_manual.c, src/nightfire_diagnostics.h
         src = ctx['recipe_dir'] / 'own-src' / name
+        if not src.exists():
+            src = ctx['recipe_dir'].parent / 'src' / name   # native/action/src/recomp_manual.c
         if src.exists():
             write(ctx['tree'] / 'src' / name, read(src))
         else:
-            print(f'  own-src/{name} is not in this copy of the recipe; the build needs it in src/', flush=True)
+            print(f'  {name} is not in this copy of the repository; the build needs it in src/', flush=True)
     for name, parts in ctx['recipe'].get('hand', {}).items():
         out = []
         for part in parts:

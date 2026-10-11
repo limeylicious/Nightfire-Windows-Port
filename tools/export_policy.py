@@ -19,6 +19,12 @@ DENIED_NAMES = {
     'driving_native_effects350.h', 'driving_native_remaining352.h',
     'driving_sprite_contract396.h', 'driving_font_plan348.h', 'driving_fog455.h',
 }
+# Reviewed exceptions to DENIED_NAMES, by exact path (owner's decision, 2026-10-11): both
+# engines' recomp_manual.c now hold only an address-to-function table and diagnostics.
+REVIEWED_PATHS = {
+    'nightfire-port-native/src/recomp_manual.c', 'native/action/src/recomp_manual.c',
+    'nightfire-driving-native/src/recomp_manual.c', 'native/driving/src/recomp_manual.c',
+}
 DENIED_PARTS = {
     'game_files', 'recomp', 'gen', 'analysis', 'captures', 'logs', 'recovery',
     'cache', 'releases', 'generic263', 'packaging', 'node_modules', '__pycache__',
@@ -63,7 +69,7 @@ def check_destination(name: str) -> None:
     if any(part in DENIED_PARTS for part in parts) or any(part.startswith('build') for part in parts[:-1]):
         raise ValueError(f'forbidden destination: {name}')
     basename = path.name.lower()
-    if basename in DENIED_NAMES or basename.startswith('driving_contract'):
+    if (basename in DENIED_NAMES and path.as_posix() not in REVIEWED_PATHS) or basename.startswith('driving_contract'):
         raise ValueError(f'excluded derived input: {name}')
     if path.suffix.lower() not in ALLOWED_SUFFIXES and name not in {'.gitignore', '.gitattributes'}:
         raise ValueError(f'forbidden file type: {name}')

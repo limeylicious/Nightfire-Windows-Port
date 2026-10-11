@@ -5653,13 +5653,13 @@
       "path": "native/regen/README.md",
       "source": "native/regen/README.md",
       "group": "regen",
-      "reviewed_sha256": "5dcaa192f6781070e2c51dfd6e904047c0f1ae0743a32b2d7bba6463836596d8"
+      "reviewed_sha256": "33137a1c487498187e5e2a22fed1b4c326dcebe3c79adf1dd122d88d3c8f7707"
     },
     {
       "path": "native/regen/build_action.py",
       "source": "native/regen/build_action.py",
       "group": "regen",
-      "reviewed_sha256": "6a55a7657ca2370caf44dcabef8e04214d38f6f6f4d7ab82a67c079f94c6f8a2"
+      "reviewed_sha256": "726b689ff0f8b5f41324ee67902ee6dbebae33bb1a1243fbef7d9be5b54653a7"
     },
     {
       "path": "native/regen/make_manifest.py",
@@ -5684,6 +5684,18 @@
       "source": "native/regen/repair_driving.py",
       "group": "regen",
       "reviewed_sha256": "6ef99e5a2c1a44b113ad76a3add6b130bd0d5b9a74b5eb2e4653af1aeaec6cf4"
+    },
+    {
+      "path": "native/action/src/recomp_manual.c",
+      "source": "nightfire-port-native/src/recomp_manual.c",
+      "group": "native-action",
+      "reviewed_sha256": "751aba228c4fef6248bc91c49db5fda182e04b334f5480849771d5692b036959"
+    },
+    {
+      "path": "native/driving/src/recomp_manual.c",
+      "source": "nightfire-driving-native/src/recomp_manual.c",
+      "group": "native-driving",
+      "reviewed_sha256": "16b2146fc6e06ba980e91d148c5c5d007937d523c0b034f2a410da7fc623e2d1"
     }
   ]
 }

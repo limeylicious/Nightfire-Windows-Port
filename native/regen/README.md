@@ -27,7 +27,7 @@ the engine's recipe and checks every file against the recipe's manifest.
 | `inputs/function-list.json`, `inputs/classification.json` | Action only: the function list and classification the first translation used, as start address, size, section and category (names are `sub_<start>`). The current disassembler finds a different list, so the original is kept as addresses. No labels made from the game's strings. |
 | `recipe.json` (Action), `steps.json` (Driving) | The steps after the toolkit, in order (below). |
 | `own/` | Source files in the gen folder that are entirely our code. |
-| `own-src/` | Files for the build's `src/` folder. `recomp_manual.c` (an address-to-function table and diagnostics) is still on the export deny list, so it is not in this repository yet. |
+| `own-src/` | Files for the build's `src/` folder that live only here. Each engine's `recomp_manual.c` (an address-to-function table and diagnostics) is in `native/<engine>/src/`. |
 | `manifest.json` | SHA-256 of every file of the tested build, with line endings normalised. |
 
 `build_action.py` applies the Action recipe in these stages:

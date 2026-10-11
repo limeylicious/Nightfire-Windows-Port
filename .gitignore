@@ -2,6 +2,8 @@
 **/game_files/
 **/src/recomp/
 **/recomp_manual.c
+!native/action/src/recomp_manual.c
+!native/driving/src/recomp_manual.c
 **/build*/
 **/cache/
 **/logs/
