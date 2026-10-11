@@ -2,21 +2,33 @@
 
 An AI-developed, standalone Windows static-recompilation project for the original PAL Xbox edition of *007 Nightfire*. It uses [xboxrecomp](https://github.com/sp00nznet/xboxrecomp) as the toolkit; the running game is a native Windows executable, not an emulator session.
 
-**This repository is a reviewed source snapshot, not a downloadable game or a complete build checkout.** The original Xbox executables, game data, media, generated translations, extracted shader/program tables, local logs, captures and release packages are deliberately excluded. Anyone building locally must supply their own compatible PAL copy and regenerate the excluded output. This repository does not grant rights to the game.
+**This repository is a reviewed source snapshot, not a downloadable game or a complete build checkout.** The original Xbox executables, game data, media, generated translations, extracted shader/program tables, local logs, captures and release packages are deliberately excluded. Players supply their own PAL copy, and the alpha's Setup regenerates and builds the excluded parts on their own PC. This repository does not grant rights to the game.
 
 ## A Note from the author
 Yes, this is entirely done with AI. I wanted to see how feasible it was to decompile a game of my childhood. I wanted to transform the original game into something we could still play as we remember it as well as one that's a bit more modern, with nice QOL extras, PC native features and features like online multiplayer. I personally don't want to claim any credit for anything here bar being a testing lab-rat for certain issues or moments that needed a moving hand. I personally give consent to reuse this for **anything** you desire. I didn't make the code, I have no right to tell anyone how to use it. (so long as it complies with whatever license terms or permissions the resources/tools used mention)
 
-## Current progress (October 10, 2026)
+## Play the alpha
+
+1. Install [Python](https://www.python.org/downloads/) 3.8 or newer (tick "Add python.exe to PATH"), [Git for Windows](https://git-scm.com/download/win) and [Build Tools for Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) (under "Tools for Visual Studio") with the "Desktop development with C++" workload.
+2. Download this repository (a release's "Source code (zip)", or Code > Download ZIP) and unpack it.
+3. Copy the contents of your extracted PAL disc into `release\alpha\Game Files`, so that `default.xbe` and `Driving.xbe` sit directly inside it.
+4. Double-click `release\alpha\Setup.cmd`. It checks that the files are the PAL disc, translates the game's code on your PC, applies the port's fixes and compiles both engines. That took about 15 minutes on the owner's laptop and needs about 2 GB of space.
+5. Play with `release\alpha\Play Nightfire.cmd`.
+
+[release/alpha/README.txt](release/alpha/README.txt) covers the other launchers, controls, PC settings, known issues and crash reports. Setup installs nothing outside the unpacked folder: it downloads the translator ([xboxrecomp](https://github.com/sp00nznet/xboxrecomp)) and Capstone into `workshop\` there. The engines it builds are made from the game's own code, so don't share the folder once Setup has run.
+
+## Current progress (October 11, 2026)
 
 Both of the game's engines now run as native Windows code, without emulating the Xbox graphics or sound chips. The newest source is in [native/](native/README.md), and the first alpha test's launchers are in [release/](release/README.md).
 
-- **Action engine** (missions and multiplayer): draws through the project's own Direct3D 11 renderer and plays sound through its own mixer. The owner has played it from the Paris opening through The Exchange and into local multiplayer.
+- **Action engine** (missions and multiplayer): draws through the project's own Direct3D 11 renderer and plays sound through its own mixer and output, with no emulated sound chip since October 11. The owner has played it from the Paris opening through The Exchange and into local multiplayer.
 - **Driving engine** (vehicle levels, such as the Paris chase): uses the same native renderer. Its sound now runs entirely on the project's own mixer and output, with no emulated sound chip. Its game logic steps on the game's own timer, so it plays at the original speed.
 - **One game, one window:** Action hands over to Driving for the Paris chase and back again in a single window, as it does on the console.
 - **Local multiplayer:** up to four players in split-screen on one PC, with controllers or one shared keyboard and mouse (F6 and F5 pass it between players).
 - **Fixes:** the Paris grappling hook now reaches its target (translated code ignored the x87 rounding mode). A fix for the game closing when a new profile is created is built and waiting for a play test.
 - **Crash capture:** every native launcher writes a crash report, minidump or freeze report to a per-session folder.
+- **Online play (first version):** PCs exchange only controller presses and run the same match. Two copies on one PC stayed identical frame for frame through a split-screen match. It is started from the Action launchers `show-nightfire-native-online.cmd` and `-online-two-copies.cmd`, and has not been tried between two PCs yet.
+- **Build from your own disc:** the alpha's Setup translates both engines from the player's PAL disc and compiles them. It was tested end to end on the owner's PC on October 11.
 
 ### Optional PC settings
 
@@ -34,7 +46,7 @@ These are switched on only by the "overlay" launchers and the alpha launchers. T
 
 ### Known gaps
 
-- Online multiplayer is not implemented yet. The Online menu pages exist, and a lockstep record-and-replay test is the groundwork, but nothing in this repository starts network play.
+- Online play is a first version: the in-game Online pages don't connect yet, it is started from test launchers, and it has not been tried between two PCs.
 - Smooth Motion is experimental: in Paris a car's front tyre can lean in for a moment, and lamp glows can sit one step ahead.
 - On-screen button prompts still show Xbox buttons when the keyboard is used.
 - Sound plays without the console's reverb and other audio effects.
@@ -45,11 +57,9 @@ These are switched on only by the "overlay" launchers and the alpha launchers. T
 
 The goal remains a faithful version of the PAL game on Windows.
 
-## Alpha test (October 10, 2026)
+## Alpha test (October 2026)
 
-The owner is testing a first alpha folder: one Setup, Play (windowed or fullscreen), Split-screen Multiplayer, and a Debug folder with full logging, the F9 picture recorder and other test launchers. Its launchers and set-up are in [release/alpha/](release/README.md). It contains no game and no engines: its Setup copies engines built locally and links the player's own game files.
-
-A public alpha needs one more step: making the code generation and its repairs repeatable, so that Setup can build both engines from each player's own disc.
+The alpha folder has one Setup, Play (windowed, fullscreen or with every mission open), Split-screen Multiplayer, and a Debug folder with full logging, the F9 picture recorder and other test launchers. Its launchers and set-up are in [release/alpha/](release/README.md). It contains no game and no engines: since October 11 its Setup builds both engines from the player's own disc (see "Play the alpha" above).
 
 ## End goal
 
@@ -60,18 +70,22 @@ The package itself would contain no game content. The recompiled game code is a 
 ## What is in this repository
 
 - [native/](native/README.md): the native Action and Driving sources, launchers, PC settings, key binds, split-screen and multiplayer menus.
-- [release/](release/README.md): the launchers and set-up of the first alpha test (new in this update).
+- [release/](release/README.md): the launchers and set-up of the alpha test.
 - [experiments/driving-lean](experiments/driving-lean/README.md): the first GPU-resident Driving renderer, as of October 4.
 - [experiments/driving-510](experiments/driving-510/README.md) and [docs/STATUS-510.md](docs/STATUS-510.md): the older bridge renderer's last investigation.
 - `nightfire-port/` and `nightfire-driving/`: the original source-export layout of the earlier, partly emulated builds.
 
-Exported bytes and their source-relative provenance are listed in `SOURCE-MANIFEST.json`; the export gate checks both the working tree and staged Git blobs. See [SOURCE-EXPORT.md](SOURCE-EXPORT.md) for the exact scope and why this snapshot cannot be built by itself.
+Exported bytes and their source-relative provenance are listed in `SOURCE-MANIFEST.json`; the export gate checks both the working tree and staged Git blobs. See [SOURCE-EXPORT.md](SOURCE-EXPORT.md) for the exact scope.
 
 ## Development and attribution
 
 The Nightfire-specific implementation, repair work and documentation in this project have been produced by **AI agents, including OpenAI Codex and Anthropic Claude**, under the owner's direction. Claude has also provided independent technical review and planning. The owner supplied their game files privately, set priorities, and performed hands-on gameplay testing and bug reporting. Upstream projects and the original game have their own authors and rights holders; their work is credited in [CREDITS.md](CREDITS.md).
 
 The runtime is based on a pinned `xboxrecomp` checkout (`051a128df5ec27ef14f1ceaaead11c5457321eef`) and project-specific adapters. This repository does not include the toolkit checkout.
+
+## Licence
+
+The port's own code in this repository is released under the [MIT licence](LICENSE). The xboxrecomp toolkit keeps its own licences ([licenses/](licenses/)). The game is not included, and this repository grants no rights to it.
 
 ## Repository description
 

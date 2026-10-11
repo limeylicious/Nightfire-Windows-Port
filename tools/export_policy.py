@@ -14,6 +14,7 @@ MANUAL_FILES = {
     'licenses/xboxrecomp-MIT.txt', 'licenses/xboxrecomp-NOTICE.txt',
     'docs/STATUS-510.md', 'experiments/driving-510/README.md',
     'experiments/driving-lean/README.md', 'native/README.md', 'release/README.md',
+    'LICENSE', 'START HERE.txt', 'release/v0.1.0-alpha.md',
 }
 DENIED_NAMES = {
     'recomp_manual.c', 'driving_native247.h', 'driving_admission283.h',
@@ -77,7 +78,7 @@ def check_destination(name: str) -> None:
     basename = path.name.lower()
     if (basename in DENIED_NAMES and path.as_posix() not in REVIEWED_PATHS) or basename.startswith('driving_contract'):
         raise ValueError(f'excluded derived input: {name}')
-    if path.suffix.lower() not in ALLOWED_SUFFIXES and name not in {'.gitignore', '.gitattributes'}:
+    if path.suffix.lower() not in ALLOWED_SUFFIXES and name not in {'.gitignore', '.gitattributes', 'LICENSE'}:
         raise ValueError(f'forbidden file type: {name}')
 
 

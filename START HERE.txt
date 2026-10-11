@@ -1,0 +1,24 @@
+NIGHTFIRE PC ALPHA - START HERE
+===============================
+
+This is the source of the 007 Nightfire Windows port. It contains no game: Setup builds the
+two engines on your PC from your own PAL Xbox disc.
+
+1. Install, if you do not have them yet:
+   - Python 3.8 or newer (https://www.python.org/downloads/; tick "Add python.exe to PATH").
+   - Git for Windows (https://git-scm.com/download/win).
+   - Build Tools for Visual Studio 2022 (https://visualstudio.microsoft.com/downloads/, under
+     "Tools for Visual Studio") with the "Desktop development with C++" workload.
+2. Copy the contents of your extracted PAL disc into release\alpha\Game Files, so that
+   default.xbe and Driving.xbe sit directly inside it.
+3. Double-click release\alpha\Setup.cmd. The first run downloads the translator, translates
+   the game's code and compiles both engines: about 15 minutes on a recent laptop, longer on
+   slower PCs, and about 2 GB of space.
+4. Play with release\alpha\Play Nightfire.cmd.
+
+release\alpha\README.txt explains the other launchers, the controls, the PC settings (F10),
+known issues and what to send if something goes wrong. Everything outside release\alpha is the
+port's source code.
+
+The engines Setup builds are made from the game's own code: once Setup has run, do not share or
+upload this folder.
