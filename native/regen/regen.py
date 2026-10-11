@@ -2,7 +2,6 @@
 
     python regen.py --game "Game Files" --toolkit tools\\xboxrecomp --out regen-20261011
     options: --engines action,driving   --python-deps DIR   --compare-action GEN   --compare-driving GEN
-             --local-driving DIR (private recipe parts that are not on GitHub)
 
 For each engine this makes a build tree under --out (a NEW folder; nothing outside it is
 written), runs the pinned xboxrecomp toolkit on the engine's XBE, applies the engine's
@@ -141,7 +140,7 @@ def action(out, tk, xbe, env, info, compare):
     return check(root / 'src/recomp/gen', rd / 'manifest.json', compare, info)
 
 
-def driving(out, tk, xbe, env, info, compare, local=None):
+def driving(out, tk, xbe, env, info, compare):
     rd = NATIVE / 'driving/regen'
     root = out / 'driving'
     for d in ('analysis', 'logs', 'game_files'):
@@ -165,8 +164,6 @@ def driving(out, tk, xbe, env, info, compare, local=None):
     gen = root / 'src/recomp/gen'
     cmd = [py, HERE / 'repair_driving.py', root / 'fresh-gen', gen, '--recipe', rd, '--scripts', scripts,
            '--toolkit', tk, '--xbe', x, '--analysis', an, '--work', root / 'work', '--report', root / 'logs/repair.json']
-    if local:
-        cmd += ['--local', local]
     run(cmd, root, env, root / 'logs/repair.log', info, 'repair', allow_fail=True)
     (root / 'src').mkdir(exist_ok=True)
     for f in sorted((rd / 'own-src').glob('*')) if (rd / 'own-src').exists() else []:
@@ -182,7 +179,6 @@ def main():
     p.add_argument('--engines', default='action,driving')
     p.add_argument('--python-deps', help='folder holding capstone, added to PYTHONPATH')
     p.add_argument('--compare-action'); p.add_argument('--compare-driving')
-    p.add_argument('--local-driving', help='private recipe parts kept off GitHub (hand transcriptions)')
     a = p.parse_args()
     tk, game, out = Path(a.toolkit).resolve(), Path(a.game).resolve(), Path(a.out).resolve()
     if out.exists():
@@ -208,8 +204,7 @@ def main():
             print(f'{kind}:', flush=True)
             xbe = find_xbe(game, XBE[kind][0], XBE[kind][1])
             info[kind] = {'xbe': str(xbe)}
-            extra = {'local': Path(a.local_driving).resolve()} if kind == 'driving' and a.local_driving else {}
-            res = globals()[kind](out, tk, xbe, env, info[kind], getattr(a, f'compare_{kind}'), **extra)
+            res = globals()[kind](out, tk, xbe, env, info[kind], getattr(a, f'compare_{kind}'))
             if res and ((res['manifest'] and res['manifest']['mismatched']) or (res['compare'] and res['compare']['mismatched'])):
                 ok = False
     finally:

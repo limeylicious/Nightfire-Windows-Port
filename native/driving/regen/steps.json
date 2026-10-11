@@ -283,11 +283,12 @@
    "kind": "copy",
    "files": {
     "driving_dev_start240.c": {
-     "from": "files/driving_dev_start240.c",
+     "from": "own/driving_dev_start240.c.txt",
+     "fill": "xbe",
      "sha256": "c1f6aea81e8cf83508080ac809f907b74e4c26a3bbbd7b41cc56f90e55888d1f"
     }
    },
-   "note": "files that are entirely our own code"
+   "note": "files that are entirely our own code; the game file names in driving_dev_start240.c are read from the player's XBE (@XBE_STRING placeholders)"
   }
  ]
 }

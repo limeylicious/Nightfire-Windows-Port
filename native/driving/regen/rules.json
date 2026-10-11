@@ -5,5 +5,9 @@
  "pop_ebp_publish": ["^(\\s*POP32\\(esp, ebp\\);)$", "\\1 g_ebp=g_seh_ebp=ebp;"],
  "pop_ebp_publish_spaced": ["^(\\s*POP32\\(esp, ebp\\);)$", "\\1 g_ebp = g_seh_ebp = ebp;"],
  "pop_ebp_publish_noted": ["^(\\s*POP32\\(esp, ebp\\);)$", "\\1 g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"],
- "ebp_write_publish": ["^(\\s*ebp = [^;]+;)$", "\\1 g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"]
+ "ebp_write_publish": ["^(\\s*ebp = [^;]+;)$", "\\1 g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"],
+ "harden_pop_ebp": ["^(\\s*POP32\\(esp, ebp\\);)((?: /\\* leave \\*/)?)$", "\\1 g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */\\2"],
+ "icall_bridge": ["^(.*PUSH32\\(esp, 0x[0-9A-F]+u\\); )(RECOMP_ICALL_SAFE\\()", "\\1g_ebp = g_seh_ebp = ebp; \\2"],
+ "tail_bridge": ["^(\\s*)g_seh_ebp = ebp; (sub_[0-9A-F]{8}\\(\\); return; /\\* tail jmp)", "\\1g_ebp = g_seh_ebp = ebp; \\2"],
+ "ret_bridge": ["^(\\s*)(esp \\+= \\d+; return; /\\* ret)", "\\1g_ebp = g_seh_ebp = ebp; \\2"]
 }

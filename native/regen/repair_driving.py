@@ -17,9 +17,12 @@ list of steps. Step kinds:
   flags_counters  number every `if (_flags` site in file order as lean_flags_hit(N),
                   skipping the listed (function address, ordinal) sites
   ops             apply address-keyed line edits (recipe/ops/*.json, plus --local/ops)
-  lift            lift whole functions with the toolkit by start/end address
+  lift            lift whole functions with the toolkit by start/end address ("cfg": decode
+                  reachable code only, "seed_tables": jump tables given by address)
   hand            assemble hand files from lifts, then apply their ops
-  copy            copy files that are entirely our own code from the recipe (or --local)
+  copy            copy files that are entirely our own code from the recipe (or --local);
+                  with "fill": "xbe", @XBE_STRING(0xVA)@ placeholders are replaced by the
+                  game's strings read from the player's own XBE (--xbe)
 Edits are keyed by function address (the "Original: 0x..." banner) and guarded by SHA-256
 of the normalised text they apply to; text already in its final state is left alone, so
 every step can be re-run. The recipe holds addresses, hashes, shape rules and our own code
@@ -107,6 +110,20 @@ def make_line(src, item, pools=None):
     return line[:p] + item.get('x', '') + (line[len(line) - q:] if q else '')
 
 
+def make_range(item, pools):
+    """Lines [a, b) of the toolkit lift item['l'] (b may be negative, counted from the end),
+    each passed through the shape rules item['rules'] in order (a rule that does not match
+    leaves the line unchanged)."""
+    a, b = item['range']
+    out = []
+    for line in pools[item['l']][a:b]:
+        for r in item.get('rules', []):
+            pat, rep = RULES[r]
+            line = re.sub(pat, rep, line, count=1)
+        out.append(line)
+    return out
+
+
 def apply_hunks(text, hunks, pools=None):
     """hunks: [{'at': i, 'del': n, 'ins': [...]}] against the source line list. Applied
     back to front; hunks at the same position keep their list order."""
@@ -115,7 +132,9 @@ def apply_hunks(text, hunks, pools=None):
     order = sorted(range(len(hunks)), key=lambda k: (hunks[k]['at'], k), reverse=True)
     for k in order:
         h = hunks[k]
-        ins = [make_line(src, x, pools) for x in h.get('ins', [])]
+        ins = []
+        for x in h.get('ins', []):
+            ins.extend(make_range(x, pools) if isinstance(x, dict) and 'range' in x else [make_line(src, x, pools)])
         out[h['at']:h['at'] + h.get('del', 0)] = ins
     return '\n'.join(out)
 
@@ -303,8 +322,22 @@ t = BatchTranslator(xbe_path=xbe, func_json_path=str(out / '_functions.json'), l
                     identified_json_path=identified, abi_json_path=abi, output_dir=str(out / '_o'),
                     trace_functions=set())
 bad = 0
+import struct
+from tools.recomp.config import va_to_file_offset
+xbe_bytes = Path(xbe).read_bytes()
 for s in spec:
     st = int(s['start'], 16)
+    if s.get('cfg'):
+        # reachable code only (data inside the range is never decoded); tables whose first
+        # entry is not a code pointer are seeded from the entries after it (s['seed_tables'])
+        en = int(s['end'], 16); ft = t.translator
+        ins, tables, _ = ft._recover_cfg(st, en, set(), set())
+        for tab in s.get('seed_tables', []):
+            tab = int(tab, 16)
+            tables[tab] = list(struct.unpack_from('<3I', xbe_bytes, va_to_file_offset(tab) + 4))
+        seeds = {st} | {x for v in tables.values() for x in v}
+        ins = ft.disasm.disassemble_cfg(xbe_bytes[va_to_file_offset(st):va_to_file_offset(st) + en - st], st, en, seeds)
+        ft._recovered_cfg[st] = dict(end=en, instructions=ins, jump_tables=tables)
     code = t.translate_single(st)
     if code:
         (out / f'{st:08X}.c').write_text(code)
@@ -381,6 +414,39 @@ def step_hand(work, gen, step, a, payloads, log):
     return counts
 
 
+XBE_STR = re.compile(r'@XBE_STRING\(0x([0-9A-Fa-f]{8})(?:,(\d+))?\)@')
+
+
+def xbe_va_reader(path):
+    """VA -> bytes of the XBE image (section headers of the player's own file)."""
+    data = Path(path).read_bytes()
+    base, nsec, sec_va = (int.from_bytes(data[o:o + 4], 'little') for o in (0x104, 0x11C, 0x120))
+    secs = []
+    for i in range(nsec):
+        h = sec_va - base + i * 56
+        va, vsize, raw, rsize = (int.from_bytes(data[h + o:h + o + 4], 'little') for o in (4, 8, 12, 16))
+        secs.append((va, min(vsize, rsize), raw))
+    def at(va):
+        for sva, size, raw in secs:
+            if sva <= va < sva + size:
+                return data[raw + va - sva:raw + size]
+        raise KeyError(f'0x{va:08X} is not in a section of {path}')
+    return at
+
+
+def fill_xbe_strings(text, xbe):
+    """Replace @XBE_STRING(0xVA)@ (or @XBE_STRING(0xVA,SKIP)@) with the NUL-terminated
+    string at that VA of the player's XBE (from character SKIP on), escaped for a C literal."""
+    if not XBE_STR.search(text):
+        return text
+    at = xbe_va_reader(xbe)
+    def one(m):
+        raw = at(int(m[1], 16))
+        s = raw[:raw.index(0)][int(m[2] or 0):].decode('ascii')
+        return s.replace('\\', '\\\\').replace('"', '\\"')
+    return XBE_STR.sub(one, text)
+
+
 def step_copy(gen, step, a, log):
     n = 0
     for name, info in step['files'].items():
@@ -388,6 +454,11 @@ def step_copy(gen, step, a, log):
             src = base / info['from']
             if src.exists():
                 text = norm(read(src))
+                if info.get('fill') == 'xbe':
+                    if not a.xbe:
+                        log.append(f'copy {name}: needs --xbe to fill its placeholders')
+                        break
+                    text = fill_xbe_strings(text, a.xbe)
                 if sha(text) != info['sha256']:
                     log.append(f'copy {name}: SHA-256 differs from the recipe')
                 write(gen / name, text)

@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 949,
+  "file_count": 950,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -6217,22 +6217,22 @@
       "path": "native/driving/regen/lifts-aux.json",
       "source": "native/driving/regen/lifts-aux.json",
       "group": "regen",
-      "bytes": 3267,
-      "sha256": "fdc11a68ba8e61204814b33ab1eeb53233a7ff621d9a3683732ef223b88dc94a"
+      "bytes": 3223,
+      "sha256": "1b4b2bb891f90949ee5ed95da529a5f26c42230d1100c098a9db93028088a0f3"
     },
     {
       "path": "native/driving/regen/lifts-hand.json",
       "source": "native/driving/regen/lifts-hand.json",
       "group": "regen",
-      "bytes": 2595,
-      "sha256": "ea063dbef8dc828ba66fa13ed8ea53eda0c3203b699751192a852cc4538e52db"
+      "bytes": 2545,
+      "sha256": "85dc647221aa4e7344afe3c685539d4828776a567b3ef90a0d61111b1eda1df7"
     },
     {
       "path": "native/driving/regen/manifest.json",
       "source": "native/driving/regen/manifest.json",
       "group": "regen",
       "bytes": 4976,
-      "sha256": "8f6a778cb05163091b4fa4a98f9238a78a4bbb515b72a5400eb1f5d9e63d3ef6"
+      "sha256": "c314973c3139be7400dc7c3fcbdd21003dfe7180d93212544c0591994f1666ef"
     },
     {
       "path": "native/driving/regen/ops-hand/driving_callbacks143_c.json",
@@ -6392,8 +6392,8 @@
       "path": "native/driving/regen/ops-hand/driving_copy142_c.json",
       "source": "native/driving/regen/ops-hand/driving_copy142_c.json",
       "group": "regen",
-      "bytes": 2873,
-      "sha256": "9376f54f7b2b9c2d4bcd15573733fbaa722092bd9f87d198d20187be79d395be"
+      "bytes": 2107,
+      "sha256": "ba1fcd4080c3cb26fdb18fd550a0ce302786693165392bda72c8cef850ba09d0"
     },
     {
       "path": "native/driving/regen/ops-hand/driving_graphics_init142_c.json",
@@ -6448,15 +6448,15 @@
       "path": "native/driving/regen/ops/recomp_0001_c.json",
       "source": "native/driving/regen/ops/recomp_0001_c.json",
       "group": "regen",
-      "bytes": 3038,
-      "sha256": "8cb690c701eb7b7c2d312b4c0219ccb3e876e74c6e5666f75230657a1f6f0d72"
+      "bytes": 3972,
+      "sha256": "6d64e4073e8535ef2837337c10b438e19b061a078d8a3ba48a941b7e53ede9f3"
     },
     {
       "path": "native/driving/regen/ops/recomp_0002_c.json",
       "source": "native/driving/regen/ops/recomp_0002_c.json",
       "group": "regen",
-      "bytes": 2389,
-      "sha256": "a29d7558b3e41c45e3a0c3a3629d6455df39b72e83bd6bd39f356c1081c9b8ac"
+      "bytes": 4471,
+      "sha256": "4645c9a9c8d5bf3437f17b1f4ebae8595ae7fa842de43d99d0342bcaac657361"
     },
     {
       "path": "native/driving/regen/ops/recomp_0003_c.json",
@@ -6504,8 +6504,8 @@
       "path": "native/driving/regen/ops/recomp_0009_c.json",
       "source": "native/driving/regen/ops/recomp_0009_c.json",
       "group": "regen",
-      "bytes": 626,
-      "sha256": "50262117ce7decfcb7bcb962d1997bbdc25e1f5ea226307be8629ceacbc67d62"
+      "bytes": 1041,
+      "sha256": "f47885a4a53c2253f78ae760b0038319292f02881b941ae0e79f8abd7adc99fd"
     },
     {
       "path": "native/driving/regen/ops/recomp_0010_c.json",
@@ -6553,8 +6553,8 @@
       "path": "native/driving/regen/ops/recomp_stubs_unresolved_c.json",
       "source": "native/driving/regen/ops/recomp_stubs_unresolved_c.json",
       "group": "regen",
-      "bytes": 2888,
-      "sha256": "1b04a86270b8f18e72231d427cab57b4a639345347c001f01f3aaca774a91ecb"
+      "bytes": 14694,
+      "sha256": "60b0ee01a805374be014d33bc39f4cb4d4bb88e13b7aaa38e182cd9904973f4b"
     },
     {
       "path": "native/driving/regen/ops/recomp_types_h.json",
@@ -6567,15 +6567,15 @@
       "path": "native/driving/regen/rules.json",
       "source": "native/driving/regen/rules.json",
       "group": "regen",
-      "bytes": 700,
-      "sha256": "1784b914da4dc951be0e6464249df9b8bc99731824984a883b92c625e5648e14"
+      "bytes": 1187,
+      "sha256": "d70107a0253cf4a820da4d8dd4b48604a28e3fd9d4b6654ae675b7db8f052ea0"
     },
     {
       "path": "native/driving/regen/steps.json",
       "source": "native/driving/regen/steps.json",
       "group": "regen",
-      "bytes": 6526,
-      "sha256": "c80abac152795380a37b23f2f9452ab445df6b67b48ea594ccd4ec64d02d8b88"
+      "bytes": 6653,
+      "sha256": "d927c7004e9438598c00dce7cba9bd1abde18699a57207f963a992a6faa2c854"
     },
     {
       "path": "native/driving/scripts/hook_probe_patch.py",
@@ -6595,8 +6595,8 @@
       "path": "native/regen/README.md",
       "source": "native/regen/README.md",
       "group": "regen",
-      "bytes": 4304,
-      "sha256": "33137a1c487498187e5e2a22fed1b4c326dcebe3c79adf1dd122d88d3c8f7707"
+      "bytes": 5167,
+      "sha256": "b8d2b44c58f22c45be7733a6c4c10ef3afd30e612fbf228e0a6b150912d40767"
     },
     {
       "path": "native/regen/build_action.py",
@@ -6616,8 +6616,8 @@
       "path": "native/regen/regen.py",
       "source": "native/regen/regen.py",
       "group": "regen",
-      "bytes": 12263,
-      "sha256": "302e2cb39b4a499162b8656033ab860fed7405d03a0b808da6839fb601f981e0"
+      "bytes": 11898,
+      "sha256": "c1de184c532f7e94ee468ff4ee9621dee7c42b733324f28ecf867b34786228b7"
     },
     {
       "path": "native/regen/relift.py",
@@ -6630,8 +6630,8 @@
       "path": "native/regen/repair_driving.py",
       "source": "native/regen/repair_driving.py",
       "group": "regen",
-      "bytes": 21573,
-      "sha256": "6ef99e5a2c1a44b113ad76a3add6b130bd0d5b9a74b5eb2e4653af1aeaec6cf4"
+      "bytes": 24820,
+      "sha256": "210f8854f789400826548c00e2aa4ee4c1cf62cc2d2637f837530882f66f229a"
     },
     {
       "path": "native/action/src/recomp_manual.c",
@@ -6646,6 +6646,13 @@
       "group": "native-driving",
       "bytes": 18600,
       "sha256": "16b2146fc6e06ba980e91d148c5c5d007937d523c0b034f2a410da7fc623e2d1"
+    },
+    {
+      "path": "native/driving/regen/own/driving_dev_start240.c.txt",
+      "source": "native/driving/regen/own/driving_dev_start240.c.txt",
+      "group": "regen",
+      "bytes": 2506,
+      "sha256": "a7e11dd01a6513a8275e40653ea39245188984636cceff3804adcd17da0d07cc"
     }
   ]
 }

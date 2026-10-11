@@ -42,12 +42,34 @@
    "file": "recomp_0001.c",
    "block": "0x00026290",
    "src": "52a2cd6dc9459cfd",
-   "dst": "b06beafdac5f3c27",
-   "lifts": [
-    "0x00026290"
-   ],
-   "generated_like": 41,
-   "payload": "recomp_0001.c:0x00026290"
+   "dst": "733195b5b3e0e373",
+   "note": "both predecessors of 0x26310 set ZF; the toolkit merged them into the never-set _flags",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 84,
+     "del": 1,
+     "ins": [
+      {
+       "s": 84,
+       "p": 41,
+       "x": "_fb = 0u; /*public: PAL262FE TEST EAX,EAX recorded as CMP EAX,0 (same ZF) for the JNE at 26310*/"
+      }
+     ]
+    },
+    {
+     "at": 94,
+     "del": 1,
+     "ins": [
+      {
+       "s": 94,
+       "p": 8,
+       "q": 20,
+       "x": "CMP_NE(_fa, _fb) /*public: PAL26310 JNE, ZF from TEST@262FE or CMP@26309*/"
+      }
+     ]
+    }
+   ]
   },
   {
    "file": "recomp_0001.c",
@@ -152,9 +174,35 @@
    "file": "recomp_0001.c",
    "block": "0x0003FBF0",
    "src": "f8ddbd4f356f5ad4",
-   "dst": "d3dcb891762297ce",
-   "generated_like": 4,
-   "payload": "recomp_0001.c:0x0003FBF0"
+   "dst": "4186e6e075ceb50e",
+   "lifts": [
+    "0x0003FBF0"
+   ],
+   "note": "false boundary 0x3FC00 inside the MOV at 3FBFE; lifted to 0x3FC05",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 30,
+     "ins": [
+      {
+       "l": "0x0003FBF0",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x0003FBF0..0x0003FC05; replaces the hand transcription*/",
+      {
+       "l": "0x0003FBF0",
+       "range": [
+        7,
+        31
+       ]
+      }
+     ]
+    }
+   ]
   }
  ]
 }

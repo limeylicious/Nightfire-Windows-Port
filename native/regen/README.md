@@ -15,7 +15,6 @@ python native\regen\regen.py --game "Game Files" --toolkit tools\xboxrecomp --ou
 - `--out` must be a new folder. Nothing outside it is written.
 - `--compare-action GEN` / `--compare-driving GEN` also compare the result with an existing
   gen folder, read-only.
-- `--local-driving DIR` adds recipe parts that are not published (see below).
 
 For each engine `regen.py` makes a build tree under `--out`, runs the toolkit, then applies
 the engine's recipe and checks every file against the recipe's manifest.
@@ -56,10 +55,24 @@ fresh output:
 5. **hand** and **copy**: assemble the separate callback files from lifts plus their edits
    (`hand-files.json`, `ops-hand/`), then copy files that are entirely our code.
 
-Six of Driving's 53 files also need parts that are not published: functions the port carries
-as hand-checked transcriptions, and a start-up file that names the game's files. They stay
-on the owner's PC and are added with `--local-driving`. Without them the other 47 files are
-identical; replacing those parts with toolkit lifts is planned.
+Where the port used to carry hand-checked transcriptions, the Driving recipe makes the code
+on the player's PC:
+
+- Functions the first pass cut short (a false start inside an instruction) are translated
+  again by start and end address (`lifts-aux.json`), with our one-line edits.
+- Callbacks the first pass did not find (`recomp_stubs_unresolved.c`) are toolkit lifts by
+  start and end address, passed through the named pattern rules in `rules.json`. Insert
+  items `{"l": key, "range": [a, b], "rules": [...]}` take lines `a` to `b-1` of a lift made
+  on the player's PC, never translated text from the recipe.
+- `driving_copy142.c` is a lift with `"cfg": true` and `seed_tables` (the copy routine's
+  jump tables, read from the player's XBE), so its tables are not decoded as code.
+- `driving_dev_start240.c` is our file (`own/driving_dev_start240.c.txt`). With
+  `"fill": "xbe"` each `@XBE_STRING(0xVA[,SKIP])@` becomes the string at that address of
+  the player's XBE, so the recipe holds no game file names.
+
+Four of the 53 files therefore differ from the owner's earlier build in a few functions
+(`recomp_0001.c`, `recomp_0002.c`, `recomp_0009.c`, `recomp_stubs_unresolved.c`); each
+difference was tested as equivalent, and `manifest.json` holds the hashes of this output.
 
 ## Rules for what goes here
 

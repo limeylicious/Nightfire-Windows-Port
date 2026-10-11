@@ -5,12 +5,35 @@
    "file": "recomp_0009.c",
    "block": "0x00100A30",
    "src": "1cd7a8f2cd93fe71",
-   "dst": "f9ed65bf39fb8eda",
+   "dst": "dd9b3647724cc2e5",
    "lifts": [
     "0x00100A30"
    ],
-   "generated_like": 9,
-   "payload": "recomp_0009.c:0x00100A30"
+   "note": "false boundary 0x100A50; lifted to 0x100A71 (both RET 4 paths)",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 49,
+     "ins": [
+      {
+       "l": "0x00100A30",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x00100A30..0x00100A71; replaces the hand transcription*/",
+      {
+       "l": "0x00100A30",
+       "range": [
+        7,
+        57
+       ]
+      }
+     ]
+    }
+   ]
   },
   {
    "file": "recomp_0009.c",

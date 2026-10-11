@@ -1,0 +1,47 @@
+/* Explicit fresh-Paris development shortcut. Called only at PAL 0005AD66,
+ * after its original MOV AL and before its original TEST/JZ. Default off.
+ * No guest-memory writes, decoder manipulation or persistent option changes. */
+#include <windows.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+extern ptrdiff_t g_xbox_mem_offset;
+static volatile LONG used240, refused240;
+
+static int read240(uint64_t va,void *out,size_t n)
+{
+ SIZE_T got=0;uintptr_t base=(uintptr_t)g_xbox_mem_offset,address;
+ if(!va||!n||n>64||va+n<va||
+    !((va<0x04000000ull&&va+n<=0x04000000ull)||
+      (va>=0x80000000ull&&va+n<=0x84000000ull)))return 0;
+ address=base+(uintptr_t)va;
+ if(address<base||address+n<address)return 0;
+ return ReadProcessMemory(GetCurrentProcess(),(const void*)address,out,n,&got)&&got==n;
+}
+
+uint32_t driving_dev_start240(uint32_t original_eax,uint32_t stack)
+{
+ DWORD saved=GetLastError();uint32_t result=original_eax,filename=0;
+ char map[sizeof "@XBE_STRING(0x0018CA9C)@"],name[sizeof "@XBE_STRING(0x001A088C)@@XBE_STRING(0x0018E4F0,2)@"];
+ const char *flag=getenv("DRIVING_DEV_SKIP_PARIS_INTRO240");
+ static const char *const allowed[]={"@XBE_STRING(0x001A088C)@@XBE_STRING(0x0018E4F0,2)@","@XBE_STRING(0x001A0884)@@XBE_STRING(0x0018E4F0,2)@",
+                                       "@XBE_STRING(0x001A087C)@@XBE_STRING(0x0018E4F0,2)@","@XBE_STRING(0x001A0874)@@XBE_STRING(0x0018E4F0,2)@"};
+ unsigned i;
+ if(!flag||strcmp(flag,"1")||!(original_eax&255)||InterlockedCompareExchange(&used240,0,0))goto done;
+ if(!read240(0x244084,map,sizeof map)||memcmp(map,"@XBE_STRING(0x0018CA9C)@",sizeof map))goto refuse;
+ if((uint64_t)stack+0x14>0x100000000ull||!read240((uint64_t)stack+0x10,&filename,4))goto refuse;
+ for(i=0;i<sizeof name;i++)if(!read240((uint64_t)filename+i,name+i,1))goto refuse;
+ for(i=0;i<sizeof allowed/sizeof allowed[0];i++)if(!memcmp(name,allowed[i],sizeof name))break;
+ if(i==sizeof allowed/sizeof allowed[0])goto refuse;
+ if(InterlockedCompareExchange(&used240,1,0))goto done;
+ result=original_eax&0xffffff00u;
+ fprintf(stderr,"[DEV-START240] fresh Paris: opening intro skipped at original PAL gate0005AD66; map=%s movie=%s; ordinary loading retained; not normal progression proof\n",map,name);
+ goto done;
+refuse:
+ if(InterlockedIncrement(&refused240)<=3)
+  fprintf(stderr,"[DEV-START240] original movie retained: unexpected or unreadable Paris map/filename at PAL gate0005AD66\n");
+done:
+ SetLastError(saved);return result;
+}
