@@ -1,0 +1,467 @@
+{
+ "file": "driving_callbacks166.c",
+ "edits": [
+  {
+   "file": "driving_callbacks166.c",
+   "block": "file",
+   "src": "1d6df2afddcd7b12",
+   "dst": "7388dc02e7650fa7",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include <xmmintrin.h>"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 3,
+     "del": 1,
+     "ins": [],
+     "seq": 1
+    },
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "s": 9,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 2
+    },
+    {
+     "at": 22,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 3
+    },
+    {
+     "at": 37,
+     "del": 1,
+     "ins": [
+      {
+       "s": 37,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 52,
+     "del": 1,
+     "ins": [
+      {
+       "s": 52,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 63,
+     "del": 1,
+     "ins": [
+      {
+       "s": 63,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 122,
+     "del": 1,
+     "ins": [
+      {
+       "s": 122,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 136,
+     "del": 1,
+     "ins": [
+      {
+       "s": 136,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 213,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x14))); /* PAL CVTSS2SI: obey MXCSR rounding, not a truncating C cast. */"
+     ],
+     "seq": 9
+    },
+    {
+     "at": 254,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x14))); /* PAL CVTSS2SI: obey MXCSR rounding, not a truncating C cast. */"
+     ],
+     "seq": 10
+    },
+    {
+     "at": 270,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x14))); /* PAL CVTSS2SI: obey MXCSR rounding, not a truncating C cast. */"
+     ],
+     "seq": 11
+    },
+    {
+     "at": 299,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x14))); /* PAL CVTSS2SI: obey MXCSR rounding, not a truncating C cast. */"
+     ],
+     "seq": 12
+    },
+    {
+     "at": 303,
+     "del": 1,
+     "ins": [
+      {
+       "s": 303,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 13
+    },
+    {
+     "at": 309,
+     "del": 1,
+     "ins": [
+      {
+       "s": 309,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 14
+    },
+    {
+     "at": 315,
+     "del": 1,
+     "ins": [
+      {
+       "s": 315,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 15
+    },
+    {
+     "at": 321,
+     "del": 1,
+     "ins": [
+      {
+       "s": 321,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 16
+    },
+    {
+     "at": 340,
+     "del": 1,
+     "ins": [
+      {
+       "s": 340,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 17
+    },
+    {
+     "at": 350,
+     "del": 1,
+     "ins": [
+      {
+       "s": 350,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 18
+    },
+    {
+     "at": 363,
+     "del": 1,
+     "ins": [
+      {
+       "s": 363,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 19
+    },
+    {
+     "at": 369,
+     "del": 1,
+     "ins": [
+      {
+       "s": 369,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 20
+    },
+    {
+     "at": 391,
+     "del": 1,
+     "ins": [
+      {
+       "s": 391,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 21
+    },
+    {
+     "at": 395,
+     "del": 1,
+     "ins": [
+      {
+       "s": 395,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 22
+    },
+    {
+     "at": 421,
+     "del": 1,
+     "ins": [
+      {
+       "s": 421,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 23
+    },
+    {
+     "at": 427,
+     "del": 1,
+     "ins": [
+      {
+       "s": 427,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 24
+    },
+    {
+     "at": 431,
+     "del": 1,
+     "ins": [
+      {
+       "s": 431,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 25
+    },
+    {
+     "at": 441,
+     "del": 1,
+     "ins": [
+      {
+       "s": 441,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 26
+    },
+    {
+     "at": 455,
+     "del": 1,
+     "ins": [
+      {
+       "s": 455,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 27
+    },
+    {
+     "at": 458,
+     "del": 1,
+     "ins": [
+      {
+       "s": 458,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 28
+    },
+    {
+     "at": 462,
+     "del": 1,
+     "ins": [
+      {
+       "s": 462,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 29
+    },
+    {
+     "at": 488,
+     "del": 1,
+     "ins": [
+      {
+       "s": 488,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 30
+    },
+    {
+     "at": 492,
+     "del": 1,
+     "ins": [
+      {
+       "s": 492,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 31
+    },
+    {
+     "at": 512,
+     "del": 1,
+     "ins": [
+      {
+       "s": 512,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 32
+    },
+    {
+     "at": 545,
+     "del": 1,
+     "ins": [
+      {
+       "s": 545,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 33
+    },
+    {
+     "at": 559,
+     "del": 1,
+     "ins": [
+      {
+       "s": 559,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 34
+    },
+    {
+     "at": 589,
+     "del": 1,
+     "ins": [
+      {
+       "s": 589,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 35
+    },
+    {
+     "at": 595,
+     "del": 1,
+     "ins": [
+      {
+       "s": 595,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 36
+    },
+    {
+     "at": 607,
+     "del": 1,
+     "ins": [
+      {
+       "s": 607,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 37
+    },
+    {
+     "at": 624,
+     "del": 1,
+     "ins": [
+      {
+       "s": 624,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 38
+    },
+    {
+     "at": 628,
+     "del": 1,
+     "ins": [
+      {
+       "s": 628,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 39
+    },
+    {
+     "at": 645,
+     "del": 1,
+     "ins": [
+      {
+       "s": 645,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 40
+    },
+    {
+     "at": 649,
+     "del": 1,
+     "ins": [
+      {
+       "s": 649,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 41
+    },
+    {
+     "at": 662,
+     "del": 1,
+     "ins": [
+      {
+       "s": 662,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 42
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

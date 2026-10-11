@@ -1,0 +1,52 @@
+{
+ "file": "driving_static_tail142.c",
+ "edits": [
+  {
+   "file": "driving_static_tail142.c",
+   "block": "file",
+   "src": "d57b543a670e7236",
+   "dst": "82ee4be288ed2cd5",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 3,
+     "del": 1,
+     "ins": [],
+     "seq": 1
+    },
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "s": 9,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 2
+    },
+    {
+     "at": 689,
+     "del": 1,
+     "ins": [
+      {
+       "s": 689,
+       "rule": "pop_ebp_publish_spaced"
+      }
+     ],
+     "seq": 3
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

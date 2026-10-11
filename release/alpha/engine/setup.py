@@ -1,15 +1,21 @@
 """Nightfire PC alpha set-up (run by Setup.cmd).
 
-This alpha is a personal test build: it copies the two engines the workshop last built, and it
-links the game files. It does not compile anything and it never changes the workshop folders.
+It copies the two engines from a workshop and links the game files. In the owner's workshop it
+compiles nothing and never changes the workshop folders. In a copy of the public source (this
+folder is release\\alpha of the repository) it first builds the workshop itself:
 
+  0. Public copy only: native\\setup\\build_engines.py translates the game files in "Game Files",
+     applies the port's recipes and compiles both engines into the repository's workshop\\
+     folder (Git, CMake and the Visual Studio C++ build tools are needed; see README.txt).
   1. Finds the workshop: the folder that holds nightfire-port-native and nightfire-driving-native
-     (by default the folder above releases\\; or pass --workshop PATH).
+     (by default the folder above releases\\, or workshop\\ in a public copy; or pass --workshop PATH).
   2. Copies into engine\\:
        action\\nightfire_native.exe + .pdb        from nightfire-port-native\\build-native\\RelWithDebInfo
        action\\cache\\shaders\\*.dxbc             from nightfire-port-native\\cache\\shaders (saves first-run hitches)
        driving\\nightfire_driving_lean.exe + .pdb from nightfire-driving-native\\build-native\\RelWithDebInfo
-       driving\\launch-data\\original-first-paris144.bin  from nightfire-driving-native\\launch-data
+       driving\\launch-data\\original-first-paris144.bin  from nightfire-driving-native\\launch-data, when
+                                                  present (only the owner's workshop has it; linked play
+                                                  hands the launch page over from the Action engine)
      and writes engine\\build-info.txt (sizes, times, SHA-256 of both exes).
   3. Game files. If "Game Files" already holds the extracted disc (default.xbe and Driving.xbe), or
      links to it, it is used as it is. Otherwise "Game Files" becomes a link (junction) to the
@@ -97,13 +103,26 @@ def check_runtime():
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--workshop', help='folder holding nightfire-port-native and nightfire-driving-native')
+    p.add_argument('--jobs', help='public copy: parallel compiles (default up to 4)')
     a = p.parse_args()
     ws = Path(a.workshop).resolve() if a.workshop else ALPHA.parent.parent
-    if not (ws / 'nightfire-port-native').is_dir() or not (ws / 'nightfire-driving-native').is_dir():
+    build = ALPHA.parent.parent / 'native' / 'setup' / 'build_engines.py'
+    public = not a.workshop and not (ws / 'nightfire-port-native').is_dir() and build.is_file()
+    if public:
+        ws = ALPHA.parent.parent / 'workshop'
+    elif not (ws / 'nightfire-port-native').is_dir() or not (ws / 'nightfire-driving-native').is_dir():
         raise SystemExit(f'No workshop found at {ws} (it needs nightfire-port-native and nightfire-driving-native).\n'
                          'Run: Setup.cmd --workshop "C:\\path\\to\\Nightfire-Windows-Diagnostic-Project"')
     if running():
         raise SystemExit('A Nightfire game is running. Close it, then run Setup again.')
+    if public:
+        say('Nightfire PC set-up: building both engines from your game files first.\n')
+        cmd = [sys.executable, str(build), '--game', str(GAME), '--workshop', str(ws)]
+        if a.jobs:
+            cmd += ['--jobs', a.jobs]
+        if subprocess.run(cmd).returncode:
+            raise SystemExit('Building the engines did not finish; the message above says why.')
+        say()
     say(f'Nightfire PC alpha set-up\n  alpha folder: {ALPHA}\n  workshop:     {ws}\n')
     check_runtime()
 
@@ -120,7 +139,8 @@ def main():
     say(f'  copied {n} compiled shaders to engine\\action\\cache\\shaders')
     for name in ('nightfire_driving_lean.exe', 'nightfire_driving_lean.pdb'):
         copy(dn / 'build-native' / 'RelWithDebInfo' / name, ENGINE / 'driving' / name)
-    copy(dn / 'launch-data' / 'original-first-paris144.bin', ENGINE / 'driving' / 'launch-data' / 'original-first-paris144.bin')
+    if (dn / 'launch-data' / 'original-first-paris144.bin').exists():
+        copy(dn / 'launch-data' / 'original-first-paris144.bin', ENGINE / 'driving' / 'launch-data' / 'original-first-paris144.bin')
 
     info = [f'Nightfire PC alpha engines, set up {datetime.datetime.now():%Y-%m-%d %H:%M:%S} from {ws}']
     for rel in ('action/nightfire_native.exe', 'driving/nightfire_driving_lean.exe'):

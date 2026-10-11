@@ -1,0 +1,492 @@
+{
+ "file": "recomp_0018.c",
+ "edits": [
+  {
+   "file": "recomp_0018.c",
+   "block": "header",
+   "src": "4149e97c3cdee4a5",
+   "dst": "c3e8bb32ff3a73a8",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 11,
+     "del": 0,
+     "ins": [
+      "extern int driving_input224(uint32_t va);"
+     ]
+    },
+    {
+     "at": 12,
+     "del": 0,
+     "ins": [
+      "/* Checkpoint211: original-width APU read copies; analysis/mmio211. */",
+      "void driving_copy_read211(uint32_t,uint32_t,uint32_t,unsigned,int);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0017C1EC",
+   "src": "5acd790ab1b6d547",
+   "dst": "6da944c6c0f784fe",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 74,
+     "del": 0,
+     "ins": [
+      "    extern void driving_audio_probe147(unsigned int,unsigned int,unsigned int,unsigned int);",
+      "    driving_audio_probe147(0x0017C23Au,edi,eax,esp);"
+     ]
+    },
+    {
+     "at": 102,
+     "del": 0,
+     "ins": [
+      "    driving_audio_probe147(0x0017C253u,0,esi,esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0017C9F5",
+   "src": "9f4d991366c22d91",
+   "dst": "49248dc6730efb9e",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 16,
+     "del": 0,
+     "ins": [
+      "    extern void driving_audio_probe147(unsigned int,unsigned int,unsigned int,unsigned int);",
+      "    driving_audio_probe147(0x0017C9F5u,ecx,eax,esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0017CB37",
+   "src": "0e26fbc7c52f90d9",
+   "dst": "f4f57224a858b544",
+   "lifts": [
+    "0x0017CB37"
+   ],
+   "generated_like": 4,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "l": "0x0017CB37",
+       "s": 9,
+       "rule": "ebp_from_caller"
+      }
+     ]
+    },
+    {
+     "at": 25,
+     "del": 1,
+     "ins": [
+      {
+       "s": 25,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 42,
+     "del": 6,
+     "ins": [
+      "    { uint32_t count211=ecx, bytes211=count211*4u;",
+      "      driving_copy_read211(edi,esi,count211,4u,g_df!=0);",
+      "      if(g_df){esi-=bytes211;edi-=bytes211;}else{esi+=bytes211;edi+=bytes211;}",
+      {
+       "s": 47,
+       "p": 4,
+       "q": 9,
+       "x": "  ecx=0; } /* original REP"
+      }
+     ]
+    },
+    {
+     "at": 50,
+     "del": 6,
+     "ins": [
+      "    { uint32_t count211=ecx, bytes211=count211*1u;",
+      "      driving_copy_read211(edi,esi,count211,1u,g_df!=0);",
+      "      if(g_df){esi-=bytes211;edi-=bytes211;}else{esi+=bytes211;edi+=bytes211;}",
+      {
+       "s": 55,
+       "p": 4,
+       "q": 9,
+       "x": "  ecx=0; } /* original REP"
+      }
+     ]
+    },
+    {
+     "at": 61,
+     "del": 1,
+     "ins": [
+      {
+       "l": "0x0017CB37",
+       "s": 61,
+       "rule": "pop_ebp_publish"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0017D655",
+   "src": "eb024fef669fb183",
+   "dst": "021c1918ccf14692",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 15,
+     "del": 1,
+     "ins": [
+      "    /* EBP is the original register, including HRESULT scratch uses. */"
+     ]
+    },
+    {
+     "at": 26,
+     "del": 1,
+     "ins": [
+      {
+       "s": 26,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 37,
+     "del": 1,
+     "ins": [
+      {
+       "s": 37,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 52,
+     "del": 1,
+     "ins": [
+      {
+       "s": 52,
+       "p": 62,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 60,
+     "del": 1,
+     "ins": [
+      {
+       "s": 60,
+       "p": 74,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 69,
+     "del": 1,
+     "ins": [
+      {
+       "s": 69,
+       "p": 62,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 77,
+     "del": 1,
+     "ins": [
+      {
+       "s": 77,
+       "p": 74,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 90,
+     "del": 1,
+     "ins": [
+      {
+       "s": 90,
+       "p": 74,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 96,
+     "del": 1,
+     "ins": [
+      {
+       "s": 96,
+       "p": 74,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 116,
+     "del": 1,
+     "ins": [
+      {
+       "s": 116,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 124,
+     "del": 1,
+     "ins": [
+      {
+       "s": 124,
+       "p": 74,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 130,
+     "del": 1,
+     "ins": [
+      {
+       "s": 130,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 146,
+     "del": 1,
+     "ins": [
+      {
+       "s": 146,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0018186C",
+   "src": "99882ae07832b56b",
+   "dst": "fa7447006c350507",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 44,
+     "del": 0,
+     "ins": [
+      "    extern void driving_audio_probe147(unsigned int,unsigned int,unsigned int,unsigned int);",
+      "    driving_audio_probe147(0x001818A4u,edi,esi,esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00181AD4",
+   "src": "3a6dd1c2ea661997",
+   "dst": "76241b7f92d77268",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 82,
+     "del": 1,
+     "ins": [
+      {
+       "s": 82,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 107,
+     "del": 1,
+     "ins": [
+      {
+       "s": 107,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 117,
+     "del": 1,
+     "ins": [
+      {
+       "s": 117,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 127,
+     "del": 1,
+     "ins": [
+      {
+       "s": 127,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 165,
+     "del": 1,
+     "ins": [
+      {
+       "s": 165,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 187,
+     "del": 1,
+     "ins": [
+      {
+       "s": 187,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x001848AD",
+   "src": "7a7d1ea9c1bb586d",
+   "dst": "f70d89d78293e152",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x001848ADu)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00184903",
+   "src": "bd198c0f584e1976",
+   "dst": "d7ebd4e7bb4b7130",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x00184903u)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x0018490F",
+   "src": "8e2153230736959d",
+   "dst": "42df4e1a8af8f03b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x0018490Fu)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00184AED",
+   "src": "e3645ce20a7482c9",
+   "dst": "9efa073f2bf62c11",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 8,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x00184AEDu)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00184B59",
+   "src": "a61a6a72e1a99542",
+   "dst": "68c68cc184c69321",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x00184B59u)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00184BB3",
+   "src": "ba5fe3fe7aa2f682",
+   "dst": "5406ff359106ae75",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 8,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x00184BB3u)) return;"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0018.c",
+   "block": "0x00184BD5",
+   "src": "d4955f59655b6b8d",
+   "dst": "2366e965935c6874",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 8,
+     "del": 0,
+     "ins": [
+      "    if (driving_input224(0x00184BD5u)) return;"
+     ]
+    }
+   ]
+  }
+ ]
+}

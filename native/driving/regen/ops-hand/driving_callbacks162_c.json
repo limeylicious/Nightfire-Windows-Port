@@ -1,0 +1,84 @@
+{
+ "file": "driving_callbacks162.c",
+ "edits": [
+  {
+   "file": "driving_callbacks162.c",
+   "block": "file",
+   "src": "51d347cf3a476cc8",
+   "dst": "8c70443cb69c4796",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 51,
+     "del": 1,
+     "ins": [
+      {
+       "s": 51,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 118,
+     "del": 1,
+     "ins": [
+      {
+       "s": 118,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 133,
+     "del": 1,
+     "ins": [
+      {
+       "s": 133,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 135,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 6
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

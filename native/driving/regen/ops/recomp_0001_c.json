@@ -1,0 +1,208 @@
+{
+ "file": "recomp_0001.c",
+ "edits": [
+  {
+   "file": "recomp_0001.c",
+   "block": "header",
+   "src": "10f0b3cd8422ed07",
+   "dst": "07faff018e4ca009",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 0,
+     "ins": [
+      {
+       "s": 9,
+       "p": 10,
+       "q": 3,
+       "x": "xmmintrin"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x000254C0",
+   "src": "8bdc20f3448d4921",
+   "dst": "129354f48bd78c53",
+   "generated_like": 1,
+   "hunks": [
+    {
+     "at": 480,
+     "del": 1,
+     "ins": [
+      "    if (CMP_EQ(_fa, _fb)) goto loc_00025A86; /* PAL2578A/25973 CMP -> JE25979 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x00026290",
+   "src": "52a2cd6dc9459cfd",
+   "dst": "733195b5b3e0e373",
+   "note": "both predecessors of 0x26310 set ZF; the toolkit merged them into the never-set _flags",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 84,
+     "del": 1,
+     "ins": [
+      {
+       "s": 84,
+       "p": 41,
+       "x": "_fb = 0u; /*public: PAL262FE TEST EAX,EAX recorded as CMP EAX,0 (same ZF) for the JNE at 26310*/"
+      }
+     ]
+    },
+    {
+     "at": 94,
+     "del": 1,
+     "ins": [
+      {
+       "s": 94,
+       "p": 8,
+       "q": 20,
+       "x": "CMP_NE(_fa, _fb) /*public: PAL26310 JNE, ZF from TEST@262FE or CMP@26309*/"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x0002C6E0",
+   "src": "5e58af20303ae22b",
+   "dst": "c8360b26811be982",
+   "generated_like": 2,
+   "hunks": [
+    {
+     "at": 278,
+     "del": 1,
+     "ins": [
+      "    if (TEST_NZ(_fa, _fb)) goto loc_0002C895; /* PAL2C905/2C916 TEST AH -> JNZ2C919 */"
+     ]
+    },
+    {
+     "at": 313,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x1C))); /* PAL2C973: current MXCSR rounding and status. */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x00035130",
+   "src": "b444f0e2a357f738",
+   "dst": "bd010e38b1e46652",
+   "generated_like": 1,
+   "hunks": [
+    {
+     "at": 173,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x1C))); /* PAL CVTSS2SI: current MXCSR rounding/status, not truncation. */"
+     ]
+    },
+    {
+     "at": 178,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x1C))); /* PAL CVTSS2SI: current MXCSR rounding/status, not truncation. */"
+     ]
+    },
+    {
+     "at": 336,
+     "del": 1,
+     "ins": [
+      "    if (CMP_LE(_fas, _fbs)) goto loc_0003544B; /* PAL3538F/35396/353C0 -> signed JLE353C3 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x00038B70",
+   "src": "8c69d39f43b07575",
+   "dst": "6a370509c0d8da89",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 56,
+     "del": 1,
+     "ins": [
+      {
+       "s": 56,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 70,
+     "del": 1,
+     "ins": [
+      {
+       "s": 70,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 81,
+     "del": 1,
+     "ins": [
+      {
+       "s": 81,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0001.c",
+   "block": "0x0003FBF0",
+   "src": "f8ddbd4f356f5ad4",
+   "dst": "4186e6e075ceb50e",
+   "lifts": [
+    "0x0003FBF0"
+   ],
+   "note": "false boundary 0x3FC00 inside the MOV at 3FBFE; lifted to 0x3FC05",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 30,
+     "ins": [
+      {
+       "l": "0x0003FBF0",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x0003FBF0..0x0003FC05; replaces the hand transcription*/",
+      {
+       "l": "0x0003FBF0",
+       "range": [
+        7,
+        31
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

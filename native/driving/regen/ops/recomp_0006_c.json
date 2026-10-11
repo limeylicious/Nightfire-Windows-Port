@@ -1,0 +1,53 @@
+{
+ "file": "recomp_0006.c",
+ "edits": [
+  {
+   "file": "recomp_0006.c",
+   "block": "header",
+   "src": "f31ef334905727d7",
+   "dst": "c4c85e1db5ec6a62",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern void nightfire_memory_barrier(void);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0006.c",
+   "block": "0x000A4710",
+   "src": "63d888c101ccdfb3",
+   "dst": "da253f85024b469c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 123,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000A4861 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0006.c",
+   "block": "0x000A48B0",
+   "src": "41f5a95d562b8c78",
+   "dst": "a900e1d3f0805eca",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 56,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000A4915 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,85 @@
+{
+ "file": "recomp_0008.c",
+ "edits": [
+  {
+   "file": "recomp_0008.c",
+   "block": "header",
+   "src": "3649b6940a9e7f0e",
+   "dst": "514edd33e99db318",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern void nightfire_memory_barrier(void);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0008.c",
+   "block": "0x000D7A50",
+   "src": "6dcba26270a744be",
+   "dst": "a86e6ca64400fb59",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 136,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000D7B2D WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0008.c",
+   "block": "0x000F62B0",
+   "src": "5bd6eb2150381b11",
+   "dst": "9e5bf561c76622a8",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 24,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000F62B9 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0008.c",
+   "block": "0x000F65C0",
+   "src": "d648a0f4e865ae86",
+   "dst": "e83edf094b01e2aa",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 24,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000F65C9 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0008.c",
+   "block": "0x000F6600",
+   "src": "aa70b6ee13b166ff",
+   "dst": "e54e362a890b64fb",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 24,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 000F6609 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  }
+ ]
+}

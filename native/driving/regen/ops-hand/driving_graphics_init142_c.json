@@ -1,0 +1,52 @@
+{
+ "file": "driving_graphics_init142.c",
+ "edits": [
+  {
+   "file": "driving_graphics_init142.c",
+   "block": "file",
+   "src": "61198f6ed8df3a34",
+   "dst": "97547e15a8f9ca86",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 7,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "void driving_port_write8(uint16_t port, uint8_t value);"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "s": 9,
+       "rule": "ebp_from_caller_noted"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 180,
+     "del": 1,
+     "ins": [
+      "    driving_port_write8((uint16_t)edx, (uint8_t)eax);"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 224,
+     "del": 1,
+     "ins": [
+      "    POP32(esp, ebp); g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */ /* leave */"
+     ],
+     "seq": 3
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

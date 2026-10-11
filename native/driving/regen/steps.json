@@ -1,0 +1,294 @@
+{
+ "steps": [
+  {
+   "id": "seed",
+   "kind": "seed",
+   "inputs": {
+    "runtime/native/nd3d-replace-set.json": {
+     "from": "inputs/nd3d-replace-set.json"
+    }
+   }
+  },
+  {
+   "id": "lift_hand",
+   "kind": "lift",
+   "spec": "lifts-hand.json",
+   "game_name": "Nightfire PAL Driving",
+   "note": "toolkit lifts of the functions the hand files carry (start/end addresses)",
+   "group": "hand"
+  },
+  {
+   "id": "lift_aux",
+   "kind": "lift",
+   "spec": "lifts-aux.json",
+   "group": "aux",
+   "game_name": "Nightfire PAL Driving",
+   "note": "toolkit lifts of hand-extended functions; edits copy lines from them instead of storing code"
+  },
+  {
+   "id": "harden_bootstrap",
+   "kind": "script",
+   "script": "harden_bootstrap.py",
+   "sha256": "aebd33313fc5f72f944b667f3b0d62c494fb0f773f45afa5fa5f5eef711000ca",
+   "args": [],
+   "exit": [
+    0
+   ],
+   "note": "checkpoint 142: incoming/restored EBP, visible stops, five entry traces, call-history hook"
+  },
+  {
+   "id": "strict_stubs",
+   "kind": "script",
+   "script": "strict_stubs.py",
+   "sha256": "ea58808bebe4bde792663958479272f1817d9b9b407400517eed8eda164d13e3",
+   "args": [],
+   "exit": [
+    0
+   ],
+   "note": "checkpoint 142: unresolved targets fail closed"
+  },
+  {
+   "id": "memory_order142",
+   "kind": "script",
+   "script": "install_memory_order142.py",
+   "args": [],
+   "exit": [
+    0
+   ],
+   "outside": {
+    "nightfire-port/src/recomp/gen/nightfire_memory_order.c": "placeholder"
+   },
+   "note": "checkpoint 142: WBINVD at 0x16D800 -> host memory barrier (the helper file it copies is not part of gen)",
+   "sha256": "099bdb11f88378218126457b22ba645b902d73cd6549819636c04e14d85f5b76"
+  },
+  {
+   "id": "gpu_probe143",
+   "kind": "script",
+   "script": "install_gpu_probe143.py",
+   "args": [],
+   "exit": [
+    0
+   ],
+   "note": "checkpoint 143: two one-shot GPU snapshots in recomp_0017.c",
+   "sha256": "815f53105edfd0ab056da6e1b31d356905768d743cc7c28a09121aba8a1fcb21"
+  },
+  {
+   "id": "audio_boundaries149",
+   "kind": "script",
+   "script": "install_audio_boundaries149.py",
+   "args": [
+    "--apply"
+   ],
+   "exit": [
+    0
+   ],
+   "outside": {
+    "nightfire-port/game_files/Driving.xbe": "xbe"
+   },
+   "note": "checkpoint 149: AC97/DSP write boundaries in recomp_0018.c (checks the PAL bytes first)",
+   "sha256": "b1c2f60005ea06a195c4f8d77a9cebc3967d77c03e2485f17b9da2e80a259e4b"
+  },
+  {
+   "id": "flags_counters",
+   "kind": "flags_counters",
+   "expect": 280,
+   "note": "lean: count every never-set _flags condition (sites already repaired before the lean copy are skipped)",
+   "skip": [
+    {
+     "function": "0x000254C0",
+     "ordinal": 0
+    },
+    {
+     "function": "0x00026290",
+     "ordinal": 0
+    },
+    {
+     "function": "0x0002C6E0",
+     "ordinal": 0
+    },
+    {
+     "function": "0x00035130",
+     "ordinal": 0
+    },
+    {
+     "function": "0x000CAD40",
+     "ordinal": 0
+    },
+    {
+     "function": "0x000CBF20",
+     "ordinal": 0
+    },
+    {
+     "function": "0x00146930",
+     "ordinal": 0
+    }
+   ]
+  },
+  {
+   "id": "lost_flags",
+   "kind": "script",
+   "script": "fix_lost_flags.py",
+   "sha256": "09465b2b1edf6c063755e625f4b7543ddc225e48d7bcff4fd7f19623996f2b3b",
+   "args": [
+    "{gen}"
+   ],
+   "exit": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "sahf",
+   "kind": "script",
+   "script": "fix_sahf_unordered.py",
+   "sha256": "6a5546ef22532cc897f419c1f0e332894d386c79e21a4642a62427e37d0b1e58",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "round",
+   "kind": "script",
+   "script": "fix_cvtss2si_round.py",
+   "sha256": "77ca005b174fbd0cd9720cb7906ce5fe7e6d05076c07f2566b46b40288e739d3",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "cmpsd",
+   "kind": "script",
+   "script": "fix_cmpsd_flags.py",
+   "sha256": "0b10138953cf1cb7eae5028c89574a68e1831589da964e1dfeddc0849d10999e",
+   "args": [
+    "{gen}"
+   ],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "clip_setb",
+   "kind": "script",
+   "script": "fix_clip_search_setb.py",
+   "sha256": "2d399cea1c332763f757419cbbc0cf82f499342905ac6cde39194a3d40924d4d",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "clip_note",
+   "kind": "script",
+   "script": "fix_clip_search_note.py",
+   "sha256": "489b5d16d149cfbb78ee00fb7852fc055f91fd0fb4c831e386c501d844df07cc",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "gadget",
+   "kind": "script",
+   "script": "fix_gadget_grant.py",
+   "sha256": "710e87503c02c1e188e1365f5795c0b4733788e1433708dc3bbd490c20c49834",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "timer60",
+   "kind": "script",
+   "script": "fix_timer_exact60.py",
+   "sha256": "39eaa40b858b538fa4489398211e1d1a0428e1b98badd46a1668c545a6636e35",
+   "args": [],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "types_coverage",
+   "kind": "ops",
+   "dir": "ops-types-coverage",
+   "note": "lean: LEAN_COV first-call coverage in RECOMP_ABI_CALL (recomp_types.h), which apply_native_audio_hook.py extends"
+  },
+  {
+   "id": "audio_hook",
+   "kind": "script",
+   "script": "apply_native_audio_hook.py",
+   "sha256": "7d9f5f165974d7161c4cb2200fe73f99d6db181be293e0f7e1620176d3903430",
+   "args": [],
+   "exit": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "nd3d_rename",
+   "kind": "script",
+   "script": "native_d3d_rename.py",
+   "sha256": "a90ef001bbe0a21f419bd7b834bc60cdc8e5e782b8ca9458651c1268eeed6ef4",
+   "args": [
+    "--apply"
+   ],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "frndint",
+   "kind": "script",
+   "script": "nf_frndint_fix.py",
+   "sha256": "990cbd417571d8ce5ee6fd1f4ec22e367a34647f0669680f6fd12bab10e99bca",
+   "args": [
+    "--apply"
+   ],
+   "exit": [
+    0
+   ]
+  },
+  {
+   "id": "hook_probe",
+   "kind": "script",
+   "script": "hook_probe_patch.py",
+   "sha256": "0e15bfc30e5437f695a5f15319e7d6cbe046904ec78ebdd0a6f2eb62b3bb9944",
+   "args": [
+    "--apply"
+   ],
+   "exit": [
+    0
+   ],
+   "with": [
+    "lean_hook_probe.c"
+   ]
+  },
+  {
+   "id": "residual",
+   "kind": "ops",
+   "dir": "ops",
+   "note": "address-keyed edits that no script reproduces (checkpoints 143-491, lean probes and repairs)"
+  },
+  {
+   "id": "hand_files",
+   "kind": "hand",
+   "spec": "hand-files.json",
+   "ops": "ops-hand",
+   "note": "hand files = their lifts joined in order + address-keyed edits"
+  },
+  {
+   "id": "own_files",
+   "kind": "copy",
+   "files": {
+    "driving_dev_start240.c": {
+     "from": "own/driving_dev_start240.c.txt",
+     "fill": "xbe",
+     "sha256": "c1f6aea81e8cf83508080ac809f907b74e4c26a3bbbd7b41cc56f90e55888d1f"
+    }
+   },
+   "note": "files that are entirely our own code; the game file names in driving_dev_start240.c are read from the player's XBE (@XBE_STRING placeholders)"
+  }
+ ]
+}

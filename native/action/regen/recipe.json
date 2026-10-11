@@ -1,0 +1,3839 @@
+{
+ "engine": "action",
+ "splice": [
+  {
+   "start": "0x4cf20",
+   "upper": "0x4d080",
+   "mode": "strip",
+   "expect_end": "0x0004d025",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "start": "0x52f20",
+   "upper": "0x53110",
+   "mode": "strip",
+   "expect_end": "0x000530cb",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "start": "0x536c0",
+   "upper": "0x53c00",
+   "mode": "strip",
+   "expect_end": "0x00053b84",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "start": "0x54130",
+   "upper": "0x543c0",
+   "mode": "strip",
+   "expect_end": "0x00054357",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "start": "0x567f0",
+   "upper": "0x56a30",
+   "mode": "strip",
+   "expect_end": "0x000569fe",
+   "note": "CP59 complete death-handler CFG"
+  },
+  {
+   "start": "0x56a30",
+   "upper": "0x56bd0",
+   "mode": "strip",
+   "expect_end": "0x00056ba0",
+   "note": "CP59 complete death-handler CFG"
+  },
+  {
+   "start": "0x56bd0",
+   "upper": "0x56f00",
+   "mode": "strip",
+   "expect_end": "0x00056ed5",
+   "note": "CP59 complete death-handler CFG"
+  },
+  {
+   "start": "0x573f0",
+   "upper": "0x576b0",
+   "mode": "strip",
+   "expect_end": "0x0005765d",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x576b0",
+   "upper": "0x57840",
+   "mode": "strip",
+   "expect_end": "0x000577fb",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x57c80",
+   "upper": "0x58040",
+   "mode": "strip",
+   "expect_end": "0x00057ffb",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x58270",
+   "upper": "0x58650",
+   "mode": "strip",
+   "expect_end": "0x000585be",
+   "note": "CP43 full switch CFG"
+  },
+  {
+   "start": "0x58650",
+   "upper": "0x58a10",
+   "mode": "strip",
+   "expect_end": "0x000589a0",
+   "note": "CP43 full switch CFG"
+  },
+  {
+   "start": "0x58a10",
+   "upper": "0x58be0",
+   "mode": "strip",
+   "expect_end": "0x00058b65",
+   "note": "CP43 full switch CFG"
+  },
+  {
+   "start": "0x591d0",
+   "upper": "0x59390",
+   "mode": "strip",
+   "expect_end": "0x0005933d",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x59390",
+   "upper": "0x59700",
+   "mode": "strip",
+   "expect_end": "0x000596ae",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x59c30",
+   "upper": "0x59d50",
+   "mode": "strip",
+   "expect_end": "0x00059d05",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x59d50",
+   "upper": "0x5a020",
+   "mode": "strip",
+   "expect_end": "0x00059fda",
+   "note": "CP37 full switch CFG"
+  },
+  {
+   "start": "0x5a020",
+   "upper": "0x5a160",
+   "mode": "strip",
+   "expect_end": "0x0005a112",
+   "note": "CP36 full switch CFG"
+  },
+  {
+   "start": "0x5a160",
+   "upper": "0x5a2a0",
+   "mode": "strip",
+   "expect_end": "0x0005a252",
+   "note": "CP36 full switch CFG"
+  },
+  {
+   "start": "0x5ba50",
+   "upper": "0x5bdd0",
+   "mode": "strip",
+   "expect_end": "0x0005bd51",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "start": "0x5c420",
+   "upper": "0x5c880",
+   "mode": "strip",
+   "expect_end": "0x0005c824",
+   "note": "CP38 full switch CFG"
+  },
+  {
+   "kind": "memmove",
+   "start": "0xee4b0",
+   "end": "0xee7ed",
+   "seed_tables": [
+    "0xee510",
+    "0xee69c"
+   ]
+  }
+ ],
+ "hand": {
+  "nightfire_emitter_callback.c": [
+   {
+    "lift": "0x68510",
+    "upper": "0x6892f",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_guard_registry.c": [
+   {
+    "lift": "0x4f440",
+    "upper": "0x4f6f0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x4fa40",
+    "upper": "0x4fcc0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x52660",
+    "upper": "0x52760",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x528c0",
+    "upper": "0x52a20",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x556f0",
+    "upper": "0x55830",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x4bbf0",
+    "upper": "0x4bcd0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x58190",
+    "upper": "0x58270",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x59040",
+    "upper": "0x591d0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x5bf10",
+    "upper": "0x5c070",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x5dc10",
+    "upper": "0x5ddc0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x4e040",
+    "upper": "0x4e04b",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_menu_callback.c": [
+   {
+    "lift": "0x6ed30",
+    "upper": "0x6eede",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_menu_callback_0006F550.c": [
+   {
+    "lift": "0x6f550",
+    "upper": "0x6f712",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_00022BD0.c": [
+   {
+    "lift": "0x22bd0",
+    "upper": "0x22cb5",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_00031530.c": [
+   {
+    "lift": "0x31530",
+    "upper": "0x31774",
+    "mode": "strip",
+    "transforms": []
+   }
+  ],
+  "nightfire_mission_callback_00033320.c": [
+   {
+    "lift": "0x33320",
+    "upper": "0x33583",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_00033590.c": [
+   {
+    "lift": "0x33590",
+    "upper": "0x33820",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_0003EFF0.c": [
+   {
+    "lift": "0x3eff0",
+    "upper": "0x3f34c",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_0004F100.c": [
+   {
+    "lift": "0x4f100",
+    "upper": "0x4f440",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_0004F790.c": [
+   {
+    "lift": "0x4f790",
+    "upper": "0x4fa40",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_00071530.c": [
+   {
+    "lift": "0x71530",
+    "upper": "0x716b1",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000A8A60.c": [
+   {
+    "lift": "0xa8a60",
+    "upper": "0xa9160",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000AE1C0.c": [
+   {
+    "lift": "0xae1c0",
+    "upper": "0xae5c0",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000B1F90.c": [
+   {
+    "lift": "0xb1f90",
+    "upper": "0xb274f",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000B2B50.c": [
+   {
+    "lift": "0xb2b50",
+    "upper": "0xb3250",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000B4090.c": [
+   {
+    "lift": "0xb4090",
+    "upper": "0xb42a4",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000B4330.c": [
+   {
+    "lift": "0xb4330",
+    "upper": "0xb4753",
+    "mode": "strip",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000B4760.c": [
+   {
+    "lift": "0xb4760",
+    "upper": "0xb4b5c",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mission_callback_000CE5E0.c": [
+   {
+    "lift": "0xce5e0",
+    "upper": "0xceb29",
+    "mode": "keep",
+    "transforms": [
+     "sync"
+    ]
+   }
+  ],
+  "nightfire_mp_attack232.c": [
+   {
+    "lift": "0x614a0",
+    "upper": "0x61690",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_attack_fire234.c": [
+   {
+    "lift": "0x618f0",
+    "upper": "0x61b30",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_attack_run233.c": [
+   {
+    "lift": "0x61690",
+    "upper": "0x618b0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_backoff239.c": [
+   {
+    "lift": "0x61f40",
+    "upper": "0x62190",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_bot_global228.c": [
+   {
+    "lift": "0x603e0",
+    "upper": "0x613f0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_health225.c": [
+   {
+    "lift": "0xb6330",
+    "upper": "0xb644c",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_pane226.c": [
+   {
+    "lift": "0xb5190",
+    "upper": "0xb54c5",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_radar226.c": [
+   {
+    "lift": "0xb69e0",
+    "upper": "0xb6a96",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_radar_update227.c": [
+   {
+    "lift": "0xb54d0",
+    "upper": "0xb5c30",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_score225.c": [
+   {
+    "lift": "0xb67d0",
+    "upper": "0xb69df",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_state_db238.c": [
+   {
+    "lift": "0x62600",
+    "upper": "0x626e2",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_step_right236.c": [
+   {
+    "lift": "0x626f0",
+    "upper": "0x627d2",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_strafe_left235.c": [
+   {
+    "lift": "0x61b30",
+    "upper": "0x61ca0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_strafe_right237.c": [
+   {
+    "lift": "0x61ca0",
+    "upper": "0x61e10",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_mp_update225.c": [
+   {
+    "lift": "0xb2870",
+    "upper": "0xb2b43",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_noise_callback.c": [
+   {
+    "lift": "0x5d390",
+    "upper": "0x5d790",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_object_callbacks.c": [
+   {
+    "lift": "0x324d0",
+    "upper": "0x32870",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_render_states.c": [
+   {
+    "lift": "0x100550",
+    "upper": "0x100572",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x1008e0",
+    "upper": "0x100912",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100920",
+    "upper": "0x100955",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100a20",
+    "upper": "0x100a5a",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100b00",
+    "upper": "0x100b65",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100c70",
+    "upper": "0x100cc2",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100cd0",
+    "upper": "0x100d14",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100d20",
+    "upper": "0x100d71",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x100d80",
+    "upper": "0x100de3",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101b20",
+    "upper": "0x101ba4",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101bb0",
+    "upper": "0x101c1d",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101c50",
+    "upper": "0x101cb2",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101cc0",
+    "upper": "0x101d22",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101d30",
+    "upper": "0x101d41",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101d50",
+    "upper": "0x101d61",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101d70",
+    "upper": "0x101d81",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101d90",
+    "upper": "0x101dc4",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101dd0",
+    "upper": "0x101e04",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101e10",
+    "upper": "0x101e82",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101e90",
+    "upper": "0x101ee0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x101ee0",
+    "upper": "0x101f2e",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition115.c": [
+   {
+    "lift": "0x4ec70",
+    "upper": "0x4f100",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition117.c": [
+   {
+    "lift": "0xd3190",
+    "upper": "0xd3258",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition118.c": [
+   {
+    "lift": "0xc0da0",
+    "upper": "0xc0f55",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition119.c": [
+   {
+    "copy": "0x2b3b0"
+   },
+   {
+    "lift": "0x20310",
+    "upper": "0x20451",
+    "mode": "strip",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition121.c": [
+   {
+    "lift": "0x51700",
+    "upper": "0x519f0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition123.c": [
+   {
+    "lift": "0x50ca0",
+    "upper": "0x50cdc",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x50ce0",
+    "upper": "0x51050",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x51050",
+    "upper": "0x513c0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition124.c": [
+   {
+    "lift": "0x50600",
+    "upper": "0x508c0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x50a20",
+    "upper": "0x50ca0",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition125.c": [
+   {
+    "lift": "0x54bb0",
+    "upper": "0x55240",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition126.c": [
+   {
+    "lift": "0xa3cf0",
+    "upper": "0xa3e32",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0xa3c40",
+    "upper": "0xa3cef",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_transition141.c": [
+   {
+    "lift": "0xce280",
+    "upper": "0xce4a3",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0xd0f90",
+    "upper": "0xd12c0",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "copy": "0xd12c0"
+   },
+   {
+    "lift": "0x5fef0",
+    "upper": "0x60030",
+    "mode": "keep",
+    "transforms": []
+   }
+  ],
+  "nightfire_xpp_callbacks.c": [
+   {
+    "lift": "0x157334",
+    "upper": "0x15753d",
+    "mode": "keep",
+    "transforms": [
+     "leave"
+    ]
+   },
+   {
+    "lift": "0x157c64",
+    "upper": "0x157ccc",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x1588a0",
+    "upper": "0x1588db",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x158e8e",
+    "upper": "0x158fe2",
+    "mode": "keep",
+    "transforms": []
+   },
+   {
+    "lift": "0x15b5d5",
+    "upper": "0x15b6b7",
+    "mode": "keep",
+    "transforms": []
+   }
+  ]
+ },
+ "build_scripts": [
+  [
+   "nd3d_action_rename.py",
+   [
+    "--apply"
+   ]
+  ],
+  [
+   "nds_action_hook.py",
+   []
+  ],
+  [
+   "nf_fast_calls_hook.py",
+   []
+  ],
+  [
+   "pcg_menu_rename.py",
+   [
+    "--apply"
+   ]
+  ],
+  [
+   "nf_rcr_fix.py",
+   [
+    "--apply"
+   ]
+  ]
+ ],
+ "pre_hunks": {
+  "recomp_types.h": {
+   "file": [
+    {
+     "at": 763,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#ifdef NIGHTFIRE_CHECK_THREAD_CONTEXT",
+      "void nightfire_thread_check(uint32_t va, unsigned after);",
+      "#define NIGHTFIRE_CALL_CHECK(va, after) nightfire_thread_check((va), (after))",
+      "#else",
+      "#define NIGHTFIRE_CALL_CHECK(va, after) ((void)0)",
+      "#endif"
+     ]
+    },
+    {
+     "at": 768,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    NIGHTFIRE_CALL_CHECK((va), 0); \\"
+     ]
+    },
+    {
+     "at": 769,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    NIGHTFIRE_CALL_CHECK((va), 1); \\"
+     ]
+    },
+    {
+     "at": 773,
+     "old": 1,
+     "sha": "370ea1ff5b194ffe67fd",
+     "new": [
+      "#define RECOMP_ABI_CALL(va, fn) do { NIGHTFIRE_CALL_CHECK((va), 0); (fn)(); NIGHTFIRE_CALL_CHECK((va), 1); } while (0)"
+     ]
+    },
+    {
+     "at": 1144,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "/* Record native bulk operations without changing guest registers or memory semantics. */",
+      "#if defined(NIGHTFIRE_TRACE_HOST_COPY) && !defined(NIGHTFIRE_MEMORY_TRACE_IMPL)",
+      "void *nightfire_trace_memcpy(void *, const void *, size_t, const char *, unsigned);",
+      "void *nightfire_trace_memset(void *, int, size_t, const char *, unsigned);",
+      "#define memcpy(d,s,n) nightfire_trace_memcpy((d),(s),(n),__func__,__LINE__)",
+      "#define memset(d,v,n) nightfire_trace_memset((d),(v),(n),__func__,__LINE__)",
+      "#endif"
+     ]
+    }
+   ]
+  }
+ },
+ "hunks": {
+  "nightfire_emitter_callback.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_guard_registry.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP41: verified external entries from the PAL guard callback table. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_menu_callback.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_menu_callback_0006F550.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_00022BD0.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_00031530.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_00033320.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_00033590.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_0003EFF0.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_0004F100.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_0004F790.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_00071530.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000A8A60.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000AE1C0.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000B1F90.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000B2B50.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000B4090.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000B4330.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000B4760.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mission_callback_000CE5E0.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_attack232.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* PAL attack callback 614A0..61671, switch table61674.",
+      " * Interior61620 receives the original saved ESI/EDI frame; never a standalone entry.",
+      " * Evidence and bounded comparisons: analysis/multiplayer232. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_attack_fire234.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* PAL attack callback 618F0..61B06, switch table61B08.",
+      " * Interior61ACD receives the original saved EBX/ESI/EDI frame; never a standalone entry.",
+      " * Evidence and bounded comparisons: analysis/multiplayer234. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_attack_run233.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* PAL attack callback 61690..61887, switch table61888.",
+      " * Interior6184C receives the original saved ESI/EDI frame; never a standalone entry.",
+      " * Evidence and bounded comparisons: analysis/multiplayer233. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_backoff239.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "",
+      "/* Complete PAL D7/BotAttackBackoff parent61F40..6215D. PUSH61F49",
+      " * saves ESI before the selector62174 / table62160 switch. All cases",
+      " * remain in-frame; evidence and x87 comparisons: analysis/multiplayer239. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_bot_global228.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* PAL BotGlobal 603E0..612EB: six switches share the original saved frame.",
+      " * Recovery and bounded original-instruction comparisons: analysis/multiplayer228.",
+      " * No independent dispatch entry for interior block 60404. */"
+     ]
+    },
+    {
+     "at": 582,
+     "old": 1,
+     "sha": "56267cbda170cf688085",
+     "new": [
+      "    if (TEST_NZ(_fa, _fb)) goto loc_000608C1; /* PAL 608B1: TEST flags from 608AB or 608AF. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_health225.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 5,
+     "sha": "db9c061a3126137177f3",
+     "new": [
+      "/* PAL default.xbe HUD_CreateMPHealthPane, 000B6330..000B644B.",
+      " * The generated B6270 region skipped this separate entry after B6322 RET.",
+      " * Prologue and helper call follow the original PAL instructions at B6330..B634B;",
+      " * the remainder is the already-translated generated body, with no bypasses."
+     ]
+    },
+    {
+     "at": 6,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      ""
+     ]
+    },
+    {
+     "at": 8,
+     "old": 3,
+     "sha": "ca88a9025d16c6d610d4",
+     "new": [
+      "    uint32_t ebp = g_seh_ebp;",
+      "    int _flags = 0;"
+     ]
+    },
+    {
+     "at": 13,
+     "old": 1,
+     "sha": "1dc4a3310a5b7d478515",
+     "new": [
+      "    (void)_flags; (void)_fa; (void)_fb; (void)_fas; (void)_fbs;"
+     ]
+    },
+    {
+     "at": 19,
+     "old": 3,
+     "sha": "a4507fcc12f1b031f69d",
+     "new": []
+    },
+    {
+     "at": 126,
+     "old": 6,
+     "sha": "b432325b4018cb7dacf0",
+     "new": []
+    }
+   ]
+  },
+  "nightfire_mp_pane226.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full PAL HUD_MPUpdatePane; see analysis/multiplayer226. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_radar226.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full PAL HUD_CreateRadar; see analysis/multiplayer226. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_radar_update227.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full PAL HUD_RadarUpdate with original switch; see analysis/multiplayer227. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_score225.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full PAL multiplayer score HUD creation; see analysis/multiplayer225. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_state_db238.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "",
+      "/* Complete PAL state-DB callback 62600..626E1. ESI is saved at62609;",
+      " * JE62611 reaches 626AD in-frame. The original 6266A alias remains",
+      " * in recomp_0002.c. Evidence: analysis/multiplayer238. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_step_right236.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "",
+      "/* PAL BotAttackStepAimRight callback 626F0..627D1.",
+      " * Event1 reaches 6279D with ESI saved by the original prologue at626F9.",
+      " * 627CE is the original shared success epilogue, never a standalone entry.",
+      " * Evidence and bounded comparisons: analysis/multiplayer236. */"
+     ]
+    },
+    {
+     "at": 152,
+     "old": 1,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": []
+    }
+   ]
+  },
+  "nightfire_mp_strafe_left235.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* PAL strafe-left callback 61B30..61C74, switch table61C78.",
+      " * Shared epilogue61BB8 receives the original saved ESI frame; never a standalone entry.",
+      " * Evidence and bounded comparisons: analysis/multiplayer235. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_strafe_right237.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "",
+      "/* Complete PAL BotAttackStrafeAimRight callback 61CA0..61DE4.",
+      " * ESI is saved at61CA9; JBE61DC6 reaches shared epilogue61D28 in-frame.",
+      " * Evidence and bounded comparisons: analysis/multiplayer237. */"
+     ]
+    },
+    {
+     "at": 193,
+     "old": 1,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": []
+    },
+    {
+     "at": 196,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      ""
+     ]
+    }
+   ]
+  },
+  "nightfire_mp_update225.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full PAL multiplayer health HUD update; see analysis/multiplayer225. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_noise_callback.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    },
+    {
+     "at": 2,
+     "old": 1,
+     "sha": "81e7998ce4dbbb37b5c1",
+     "new": [
+      " * Original: 0x0005D390 - 0x0005D726 (918 bytes, 318 insns); CP40 full switch CFG"
+     ]
+    }
+   ]
+  },
+  "nightfire_object_callbacks.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include \"../../nightfire_diagnostics.h\"",
+      ""
+     ]
+    }
+   ]
+  },
+  "nightfire_render_states.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include \"../../nightfire_diagnostics.h\"",
+      ""
+     ]
+    }
+   ]
+  },
+  "nightfire_transition115.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP115: complete PAL PlayScript callback CFG; adjacent callbacks unchanged. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition117.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP117: PAL callback CFG recovery. See analysis/checkpoint-117.",
+      " * Adjacent callbacks were audited but do not require replacement. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition118.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP118: PAL callback CFG recovery. See analysis/checkpoint-118.",
+      " * Adjacent callbacks were audited but do not require replacement. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition119.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 6,
+     "sha": "da1dc3d43e59b0a17c56",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP119: complete Destroy_CollisionHandler and PAL EBP publication at",
+      " * calls/returns in it and its directly exercised Collide_FilterBullets. */"
+     ]
+    },
+    {
+     "at": 67,
+     "old": 1,
+     "sha": "49271e25f1b1e5abd8e6",
+     "new": [
+      "    PUSH32(esp, 0x0002B404u); g_ebp = g_seh_ebp = ebp; RECOMP_ABI_CALL(0x000295A0u, sub_000295A0); g_ebp = g_seh_ebp = ebp; /* call 0x000295A0 */"
+     ]
+    },
+    {
+     "at": 75,
+     "old": 1,
+     "sha": "88d1bf98823b49e88f47",
+     "new": [
+      "    esp += 4; g_ebp = g_seh_ebp = ebp; return; /* ret */"
+     ]
+    },
+    {
+     "at": 115,
+     "old": 1,
+     "sha": "cddd95d2a231cfb0fded",
+     "new": [
+      "    PUSH32(esp, 0x00020333u); g_ebp = g_seh_ebp = ebp; RECOMP_ABI_CALL(0x0002B3B0u, sub_0002B3B0); g_ebp = g_seh_ebp = ebp; /* call 0x0002B3B0 */"
+     ]
+    },
+    {
+     "at": 173,
+     "old": 1,
+     "sha": "aa93eb3b0586ab4d5c3b",
+     "new": [
+      "    ecx = (uint32_t)(int32_t)(int16_t)LO16(ebp); /* PAL MOVSX ecx,bp */"
+     ]
+    },
+    {
+     "at": 209,
+     "old": 1,
+     "sha": "98b6908b9b4e17a17445",
+     "new": [
+      "    PUSH32(esp, 0x000203DAu); g_ebp = g_seh_ebp = ebp; RECOMP_ABI_CALL(0x00020150u, sub_00020150); g_ebp = g_seh_ebp = ebp; /* call 0x00020150 */"
+     ]
+    },
+    {
+     "at": 217,
+     "old": 1,
+     "sha": "88d1bf98823b49e88f47",
+     "new": [
+      "    esp += 4; g_ebp = g_seh_ebp = ebp; return; /* ret */"
+     ]
+    },
+    {
+     "at": 240,
+     "old": 1,
+     "sha": "88d1bf98823b49e88f47",
+     "new": [
+      "    esp += 4; g_ebp = g_seh_ebp = ebp; return; /* ret */"
+     ]
+    },
+    {
+     "at": 283,
+     "old": 1,
+     "sha": "88d1bf98823b49e88f47",
+     "new": [
+      "    esp += 4; g_ebp = g_seh_ebp = ebp; return; /* ret */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition121.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP121: full PAL EnemyMission callback CFG. See analysis/checkpoint-121. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition123.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP123: three complete PAL civilian callbacks. See analysis/checkpoint-123. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition124.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP124: complete PAL civilian and patrol callbacks. See analysis/checkpoint-124. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition125.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP125: full PAL Interogate callback CFG. See analysis/checkpoint-125. */"
+     ]
+    },
+    {
+     "at": 10,
+     "old": 1,
+     "sha": "74db61cbbb9987b64e84",
+     "new": []
+    },
+    {
+     "at": 192,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* PAL callee restores the caller frame. */"
+     ]
+    },
+    {
+     "at": 302,
+     "old": 1,
+     "sha": "3978936abbdcb1547103",
+     "new": [
+      "    if ((int32_t)(_fa & _fb) >= 0) goto loc_00054DE4; /* JGE after TEST tick,tick on every predecessor. */"
+     ]
+    },
+    {
+     "at": 310,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* PAL callee restores the caller frame. */"
+     ]
+    },
+    {
+     "at": 362,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* PAL callee restores the caller frame. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition126.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define CP126_CONSTRUCTOR_REPAIR",
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP126: complete PAL Swoosh constructor and update callbacks. See analysis/checkpoint-126. */"
+     ]
+    },
+    {
+     "at": 49,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 50,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 84,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 85,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 94,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 95,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 105,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 106,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 112,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 113,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 117,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 118,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 133,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 134,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 138,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 139,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 146,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller frame. */"
+     ]
+    },
+    {
+     "at": 189,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 190,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 201,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller frame. */"
+     ]
+    },
+    {
+     "at": 230,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 231,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 236,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 237,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 243,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 244,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 256,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish current PAL EBP. */"
+     ]
+    },
+    {
+     "at": 257,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Callee preserves PAL EBP. */"
+     ]
+    },
+    {
+     "at": 265,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller frame. */"
+     ]
+    }
+   ]
+  },
+  "nightfire_transition141.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* CP141: recovered PAL callbacks; 328 original-instruction comparisons. */"
+     ]
+    },
+    {
+     "at": 33,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 34,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 37,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 38,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 51,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 52,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 64,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 65,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 73,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 74,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 82,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 83,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 101,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 102,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 153,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 154,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 158,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 159,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 174,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 175,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 182,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 183,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 193,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 194,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 206,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller PAL EBP. */"
+     ]
+    },
+    {
+     "at": 264,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 265,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 285,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 286,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 301,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 302,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 308,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 309,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 318,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 319,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 326,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 327,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 334,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 335,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 358,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 359,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 464,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 465,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 546,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 547,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 554,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller PAL EBP. */"
+     ]
+    },
+    {
+     "at": 577,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 578,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 584,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 585,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 594,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 595,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 602,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 603,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 610,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Current PAL EBP at call. */"
+     ]
+    },
+    {
+     "at": 611,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore preserved PAL EBP after callee. */"
+     ]
+    },
+    {
+     "at": 617,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller PAL EBP. */"
+     ]
+    },
+    {
+     "at": 625,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller PAL EBP. */"
+     ]
+    },
+    {
+     "at": 636,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller PAL EBP. */"
+     ]
+    },
+    {
+     "at": 646,
+     "old": 6,
+     "sha": "6a33c5a50540c6220346",
+     "new": [
+      "/* Monitor activation: preserve the PAL frame visible to called routines. */"
+     ]
+    },
+    {
+     "at": 728,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 729,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 735,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 736,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 740,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 741,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 748,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 749,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 756,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 757,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 765,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish actual PAL EBP to callee. */"
+     ]
+    },
+    {
+     "at": 766,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Restore caller-preserved PAL EBP. */"
+     ]
+    },
+    {
+     "at": 774,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp; /* Publish restored PAL caller frame. */"
+     ]
+    },
+    {
+     "at": 787,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "/* Full original PAL enemy-state switch. */"
+     ]
+    },
+    {
+     "at": 848,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 849,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 863,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 864,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 872,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 873,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 876,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 877,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 890,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 891,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 904,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 905,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 918,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    },
+    {
+     "at": 919,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "    g_ebp = g_seh_ebp = ebp;"
+     ]
+    }
+   ]
+  },
+  "nightfire_xpp_callbacks.c": {
+   "file": [
+    {
+     "at": 0,
+     "old": 0,
+     "sha": "e3b0c44298fc1c149afb",
+     "new": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include \"../../nightfire_diagnostics.h\"",
+      ""
+     ]
+    }
+   ]
+  },
+  "recomp_0000.c": {
+   "functions": {
+    "pre": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#include <stdio.h>",
+       "#include <stdlib.h>",
+       "#include <string.h>"
+      ]
+     }
+    ],
+    "0001A2D0": [
+     {
+      "at": 11,
+      "old": 1,
+      "sha": "74db61cbbb9987b64e84",
+      "new": [
+       "    int _flags = 0; /* retained for comparison only */",
+       "    unsigned _zero231=0;"
+      ]
+     },
+     {
+      "at": 362,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _zero231=(_fa==_fb); /* Original CMP EBP,EC: live ZF. */"
+      ]
+     },
+     {
+      "at": 452,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _zero231=((_fa & _fb)==0); /* Original TEST AL,AL: live ZF. */",
+       ""
+      ]
+     },
+     {
+      "at": 453,
+      "old": 1,
+      "sha": "9cb45366275feabfe768",
+      "new": [
+       "    /* Read-only, opt-in witness of the previously lost original ZF. */",
+       "    { static int trace231=-1; static unsigned count231;",
+       "      if(trace231<0){const char *v=getenv(\"NIGHTFIRE_BOT_TRACE231\");trace231=v && !strcmp(v,\"1\");}",
+       "      if(trace231 && !_zero231 && ++count231<=32)",
+       "        fprintf(stderr,\"[BOT-TRANSITION231] recovered_1A624 count=%u current=%X requested=%X health=%.8g phys=%08X\\n\",",
+       "            count231,MEM32(MEM32(esi+12)+4),ebp,MEMF(MEM32(esi+4)+0x90),MEM32(esi));",
+       "    }",
+       "",
+       "    if (!_zero231) goto loc_0001A62B; /* PAL 1A624: preserve CMP/TEST incoming ZF. */"
+      ]
+     }
+    ],
+    "00020310": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "482a9479bbeeafe2129d",
+      "new": [
+       "/* CP119: complete destructive-object callback is in nightfire_transition119.c. */",
+       "void checkpoint118_fragment_00020310(void)"
+      ]
+     }
+    ],
+    "0002B3B0": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "a58ba36f2a19c62785e1",
+      "new": [
+       "/* CP119: preserve guest EBP across the directly exercised helper calls. */",
+       "void checkpoint118_fragment_0002B3B0(void)"
+      ]
+     }
+    ],
+    "00031530": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "13f558a699a799b6e93b",
+      "new": [
+       "/* Replaced by complete CFG including shared 3172D continuation. */",
+       "void sub_00031530_incomplete_checkpoint27(void)"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0001.c": {
+   "functions": {
+    "0004EC70": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "76f2187d322a8ba89051",
+      "new": [
+       "/* CP115: retained for recovery; complete PAL callback is in nightfire_transition115.c. */",
+       "void checkpoint114_fragment_0004EC70(void)"
+      ]
+     }
+    ],
+    "0004F100": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "075bfd9a805d99debf77",
+      "new": [
+       "/* Replaced by complete switch CFG in nightfire_mission_callback_0004F100.c. */",
+       "void sub_0004F100_incomplete_checkpoint27(void)"
+      ]
+     }
+    ],
+    "0004F790": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "d51a0963079ac283d7f4",
+      "new": [
+       "/* Replaced by complete local switch CFG. */",
+       "void sub_0004F790_incomplete_checkpoint27(void)"
+      ]
+     }
+    ],
+    "00050600": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "f0daf1136fb414a29859",
+      "new": [
+       "void checkpoint123_fragment_00050600(void)"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0002.c": {
+   "functions": {
+    "00050A20": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "004e77ec2953406c3009",
+      "new": [
+       "void checkpoint123_fragment_00050A20(void)"
+      ]
+     }
+    ],
+    "00050CA0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "615ab3ee7ce6a78e9ed5",
+      "new": [
+       "void checkpoint122_fragment_00050CA0(void)"
+      ]
+     }
+    ],
+    "00050CE0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "666349fa9d68d99debe3",
+      "new": [
+       "void checkpoint122_fragment_00050CE0(void)"
+      ]
+     }
+    ],
+    "00051050": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "dd6aa315f3e4a4da1549",
+      "new": [
+       "void checkpoint122_fragment_00051050(void)"
+      ]
+     }
+    ],
+    "00051700": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "827ff019b85d15124829",
+      "new": [
+       "void checkpoint120_fragment_00051700(void)"
+      ]
+     }
+    ],
+    "00054BB0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "df0b71166e8274f11bca",
+      "new": [
+       "void checkpoint124_fragment_00054BB0(void)"
+      ]
+     }
+    ],
+    "0005FEF0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "35b42d46a32c2d7517c7",
+      "new": [
+       "void sub_0005FEF0_retained141(void)"
+      ]
+     }
+    ],
+    "000603E0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "59367a0dd0fd4cf6e305",
+      "new": [
+       "/* Superseded by full PAL CFG in nightfire_mp_bot_global228.c. */",
+       "void sub_000603E0_incomplete_checkpoint228(void)"
+      ]
+     }
+    ],
+    "000614A0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "0df40dc36fcb87177e2b",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_attack232.c. */",
+       "void sub_000614A0_incomplete_checkpoint232(void)"
+      ]
+     }
+    ],
+    "00061690": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "2bca3a67da52e626c062",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_attack_run233.c. */",
+       "void sub_00061690_incomplete_checkpoint233(void)"
+      ]
+     }
+    ],
+    "000618F0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "a08b9a35d4e9fa794efb",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_attack_fire234.c. */",
+       "void sub_000618F0_incomplete_checkpoint234(void)"
+      ]
+     }
+    ],
+    "00061B30": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "7e4a7faa561a04375118",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_strafe_left235.c. */",
+       "void sub_00061B30_incomplete_checkpoint235(void)"
+      ]
+     }
+    ],
+    "00061BFB": [
+     {
+      "at": 88,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "void sub_00061D6B_interior_checkpoint237(void);"
+      ]
+     },
+     {
+      "at": 89,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       ""
+      ]
+     }
+    ],
+    "00061CA0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "e09c6d45609c514a2ed2",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_strafe_right237.c. */",
+       "void sub_00061CA0_incomplete_checkpoint237(void)"
+      ]
+     },
+     {
+      "at": 105,
+      "old": 1,
+      "sha": "1350ca9f820307ffe6b5",
+      "new": [
+       "    if (TEST_NZ(_fa, _fb)) { g_seh_ebp = ebp; sub_00061D6B_interior_checkpoint237(); return; } /* jne: not equal / not zero */"
+      ]
+     }
+    ],
+    "00061D6B": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "b7de94fe3f3e5fd37455",
+      "new": [
+       "/* Archival split interior; never dispatch this as a guest function boundary. */",
+       "void sub_00061D6B_interior_checkpoint237(void)"
+      ]
+     }
+    ],
+    "00061F40": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "302623b37b0bfdcbffe1",
+      "new": [
+       "/* Checkpoint239: complete PAL D7 parent is in nightfire_mp_backoff239.c. */",
+       "void sub_00061F40_incomplete_checkpoint239(void)"
+      ]
+     }
+    ],
+    "00062600": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "a7229b9285dd74a1e464",
+      "new": [
+       "/* Checkpoint 238: retained only for rollback; complete PAL parent is in",
+       " * nightfire_mp_state_db238.c. Preserve the separate 6266A alias below. */",
+       "void sub_00062600_incomplete_checkpoint238(void)"
+      ]
+     }
+    ],
+    "0006266A": [
+     {
+      "at": 77,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "void sub_0006275A_interior_checkpoint236(void);"
+      ]
+     },
+     {
+      "at": 78,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       ""
+      ]
+     }
+    ],
+    "000626F0": [
+     {
+      "at": 7,
+      "old": 1,
+      "sha": "e34c9d5d0e688a7c82fc",
+      "new": [
+       "/* Superseded by complete PAL callback in nightfire_mp_step_right236.c. */",
+       "void sub_000626F0_incomplete_checkpoint236(void)"
+      ]
+     },
+     {
+      "at": 69,
+      "old": 1,
+      "sha": "8777798b30349dd9cb6c",
+      "new": [
+       "    if (TEST_NZ(_fa, _fb)) { g_seh_ebp = ebp; sub_0006275A_interior_checkpoint236(); return; } /* jne: not equal / not zero */"
+      ]
+     }
+    ],
+    "0006275A": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "b919a130b1c833d33984",
+      "new": [
+       "/* Archival split interior; never dispatch this as a guest function boundary. */",
+       "void sub_0006275A_interior_checkpoint236(void)"
+      ]
+     }
+    ],
+    "0006CF50": [
+     {
+      "at": 203,
+      "old": 1,
+      "sha": "88ec9d0d35e187f37067",
+      "new": [
+       "    /* CP36: PAL JNE retains ZF from ECX's modulo-eight calculation.",
+       "     * The unused fallback flag fired the held-input repeat on every update. */",
+       "    if (ecx != 0) goto loc_0006D0BD;"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0003.c": {
+   "functions": {
+    "pre": [
+     {
+      "at": 8,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#include \"../../../runtime/nightfire_menu_missions139.h\""
+      ]
+     }
+    ],
+    "0007F680": [
+     {
+      "at": 88,
+      "old": 1,
+      "sha": "15389f74f503535a66ee",
+      "new": [
+       "    SET_LO8(eax, nf_menu139_available(edx, MEM8(edx + 0x10)));"
+      ]
+     },
+     {
+      "at": 122,
+      "old": 1,
+      "sha": "bbbb14b7185d57c7e69e",
+      "new": [
+       "    SET_LO8(ecx, nf_menu139_available(eax, MEM8(eax + 0x10)));"
+      ]
+     },
+     {
+      "at": 159,
+      "old": 1,
+      "sha": "cd14e5c296fdd55d6316",
+      "new": [
+       "    SET_LO8(eax, nf_menu139_available(edi + ecx * 8, MEM8(edi + ecx * 8 + 0x10)));"
+      ]
+     },
+     {
+      "at": 251,
+      "old": 1,
+      "sha": "bbbb14b7185d57c7e69e",
+      "new": [
+       "    SET_LO8(ecx, nf_menu139_available(eax, MEM8(eax + 0x10)));"
+      ]
+     },
+     {
+      "at": 518,
+      "old": 1,
+      "sha": "cd9974703abc6005a2bb",
+      "new": [
+       "    SET_LO8(eax, nf_menu139_available(edi + edx * 8, MEM8(edi + edx * 8 + 0x10)));"
+      ]
+     },
+     {
+      "at": 539,
+      "old": 1,
+      "sha": "90dc1424844d5cfcca0a",
+      "new": [
+       "    SET_LO8(edx, nf_menu139_available(edi + ecx * 8, MEM8(edi + ecx * 8 + 0x10)));"
+      ]
+     },
+     {
+      "at": 557,
+      "old": 1,
+      "sha": "6357e713bd395273c426",
+      "new": [
+       "    SET_LO8(ecx, nf_menu139_available(edi + eax * 8, MEM8(edi + eax * 8 + 0x10)));"
+      ]
+     },
+     {
+      "at": 576,
+      "old": 1,
+      "sha": "cd9974703abc6005a2bb",
+      "new": [
+       "    SET_LO8(eax, nf_menu139_available(edi + edx * 8, MEM8(edi + edx * 8 + 0x10)));"
+      ]
+     },
+     {
+      "at": 597,
+      "old": 1,
+      "sha": "90dc1424844d5cfcca0a",
+      "new": [
+       "    SET_LO8(edx, nf_menu139_available(edi + ecx * 8, MEM8(edi + ecx * 8 + 0x10)));"
+      ]
+     }
+    ],
+    "00086690": [
+     {
+      "at": 87,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    if(nf_menu139_enabled()) {",
+       "        /* Original EAX is the selected menu index returned by72630. Keep",
+       "         * the original cleanup and load path; only substitute availability. */",
+       "        esp = esp + 0x10;",
+       "        if(nf_menu139_accept(LO8(eax))) goto loc_0008673A;",
+       "        goto loc_000867DD;",
+       "    }"
+      ]
+     }
+    ],
+    "00092C40": [
+     {
+      "at": 1493,
+      "old": 1,
+      "sha": "84f80096de68f454ce16",
+      "new": [
+       "    if (CMP_NE(_fa, _fb)) goto loc_000935E7; /* PAL: preserve either incoming comparison */"
+      ]
+     },
+     {
+      "at": 1514,
+      "old": 1,
+      "sha": "2ce2ffafa608aa892273",
+      "new": [
+       "    SET_LO16(esi, (uint32_t)((int16_t)LO16(esi) >> 1));"
+      ]
+     },
+     {
+      "at": 1525,
+      "old": 1,
+      "sha": "2864432def0086ec1689",
+      "new": [
+       "    SET_LO16(edx, (uint32_t)((int16_t)LO16(edx) >> 1));"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0004.c": {
+   "functions": {
+    "000A3C40": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "4c336c00fd9c25fb9f72",
+      "new": [
+       "void checkpoint125_fragment_000A3C40(void)"
+      ]
+     }
+    ],
+    "000B4090": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "2f042196725c6d591a85",
+      "new": [
+       "/* Superseded by complete PAL CFG in nightfire_mission_callback_000B4090.c. */",
+       "void sub_000B4090_incomplete_checkpoint27(void)"
+      ]
+     }
+    ],
+    "000BDDF0": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    extern void nightfire_dev_load_request(void);",
+       "    nightfire_dev_load_request();",
+       "    extern void nightfire_flight116_load(uint32_t guest_sp);",
+       "    nightfire_flight116_load(esp);"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0005.c": {
+   "functions": {
+    "000D12C0": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "9f685dd4d3fdbc3b7051",
+      "new": [
+       "void sub_000D12C0_retained141(void)"
+      ]
+     }
+    ],
+    "000D3190": [
+     {
+      "at": 6,
+      "old": 1,
+      "sha": "092a0247fcd4f38be54f",
+      "new": [
+       "/* CP117: complete hint callback is in nightfire_transition117.c. */",
+       "void checkpoint115_fragment_000D3190(void)"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0006.c": {
+   "functions": {
+    "000E8F80": [
+     {
+      "at": 10,
+      "old": 1,
+      "sha": "4a7da444f21db7a22364",
+      "new": [
+       "    nightfire_memory_barrier(); /* wbinvd: host ordering for shared guest RAM */"
+      ]
+     }
+    ],
+    "000E9190": [
+     {
+      "at": 51,
+      "old": 1,
+      "sha": "4a7da444f21db7a22364",
+      "new": [
+       "    nightfire_memory_barrier(); /* wbinvd: host ordering for shared guest RAM */"
+      ]
+     }
+    ],
+    "000EB0B4": [
+     {
+      "at": 35,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x000EB0B4u, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "000EB238": [
+     {
+      "at": 23,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x000EB238u, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "000EC8C5": [
+     {
+      "at": 847,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x000EC8C5u, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "000ED07C": [
+     {
+      "at": 44,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x000ED07Cu, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "000EDF7B": [
+     {
+      "at": 14,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x000EDF7Bu, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "000EFB3F": [
+     {
+      "at": 10,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    uint16_t _fxam_status = 0;"
+      ]
+     },
+     {
+      "at": 42,
+      "old": 1,
+      "sha": "4950d08ced0a25bae8a2",
+      "new": [
+       "    _fxam_status = (uint16_t)(((g_fp_top & 7u) << 11) | (signbit(fp_top()) ? 0x200u : 0u) | (isnan(fp_top()) ? 0x100u : isinf(fp_top()) ? 0x500u : fp_top()==0.0 ? 0x4000u : 0x400u)); /* PAL FXAM: classify the occupied floating-point operand */"
+      ]
+     },
+     {
+      "at": 45,
+      "old": 1,
+      "sha": "ef926e03cc8449858e59",
+      "new": [
+       "    MEM16(ebp + -160) = _fxam_status; /* fnstsw: status produced by FXAM */"
+      ]
+     },
+     {
+      "at": 49,
+      "old": 1,
+      "sha": "4950d08ced0a25bae8a2",
+      "new": [
+       "    _fxam_status = (uint16_t)(((g_fp_top & 7u) << 11) | (signbit(fp_top()) ? 0x200u : 0u) | (isnan(fp_top()) ? 0x100u : isinf(fp_top()) ? 0x500u : fp_top()==0.0 ? 0x4000u : 0x400u)); /* PAL FXAM: classify the occupied floating-point operand */"
+      ]
+     },
+     {
+      "at": 51,
+      "old": 1,
+      "sha": "ef926e03cc8449858e59",
+      "new": [
+       "    MEM16(ebp + -160) = _fxam_status; /* fnstsw: status produced by FXAM */"
+      ]
+     },
+     {
+      "at": 55,
+      "old": 2,
+      "sha": "999e099da8d5c941cc61",
+      "new": [
+       "    SET_HI8(ecx, (uint32_t)((int32_t)(int8_t)HI8(ecx) >> 1));",
+       "    SET_HI8(ecx, ((HI8(ecx)<<1)|(HI8(ecx)>>7)));"
+      ]
+     },
+     {
+      "at": 62,
+      "old": 2,
+      "sha": "ef7904dbdcfade59a44b",
+      "new": [
+       "    SET_LO8(ecx, (uint32_t)((int32_t)(int8_t)LO8(ecx) >> 1));",
+       "    SET_LO8(ecx, ((LO8(ecx)<<1)|(LO8(ecx)>>7)));"
+      ]
+     }
+    ],
+    "000EFE84": [
+     {
+      "at": 50,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    g_ebp = ebp; g_seh_ebp = ebp; /* PAL LEAVE restores the caller frame, including shared shadows */"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0007.c": {
+   "functions": {
+    "00105AC0": [
+     {
+      "at": 379,
+      "old": 1,
+      "sha": "4a7da444f21db7a22364",
+      "new": [
+       "    nightfire_memory_barrier(); /* wbinvd: host ordering for shared guest RAM */"
+      ]
+     },
+     {
+      "at": 478,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    NIGHTFIRE_CALL_CHECK(0x00105AC0u, 2); /* validate before following thread pointer */"
+      ]
+     }
+    ],
+    "00106480": [
+     {
+      "at": 16,
+      "old": 1,
+      "sha": "ae111350d0056194c861",
+      "new": [
+       "    nightfire_memory_barrier(); /* sfence: host ordering for shared guest RAM */"
+      ]
+     }
+    ],
+    "001064B0": [
+     {
+      "at": 39,
+      "old": 1,
+      "sha": "ae111350d0056194c861",
+      "new": [
+       "    nightfire_memory_barrier(); /* sfence: host ordering for shared guest RAM */"
+      ]
+     }
+    ],
+    "00106650": [
+     {
+      "at": 34,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    nightfire_fence_trace(\"pending\", esi, edi, MEM32(MEM32(esi + 0x34)));"
+      ]
+     },
+     {
+      "at": 161,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    nightfire_fence_trace(\"returned\", MEM32(0x1117C0), 0, 0);"
+      ]
+     }
+    ],
+    "001082DD": [
+     {
+      "at": 180,
+      "old": 1,
+      "sha": "662c9b715c0cb8b05b97",
+      "new": [
+       "    nightfire_port_write8(LO16(edx), LO8(eax)); /* OUT 80C0: virtual video GPIO */"
+      ]
+     },
+     {
+      "at": 225,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    g_ebp = ebp;",
+       "    g_seh_ebp = ebp;"
+      ]
+     }
+    ],
+    "0010B1E0": [
+     {
+      "at": 76,
+      "old": 1,
+      "sha": "f1fc374676f955513bef",
+      "new": [
+       "    SET_LO8(eax, nightfire_port_read8(LO16(edx))); /* IN preserves upper EAX */"
+      ]
+     }
+    ],
+    "00111FC0": [
+     {
+      "at": 2,
+      "old": 1,
+      "sha": "bfd2f2436f998c0d62f2",
+      "new": [
+       " * Original: 0x00111FC0 - 0x0011234D (909 bytes, 353 insns)"
+      ]
+     },
+     {
+      "at": 392,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "loc_0011234A: ;",
+       "    /* CP35: PAL C2 0C 00 was outside the original recovered boundary.",
+       "     * Its missing return left every caller's stack 16 bytes too low. */",
+       "    esp += 16; return; /* ret 12 */",
+       ""
+      ]
+     }
+    ],
+    "0011343A": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_VIDEO_AUDIO_HOOKS",
+       "    extern int nightfire_game_audio_call(uint32_t);",
+       "    if(nightfire_game_audio_call(0x0011343Au)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "001156F8": [
+     {
+      "at": 208,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    nightfire_dsp_startup_command(ebx);",
+       ""
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_0008.c": {
+   "functions": {
+    "0011BD1E": [
+     {
+      "at": 29,
+      "old": 1,
+      "sha": "280b6e4591f24d9c7076",
+      "new": [
+       "    nightfire_ac97_write8((uint32_t)(eax + -20971253), 0);"
+      ]
+     }
+    ],
+    "0011BF43": [
+     {
+      "at": 33,
+      "old": 1,
+      "sha": "bdd760146a5158a26ba7",
+      "new": [
+       "    nightfire_ac97_write8((uint32_t)(eax + -20971253), 2);"
+      ]
+     }
+    ],
+    "0011C003": [
+     {
+      "at": 59,
+      "old": 1,
+      "sha": "e1cb2410a805af302333",
+      "new": [
+       "    nightfire_ac97_write8((uint32_t)(eax + -20971253), 0x1D);"
+      ]
+     }
+    ],
+    "0011C3B8": [
+     {
+      "at": 58,
+      "old": 1,
+      "sha": "dd1347be01f9de9e193d",
+      "new": [
+       "    nightfire_ac97_write8((uint32_t)(ecx + -20971253), 2);"
+      ]
+     }
+    ],
+    "00130F07": [
+     {
+      "at": 320,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _flags = TEST_Z(_fa, _fb); /* preserve incoming TEST ZF */"
+      ]
+     },
+     {
+      "at": 452,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _flags = CMP_EQ(_fa, _fb); /* preserve incoming CMP ZF */"
+      ]
+     }
+    ],
+    "001317BC": [
+     {
+      "at": 142,
+      "old": 1,
+      "sha": "7edfeb94a7e88d30db94",
+      "new": [
+       "    if (eax == 0) goto loc_001318EF; /* ZF from initial SUB or loop DEC */"
+      ]
+     }
+    ],
+    "001318F8": [
+     {
+      "at": 175,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _flags = TEST_Z(_fa, _fb); /* preserve incoming TEST ZF */"
+      ]
+     },
+     {
+      "at": 307,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "    _flags = CMP_EQ(_fa, _fb); /* preserve incoming CMP ZF */"
+      ]
+     }
+    ],
+    "0015800F": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x0015800Fu)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "00158065": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x00158065u)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "00158071": [
+     {
+      "at": 8,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x00158071u)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "001580DD": [
+     {
+      "at": 9,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x001580DDu)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "00158137": [
+     {
+      "at": 8,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x00158137u)) return;",
+       "#endif"
+      ]
+     }
+    ],
+    "00158159": [
+     {
+      "at": 8,
+      "old": 0,
+      "sha": "e3b0c44298fc1c149afb",
+      "new": [
+       "#ifdef NIGHTFIRE_NATIVE_INPUT_HOOKS",
+       "    extern int nightfire_input_call(uint32_t);",
+       "    if(nightfire_input_call(0x00158159u)) return;",
+       "#endif"
+      ]
+     }
+    ]
+   }
+  },
+  "recomp_dispatch.c": {
+   "file": [
+    {
+     "at": 3,
+     "old": 1,
+     "sha": "884502ab116f44e0b206",
+     "new": [
+      " * Maps translated Xbox VAs to function pointers."
+     ]
+    },
+    {
+     "at": 1266,
+     "old": 1,
+     "sha": "f290e53f2e5887350438",
+     "new": [
+      "    /* 0x00061D6B is an interior block of the recovered 0x00061CA0 callback. */"
+     ]
+    },
+    {
+     "at": 1280,
+     "old": 1,
+     "sha": "f565c37f1b18cad5395f",
+     "new": [
+      "    /* 0x0006275A is an interior block of the recovered 0x000626F0 callback. */"
+     ]
+    },
+    {
+     "at": 4500,
+     "old": 1,
+     "sha": "3f928bd2f16821817fe7",
+     "new": [
+      "static const size_t g_recomp_table_size =",
+      "    sizeof(g_recomp_table) / sizeof(g_recomp_table[0]);"
+     ]
+    }
+   ]
+  },
+  "recomp_stubs_unresolved.c": {
+   "file": [
+    {
+     "at": 165,
+     "old": 1,
+     "sha": "81b897487afd807cd8ce",
+     "new": []
+    }
+   ]
+  }
+ },
+ "own": [
+  "nightfire_ac97.c",
+  "nightfire_dev_start.c",
+  "nightfire_dsp_startup.c",
+  "nightfire_fence_trace.c",
+  "nightfire_memory_order.c",
+  "nightfire_memory_trace.c",
+  "nightfire_port_io.c",
+  "nightfire_render_state_dispatch.c",
+  "nightfire_thread_check.c"
+ ],
+ "note": "Addresses, our names, our code and SHA-256 guards only. Every translated line is produced by the toolkit from the player's own default.xbe.",
+ "own_src": [
+  "recomp_manual.c",
+  "nightfire_diagnostics.h"
+ ]
+}

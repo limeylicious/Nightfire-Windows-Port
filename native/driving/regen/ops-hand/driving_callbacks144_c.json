@@ -1,0 +1,354 @@
+{
+ "file": "driving_callbacks144.c",
+ "edits": [
+  {
+   "file": "driving_callbacks144.c",
+   "block": "file",
+   "src": "770c491f28ec9e18",
+   "dst": "152bf7b082d3c387",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 21,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 26,
+     "del": 1,
+     "ins": [
+      {
+       "s": 26,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 88,
+     "del": 1,
+     "ins": [
+      {
+       "s": 88,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 101,
+     "del": 1,
+     "ins": [
+      {
+       "s": 101,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 118,
+     "del": 1,
+     "ins": [
+      {
+       "s": 118,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 124,
+     "del": 1,
+     "ins": [
+      {
+       "s": 124,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 140,
+     "del": 1,
+     "ins": [
+      {
+       "s": 140,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 160,
+     "del": 1,
+     "ins": [
+      {
+       "s": 160,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 9
+    },
+    {
+     "at": 166,
+     "del": 1,
+     "ins": [
+      {
+       "s": 166,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 10
+    },
+    {
+     "at": 181,
+     "del": 1,
+     "ins": [
+      {
+       "s": 181,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 11
+    },
+    {
+     "at": 201,
+     "del": 1,
+     "ins": [
+      {
+       "s": 201,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 12
+    },
+    {
+     "at": 207,
+     "del": 1,
+     "ins": [
+      {
+       "s": 207,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 13
+    },
+    {
+     "at": 220,
+     "del": 1,
+     "ins": [
+      {
+       "s": 220,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 14
+    },
+    {
+     "at": 237,
+     "del": 1,
+     "ins": [
+      {
+       "s": 237,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 15
+    },
+    {
+     "at": 263,
+     "del": 1,
+     "ins": [],
+     "seq": 16
+    },
+    {
+     "at": 269,
+     "del": 1,
+     "ins": [
+      {
+       "s": 269,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 17
+    },
+    {
+     "at": 282,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 18
+    },
+    {
+     "at": 286,
+     "del": 1,
+     "ins": [
+      {
+       "s": 286,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 19
+    },
+    {
+     "at": 332,
+     "del": 1,
+     "ins": [
+      {
+       "s": 332,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 20
+    },
+    {
+     "at": 345,
+     "del": 1,
+     "ins": [
+      {
+       "s": 345,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 21
+    },
+    {
+     "at": 362,
+     "del": 1,
+     "ins": [
+      {
+       "s": 362,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 22
+    },
+    {
+     "at": 368,
+     "del": 1,
+     "ins": [
+      {
+       "s": 368,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 23
+    },
+    {
+     "at": 384,
+     "del": 1,
+     "ins": [
+      {
+       "s": 384,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 24
+    },
+    {
+     "at": 404,
+     "del": 1,
+     "ins": [
+      {
+       "s": 404,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 25
+    },
+    {
+     "at": 410,
+     "del": 1,
+     "ins": [
+      {
+       "s": 410,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 26
+    },
+    {
+     "at": 425,
+     "del": 1,
+     "ins": [
+      {
+       "s": 425,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 27
+    },
+    {
+     "at": 445,
+     "del": 1,
+     "ins": [
+      {
+       "s": 445,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 28
+    },
+    {
+     "at": 451,
+     "del": 1,
+     "ins": [
+      {
+       "s": 451,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 29
+    },
+    {
+     "at": 464,
+     "del": 1,
+     "ins": [
+      {
+       "s": 464,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 30
+    },
+    {
+     "at": 481,
+     "del": 1,
+     "ins": [
+      {
+       "s": 481,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 31
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

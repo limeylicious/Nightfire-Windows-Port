@@ -2,6 +2,8 @@
 **/game_files/
 **/src/recomp/
 **/recomp_manual.c
+!native/action/src/recomp_manual.c
+!native/driving/src/recomp_manual.c
 **/build*/
 **/cache/
 **/logs/
@@ -56,6 +58,14 @@
 **/sessions/
 **/extracted/
 **/runs/
+**/linked-sessions/
+**/saves/
+**/lockstep/
+# What the public Setup makes on the player's PC: the workshop (toolkit, translated game code,
+# build folders) and the player's own game files.
+/workshop/
+release/alpha/Game Files/*
+!release/alpha/Game Files/PUT YOUR GAME FILES HERE.txt
 *.ini
 *.d00
 *.d01

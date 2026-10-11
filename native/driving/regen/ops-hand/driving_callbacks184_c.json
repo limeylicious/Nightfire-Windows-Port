@@ -1,0 +1,61 @@
+{
+ "file": "driving_callbacks184.c",
+ "edits": [
+  {
+   "file": "driving_callbacks184.c",
+   "block": "file",
+   "src": "e88fafd8041a8a98",
+   "dst": "63155f6e36e03b91",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_CHECK sound watch: per-voice packet-done callbacks. */",
+      {
+       "s": 6,
+       "x": "static void sub_0013BB20_body(void);"
+      },
+      "void sub_0013BB20(void){extern int lean_strm_check_on;extern void lean_snd_done(void);if(lean_strm_check_on)lean_snd_done();sub_0013BB20_body();}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0013BB20_body"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 2
+    },
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 3
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

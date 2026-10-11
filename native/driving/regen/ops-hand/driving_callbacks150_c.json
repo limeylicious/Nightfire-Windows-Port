@@ -1,0 +1,164 @@
+{
+ "file": "driving_callbacks150.c",
+ "edits": [
+  {
+   "file": "driving_callbacks150.c",
+   "block": "file",
+   "src": "d31f8729d6dff517",
+   "dst": "49c46ace19b7ce75",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 54,
+     "del": 1,
+     "ins": [
+      {
+       "s": 54,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 77,
+     "del": 1,
+     "ins": [
+      {
+       "s": 77,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 81,
+     "del": 1,
+     "ins": [
+      {
+       "s": 81,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 88,
+     "del": 1,
+     "ins": [
+      {
+       "s": 88,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 104,
+     "del": 1,
+     "ins": [
+      {
+       "s": 104,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 127,
+     "del": 1,
+     "ins": [
+      {
+       "s": 127,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 9
+    },
+    {
+     "at": 145,
+     "del": 1,
+     "ins": [
+      {
+       "s": 145,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 10
+    },
+    {
+     "at": 160,
+     "del": 1,
+     "ins": [
+      {
+       "s": 160,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 11
+    },
+    {
+     "at": 183,
+     "del": 1,
+     "ins": [
+      {
+       "s": 183,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 12
+    },
+    {
+     "at": 201,
+     "del": 1,
+     "ins": [
+      {
+       "s": 201,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 13
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

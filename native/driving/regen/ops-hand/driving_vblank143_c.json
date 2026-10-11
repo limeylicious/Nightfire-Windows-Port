@@ -1,0 +1,233 @@
+{
+ "file": "driving_vblank143.c",
+ "edits": [
+  {
+   "file": "driving_vblank143.c",
+   "block": "file",
+   "src": "499f1dc459f18e43",
+   "dst": "7f7763467343c607",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "uint8_t driving_port_read8(uint16_t port);",
+      "void driving_pcrtc_ack143(uint32_t reg_base,uint32_t value);",
+      "extern void driving_cadence204(unsigned,unsigned int,unsigned int);"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 71,
+     "del": 1,
+     "ins": [
+      "    SET_LO8(eax, driving_port_read8((uint16_t)edx));"
+     ],
+     "seq": 1
+    },
+    {
+     "at": 139,
+     "del": 8,
+     "ins": [],
+     "seq": 2
+    },
+    {
+     "at": 149,
+     "del": 2,
+     "ins": [
+      {
+       "s": 149,
+       "rule": "ebp_from_caller_noted"
+      },
+      {
+       "s": 150,
+       "p": 49,
+       "x": " g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 155,
+     "del": 1,
+     "ins": [
+      {
+       "s": 155,
+       "p": 59,
+       "x": " g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 158,
+     "del": 0,
+     "ins": [
+      "    driving_cadence204(3,ecx,0);"
+     ],
+     "seq": 5
+    },
+    {
+     "at": 185,
+     "del": 1,
+     "ins": [
+      "    ebp = 0; /* xor self */ g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+     ],
+     "seq": 6
+    },
+    {
+     "at": 195,
+     "del": 1,
+     "ins": [
+      {
+       "s": 195,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 207,
+     "del": 1,
+     "ins": [
+      {
+       "s": 207,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 216,
+     "del": 1,
+     "ins": [
+      "    SET_LO8(eax, driving_port_read8((uint16_t)edx));"
+     ],
+     "seq": 9
+    },
+    {
+     "at": 239,
+     "del": 1,
+     "ins": [
+      "    driving_pcrtc_ack143(edi, ecx);"
+     ],
+     "seq": 10
+    },
+    {
+     "at": 278,
+     "del": 1,
+     "ins": [
+      "    POP32(esp, ebp); g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */"
+     ],
+     "seq": 11
+    },
+    {
+     "at": 285,
+     "del": 8,
+     "ins": [],
+     "seq": 12
+    },
+    {
+     "at": 295,
+     "del": 2,
+     "ins": [
+      {
+       "s": 295,
+       "rule": "ebp_from_caller_noted"
+      },
+      {
+       "s": 296,
+       "p": 49,
+       "x": " g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+      }
+     ],
+     "seq": 13
+    },
+    {
+     "at": 301,
+     "del": 1,
+     "ins": [
+      {
+       "s": 301,
+       "p": 59,
+       "x": " g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+      }
+     ],
+     "seq": 14
+    },
+    {
+     "at": 314,
+     "del": 1,
+     "ins": [
+      "    ebp = 0; /* xor self */ g_ebp = g_seh_ebp = ebp; /* publish guest EBP register */"
+     ],
+     "seq": 15
+    },
+    {
+     "at": 324,
+     "del": 1,
+     "ins": [
+      {
+       "s": 324,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 16
+    },
+    {
+     "at": 341,
+     "del": 1,
+     "ins": [
+      {
+       "s": 341,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 17
+    },
+    {
+     "at": 358,
+     "del": 1,
+     "ins": [
+      {
+       "s": 358,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 18
+    },
+    {
+     "at": 366,
+     "del": 1,
+     "ins": [
+      "    driving_pcrtc_ack143(edi, 1);"
+     ],
+     "seq": 19
+    },
+    {
+     "at": 382,
+     "del": 1,
+     "ins": [
+      {
+       "s": 382,
+       "rule": "ebp_write_publish"
+      }
+     ],
+     "seq": 20
+    },
+    {
+     "at": 409,
+     "del": 1,
+     "ins": [
+      "    POP32(esp, ebp); g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */"
+     ],
+     "seq": 21
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

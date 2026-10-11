@@ -1,4 +1,5 @@
-/* NIGHTFIRE_NATIVE_SOUND=1 (off by default): native DirectSound for the Action engine.
+/* Native DirectSound for the Action engine: the only sound in native builds, which have
+ * no emulated sound chip (NIGHTFIRE_NO_SOUND_CHIP); NIGHTFIRE_NATIVE_SOUND=1 in builds that do.
  *
  * The game and the XMV movie player reach the statically linked XDK DirectSound
  * library through 33 C-API wrappers and 7 stream vtable slots (survey:
@@ -18,7 +19,15 @@
  *    the calling guest thread, as the XDK does; Discontinuity lets queued audio play
  *    out; Pause modes 0-3 and SynchPlayback.
  * Speaker bins fold to stereo exactly as the chip path does (apu_dsp.c); LFE (3) and
- * sends (10+, I3DL2 reverb) are not played. */
+ * sends (10+, I3DL2 reverb) are not played.
+ *
+ * Lockstep (NIGHTFIRE_LOCKSTEP=1, online play; nf_lockstep.c): every PC must see the
+ * same sound state at the same point of the game (when a sound ends, where it is,
+ * when a movie packet completes), so the game thread mixes instead of the mixer
+ * thread, up to the game's own clock: at each frame start and whenever the game
+ * polls sound state. The mixer thread then only plays those blocks out at the sound
+ * card's pace, and the game thread waits while 43 ms are already waiting, which is
+ * what keeps lockstep play, menus and movies at real speed (ls_* below). */
 #include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -36,6 +45,12 @@ void nds_audio_stats_native(const int16_t (*buf)[2], int n);
 
 extern ptrdiff_t g_xbox_mem_offset;
 uint32_t xbox_HeapAlloc(uint32_t size, uint32_t alignment);
+int nf_lockstep_on(void);
+uint64_t nf_lockstep_now(void);
+void nf_lockstep_poll(void);
+int nf_lockstep_game_thread(void);
+int nf_lockstep_stalled(void);
+void nf_lockstep_set_audio_hook(void (*fn)(void));
 
 #define G8(a)  (*(volatile uint8_t  *)(g_xbox_mem_offset + (uintptr_t)(a)))
 #define G16(a) (*(volatile uint16_t *)(g_xbox_mem_offset + (uintptr_t)(a)))
@@ -62,7 +77,12 @@ int nds_on(void)
     static int on = -1;
     if (on < 0) {
         const char *e = getenv("NIGHTFIRE_NATIVE_SOUND");
+#ifdef NIGHTFIRE_NO_SOUND_CHIP
+        if (e && e[0] == '0') fprintf(stderr, "[NDS] NIGHTFIRE_NATIVE_SOUND=0 ignored: this build has no emulated sound chip\n");
+        on = 1;
+#else
         on = e && e[0] == '1';
+#endif
         if (on) fprintf(stderr, "[NDS] native DirectSound on: no APU/DSP/AC97, older audio layers off\n");
     }
     return on;
@@ -117,6 +137,26 @@ static float s_master = 1.0f;
 static volatile LONG64 s_mixed_blocks;
 static nds_listener s_lis = { {0,0,0}, {0,0,0}, {0,0,1}, {0,1,0} };   /* listener defaults 0x12F1D8 */
 
+/* Lockstep: blocks the game thread mixed, waiting to be played (under s_lock). */
+#define LS_FIFO      96                 /* blocks (256 ms) */
+#define LS_TARGET    10                 /* after running dry, wait for 27 ms of sound */
+#define LS_HIGH      16                 /* the game thread waits while this many (43 ms) wait */
+#define LS_MAX_LAG   64                 /* further behind (a stall): move sounds on unmixed */
+static int s_ls;                        /* lockstep mixing on */
+static int16_t s_ls_fifo[LS_FIFO][NDS_BLOCK][2];
+static int s_ls_head, s_ls_count, s_ls_refill = 1;
+static int s_ls_started;
+static int64_t s_ls_epoch;              /* game clock at block 0 */
+static int64_t s_ls_blocks;             /* blocks mixed so far */
+static long s_ls_dropped, s_ls_silence, s_ls_unmixed, s_ls_other;
+static double s_ls_waited_ms;
+static LONG64 s_ls_game_at;             /* QPC when the game thread last mixed */
+static int s_ls_rt;                     /* the game thread is away while another thread drives sound: real time */
+static long s_ls_realtime;
+static HANDLE s_ls_room;                /* the mixer thread played a block */
+static int s_quiet;                     /* mixing without output: voices move on as if silent */
+static void ls_frame(void);
+
 /* Per-bin submix headroom DirectSound programs at init (same XDK library as Driving,
  * read from the chip path there: 1 on bins 0-30, 0 on bin 31). */
 static int s_submix_hr[32] = { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0 };
@@ -126,6 +166,13 @@ static BOOL CALLBACK nds_init(PINIT_ONCE o, PVOID p, PVOID *c)
     InitializeCriticalSectionAndSpinCount(&s_lock, 4000);
     const char *g = getenv("NIGHTFIRE_NATIVE_SOUND_GAIN");
     if (g && *g) s_master = (float)atof(g);
+    s_ls = nf_lockstep_on();
+    if (s_ls) {
+        s_ls_room = CreateEventA(NULL, FALSE, FALSE, NULL);
+        LARGE_INTEGER c; QueryPerformanceCounter(&c); s_ls_game_at = c.QuadPart;
+        nf_lockstep_set_audio_hook(ls_frame);
+        fprintf(stderr, "[NDS] lockstep: sound state follows the game clock (the game thread mixes; this PC's sound card only plays it out)\n");
+    }
     if (!nds_xa2_init()) fprintf(stderr, "[NDS] XAudio2 output could not be started\n");
     return TRUE;
 }
@@ -413,7 +460,7 @@ static void mix_buffer(nds_voice *v)
     if (lend > total || lend <= lstart) lend = total;
     double step = voice_rate(v) / NDS_RATE;
     float g[8];
-    if (!voice_gains(v, g)) {   /* silent: advance time exactly, skip decode and mix */
+    if (s_quiet || !voice_gains(v, g)) {   /* silent: advance time exactly, skip decode and mix */
         s_skipped++;
         double end = v->pos + step * NDS_BLOCK;
         if (end >= lend) {
@@ -455,7 +502,7 @@ static void mix_stream(nds_voice *v)
     if (v->paused || !v->qn) { if (!v->paused && !v->qn) v->starved_blocks++; return; }
     double step = voice_rate(v) / NDS_RATE;
     float g[8];
-    int audible = voice_gains(v, g);
+    int audible = !s_quiet && voice_gains(v, g);
     if (audible) s_mixed++; else s_skipped++;
     for (int i = 0; i < NDS_BLOCK; i++) {
         while (v->qn && (uint32_t)v->pos >= pkt_samples(v, &v->q[0])) {
@@ -487,33 +534,23 @@ static void fold(float out[NDS_BLOCK][2])
     }
 }
 
-static DWORD WINAPI nds_thread(LPVOID p)
+static double e_stream, e_2d, e_3d; static long clipped, frames5;   /* 5 s level report */
+/* One block of every voice into out (s_quiet: voices move on, out is silence). */
+static void mix_block(int16_t out[NDS_BLOCK][2])
 {
-    (void)p;
-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
-    HANDLE t = CreateWaitableTimerExW(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
-    int16_t out[NDS_BLOCK][2];
-    static int16_t stat_buf[256][2]; int stat_n = 0;
     static float f_stream[NDS_BLOCK][2], f_2d[NDS_BLOCK][2], f_all[NDS_BLOCK][2];
-    static double e_stream, e_2d, e_3d; static long clipped, frames5; static ULONGLONG t5;
-    for (;;) {
-        int q = nds_xa2_queued_now();
-        if (q >= NDS_QUEUE) {
-            LARGE_INTEGER due; due.QuadPart = -5000;   /* 0.5 ms */
-            if (t && SetWaitableTimer(t, &due, 0, NULL, NULL, FALSE)) WaitForSingleObject(t, 20); else Sleep(1);
-            continue;
-        }
-        LARGE_INTEGER c0, c1; QueryPerformanceCounter(&c0);
-        memset(s_bins, 0, sizeof s_bins);
-        nds_lock();
-        /* streams (movies) first, then 2D buffers, then 3D buffers, so their levels can be reported separately */
-        for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && s_v[i].stream) mix_stream(&s_v[i]);
-        fold(f_stream);
-        for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && !s_v[i].stream && !s_v[i].is3d && s_v[i].playing) mix_buffer(&s_v[i]);
-        fold(f_2d);
-        for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && !s_v[i].stream && s_v[i].is3d && s_v[i].playing) mix_buffer(&s_v[i]);
-        nds_unlock();
-        fold(f_all);
+    LARGE_INTEGER c0, c1; QueryPerformanceCounter(&c0);
+    memset(s_bins, 0, sizeof s_bins);
+    nds_lock();
+    /* streams (movies) first, then 2D buffers, then 3D buffers, so their levels can be reported separately */
+    for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && s_v[i].stream) mix_stream(&s_v[i]);
+    fold(f_stream);
+    for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && !s_v[i].stream && !s_v[i].is3d && s_v[i].playing) mix_buffer(&s_v[i]);
+    fold(f_2d);
+    for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle && !s_v[i].stream && s_v[i].is3d && s_v[i].playing) mix_buffer(&s_v[i]);
+    nds_unlock();
+    fold(f_all);
+    {
         for (int i = 0; i < NDS_BLOCK; i++) {
             float l = f_all[i][0], r = f_all[i][1];
             e_stream += f_stream[i][0] * f_stream[i][0] + f_stream[i][1] * f_stream[i][1];
@@ -528,22 +565,125 @@ static DWORD WINAPI nds_thread(LPVOID p)
         frames5 += NDS_BLOCK;
         { static LARGE_INTEGER hz; if (!hz.QuadPart) QueryPerformanceFrequency(&hz); QueryPerformanceCounter(&c1);
           double us = (c1.QuadPart - c0.QuadPart) * 1e6 / hz.QuadPart; s_cpu_us += us; if (us > s_cpu_max) s_cpu_max = us; s_cpu_blocks++; }
+    }
+}
+
+/* ---- lockstep ---------------------------------------------------------------
+ * The game thread mixes up to its game clock (nf_lockstep_now): whole blocks from
+ * the clock at DirectSoundCreate, so every PC mixes the same blocks between the
+ * same game calls. Called under s_lock, held once. */
+static void ls_wait_room(void)
+{
+    if (s_ls_count < LS_HIGH) return;
+    LARGE_INTEGER c0, c1, f; QueryPerformanceCounter(&c0);
+    for (int i = 0; i < 20 && s_ls_count >= LS_HIGH; i++) {   /* at most ~100 ms, then the oldest block goes */
+        nds_unlock();
+        WaitForSingleObject(s_ls_room, 5);
+        nds_lock();
+    }
+    QueryPerformanceCounter(&c1); QueryPerformanceFrequency(&f);
+    s_ls_waited_ms += (c1.QuadPart - c0.QuadPart) * 1000.0 / f.QuadPart;
+}
+static void ls_mix(void)
+{
+    if (s_ls <= 0) return;
+    LARGE_INTEGER c, f; QueryPerformanceCounter(&c); QueryPerformanceFrequency(&f);
+    if (!nf_lockstep_game_thread()) {   /* another thread's calls are not in step with the game: count them */
+        static unsigned logged; s_ls_other++;
+        if (logged++ < 4) fprintf(stderr, "[NDS] lockstep: sound call from a thread other than the game's (not in step on every PC)\n");
+        /* that thread drives sound (a movie?) while the game thread has not mixed for 250 ms
+         * (or ever): the mixer thread mixes with real time until the game thread is back, so
+         * it cannot hang */
+        if (!s_ls_rt && (c.QuadPart - s_ls_game_at) * 4 > f.QuadPart) {
+            s_ls_rt = 1;
+            fprintf(stderr, "[NDS] lockstep: the game thread is away while another thread uses sound; sound follows real time until it is back (not the same on every PC)\n");
+        }
+        return;
+    }
+    s_ls_game_at = c.QuadPart;
+    int64_t now = (int64_t)nf_lockstep_now();
+    if (!s_ls_started || s_ls_rt) {   /* the first mix, or back from real time: the next block starts now */
+        if (s_ls_rt) fprintf(stderr, "[NDS] lockstep: the game thread mixes again (after %ld real-time blocks)\n", s_ls_realtime);
+        s_ls_started = 1; s_ls_rt = 0;
+        s_ls_epoch = now - (s_ls_blocks * NDS_BLOCK * 10000000ll + NDS_RATE - 1) / NDS_RATE;
+    }
+    if (now <= s_ls_epoch) return;
+    int64_t want = (now - s_ls_epoch) * NDS_RATE / 10000000ll / NDS_BLOCK;
+    /* in a stall the clock follows real time: waiting for the card would only add to it */
+    int pace = !nf_lockstep_stalled();
+    while (s_ls_blocks < want) {
+        s_quiet = want - s_ls_blocks > LS_MAX_LAG;
+        if (s_quiet) s_ls_unmixed++; else if (pace) ls_wait_room();
+        if (s_ls_count == LS_FIFO) { s_ls_head = (s_ls_head + 1) % LS_FIFO; s_ls_count--; s_ls_dropped++; }   /* full: drop the oldest */
+        int16_t (*dst)[2] = s_ls_fifo[(s_ls_head + s_ls_count) % LS_FIFO];
+        mix_block(dst);
+        if (s_quiet) memset(dst, 0, sizeof s_ls_fifo[0]);
+        s_ls_count++; s_ls_blocks++;
+    }
+    s_quiet = 0;
+}
+/* nf_lockstep.c, at each frame start on the game thread */
+static void ls_frame(void) { nds_lock(); ls_mix(); nds_unlock(); }
+/* A game poll of sound state: it moves the game clock (so a loop waiting for a sound
+ * ends the same way everywhere), then the mix catches up. */
+static void ls_poll(void) { if (s_ls > 0) { nf_lockstep_poll(); nds_lock(); ls_mix(); nds_unlock(); } }
+/* Mixer thread: the next block to play, or silence while too little is ready. */
+static void ls_out(int16_t out[NDS_BLOCK][2])
+{
+    nds_lock();
+    if (s_ls_refill && s_ls_count >= LS_TARGET) s_ls_refill = 0;
+    if (!s_ls_refill && s_ls_count) {
+        memcpy(out, s_ls_fifo[s_ls_head], sizeof s_ls_fifo[0]);
+        s_ls_head = (s_ls_head + 1) % LS_FIFO; s_ls_count--;
+        SetEvent(s_ls_room);
+        if (s_ls_count > 2 * LS_TARGET + 8) { s_ls_head = (s_ls_head + 1) % LS_FIFO; s_ls_count--; s_ls_dropped++; }   /* running ahead of the card */
+    } else if (s_ls_rt) {
+        mix_block(out); s_ls_blocks++; s_ls_realtime++;
+    } else {
+        memset(out, 0, sizeof s_ls_fifo[0]);
+        if (!s_ls_refill && s_ls_started) s_ls_refill = 1;
+        if (s_ls_started) s_ls_silence++;
+    }
+    nds_unlock();
+}
+
+static DWORD WINAPI nds_thread(LPVOID p)
+{
+    (void)p;
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+    HANDLE t = CreateWaitableTimerExW(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
+    int16_t out[NDS_BLOCK][2];
+    static int16_t stat_buf[256][2]; int stat_n = 0;
+    static ULONGLONG t5;
+    for (;;) {
+        int q = nds_xa2_queued_now();
+        if (q >= NDS_QUEUE) {
+            LARGE_INTEGER due; due.QuadPart = -5000;   /* 0.5 ms */
+            if (t && SetWaitableTimer(t, &due, 0, NULL, NULL, FALSE)) WaitForSingleObject(t, 20); else Sleep(1);
+            continue;
+        }
+        if (s_ls > 0) ls_out(out); else mix_block(out);
         if (GetTickCount64() - t5 >= 5000) {
+            nds_lock();
             if (t5) {
                 int nb = 0, n3 = 0, ns = 0; uint32_t starved = 0;
-                nds_lock();
                 for (int i = 0; i < NDS_MAX_VOICES; i++) if (s_v[i].handle) {
                     if (s_v[i].stream) { ns++; starved += s_v[i].starved_blocks; s_v[i].starved_blocks = 0; }
                     else if (s_v[i].playing) { if (s_v[i].is3d) n3++; else nb++; }
                 }
-                nds_unlock();
+                long f5 = frames5 ? frames5 : 1;
                 fprintf(stderr, "[NDS] 5s: rms streams %.0f 2d %.0f 3d %.0f, clipped %ld, playing 2d %d 3d %d, streams %d (starved blocks %u), mixer cpu per block avg %.0f us max %.0f us (budget %.0f us), voices mixed %ld skipped %ld per block\n",
-                        32767.0 * sqrt(e_stream / (2.0 * frames5)), 32767.0 * sqrt(e_2d / (2.0 * frames5)), 32767.0 * sqrt(e_3d / (2.0 * frames5)),
+                        32767.0 * sqrt(e_stream / (2.0 * f5)), 32767.0 * sqrt(e_2d / (2.0 * f5)), 32767.0 * sqrt(e_3d / (2.0 * f5)),
                         clipped, nb, n3, ns, starved, s_cpu_blocks ? s_cpu_us / s_cpu_blocks : 0.0, s_cpu_max, NDS_BLOCK * 1e6 / NDS_RATE,
                         s_cpu_blocks ? s_mixed / s_cpu_blocks : 0L, s_cpu_blocks ? s_skipped / s_cpu_blocks : 0L);
+                if (s_ls > 0)
+                    fprintf(stderr, "[NDS] 5s lockstep: %lld blocks mixed by the game, %d waiting; game thread waited %.0f ms for the sound card; silence blocks %ld, dropped %ld, moved on unmixed %ld, calls from other threads %ld, real-time blocks %ld\n",
+                            (long long)s_ls_blocks, s_ls_count, s_ls_waited_ms, s_ls_silence, s_ls_dropped, s_ls_unmixed, s_ls_other, s_ls_realtime);
+                s_ls_waited_ms = 0;
                 s_cpu_us = 0; s_cpu_max = 0; s_cpu_blocks = 0; s_mixed = s_skipped = 0;
             }
             t5 = GetTickCount64(); e_stream = e_2d = e_3d = 0; clipped = 0; frames5 = 0;
+            nds_unlock();
         }
         {   /* NIGHTFIRE_NATIVE_SOUND_VOICES=1 (diagnostic): every half second, each playing voice with the
              * per-slot attenuation in the chip's units (12-bit, 1/64 dB), to compare with [APU-VOICE] */
@@ -785,6 +925,7 @@ uint32_t nds_SetCurrentPosition(uint32_t buf, uint32_t pos)
 }
 uint32_t nds_GetCurrentPosition(uint32_t buf, uint32_t pplay, uint32_t pwrite)
 {
+    ls_poll();
     nds_lock(); nds_voice *v = nds_find(buf);
     uint32_t play = 0, write = 0;
     if (v) {
@@ -833,6 +974,7 @@ uint32_t nds_SetFrequency(uint32_t buf, uint32_t hz)
 }
 uint32_t nds_GetStatus(uint32_t buf, uint32_t pstatus)
 {
+    ls_poll();
     nds_lock(); nds_voice *v = nds_find(buf);
     uint32_t st = v && v->playing ? (1u | (v->looping ? 4u : 0u)) : 0u;
     nds_unlock();
@@ -944,6 +1086,7 @@ uint32_t nds_StreamDiscontinuity(uint32_t s)
 }
 uint32_t nds_StreamGetStatus(uint32_t s, uint32_t pst)
 {
+    ls_poll();
     nds_lock(); nds_voice *v = nds_find(s);
     uint32_t st = v && v->qn + v->dn < (int)v->max_packets ? 1u : 0u;   /* XMO_STATUSF_ACCEPT_INPUT_DATA */
     nds_unlock();
@@ -1012,6 +1155,7 @@ uint32_t nds_DoWork(void)
     if (busy) return DS_OK;
     busy = 1;
     InterlockedIncrement(&s_dowork_calls);
+    ls_poll();
     nds_done d[2 * NDS_MAX_PACKETS]; int n = 0;
     nds_lock();
     for (int i = 0; i < NDS_MAX_VOICES && n < NDS_MAX_PACKETS; i++)

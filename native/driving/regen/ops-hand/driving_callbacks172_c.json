@@ -1,0 +1,30 @@
+{
+ "file": "driving_callbacks172.c",
+ "edits": [
+  {
+   "file": "driving_callbacks172.c",
+   "block": "file",
+   "src": "9c5cc11793dfcbf8",
+   "dst": "a97d29b50d9b36ca",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 3,
+     "del": 1,
+     "ins": [],
+     "seq": 1
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

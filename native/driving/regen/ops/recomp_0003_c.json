@@ -1,0 +1,69 @@
+{
+ "file": "recomp_0003.c",
+ "edits": [
+  {
+   "file": "recomp_0003.c",
+   "block": "header",
+   "src": "ece87d0a49294417",
+   "dst": "1db31ec80631cd4e",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern unsigned int driving_dev_start240(unsigned int, unsigned int);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0003.c",
+   "block": "0x00050C20",
+   "src": "ea277e4e230ad0d0",
+   "dst": "481ef90c67d17dbd",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 57,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(18)), RECOMP_PARITY8((_fa) & (_fb))) goto loc_00050C60; /* jp after test FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0003.c",
+   "block": "0x00050C70",
+   "src": "517b5a28a06c198c",
+   "dst": "2f4bd0d48880f9f9",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 64,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(19)), RECOMP_PARITY8((_fa) & (_fb))) goto loc_00050CC5; /* jp after test FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0003.c",
+   "block": "0x0005AA80",
+   "src": "cc796805f6ecc9cf",
+   "dst": "14ebc715d212d8aa",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 388,
+     "del": 0,
+     "ins": [
+      "    eax = driving_dev_start240(eax, esp); /* one-shot opt-in original no-movie branch */"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -34,7 +34,10 @@ rem Normal startup: movies, menus and mission briefing are retained.
 set "NIGHTFIRE_DEV_START_EXCHANGE="
 set "NIGHTFIRE_DEV_MISSION137="
 set "NIGHTFIRE_DEV_EXCHANGE_SECTION="
-set "NIGHTFIRE_MENU_MISSIONS139=1"
+rem Mission menu: the original progression from the player's saves (Paris Prelude, The Exchange, ...).
+rem NF_ALPHA_MISSIONS=all (Play Nightfire (All Missions).cmd) opens every mission; it needs an Action
+rem engine built with the 10 October 2026 nightfire_menu_missions139.h, older engines keep the progression.
+if /i "%NF_ALPHA_MISSIONS%"=="all" (set "NIGHTFIRE_MENU_MISSIONS139=all") else (set "NIGHTFIRE_MENU_MISSIONS139=0")
 set "NIGHTFIRE_ACK_BACKOFF136=0"
 set "NIGHTFIRE_CONSUMER135=0"
 set "NIGHTFIRE_SHADOW_SUBMIT135=0"

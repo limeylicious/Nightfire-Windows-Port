@@ -1,0 +1,31 @@
+{
+ "file": "recomp_types.h",
+ "edits": [
+  {
+   "file": "recomp_types.h",
+   "block": "file",
+   "src": "ccd90e6132d072a4",
+   "dst": "53c47dea60ea8cdd",
+   "hunks": [
+    {
+     "at": 776,
+     "del": 1,
+     "ins": [
+      "/* LEAN coverage: first execution of each called function (LEAN_COVERAGE=1",
+      " * logs it with a timestamp; see runtime/lean/lean_flags.c). */",
+      "extern uint8_t g_lean_cov[0x80000];",
+      "void lean_cov_first(uint32_t va);",
+      "#define LEAN_COV(va) do { uint32_t _cv = (uint32_t)(va); \\",
+      "    if (_cv < 0x400000u && !(g_lean_cov[_cv >> 3] & (1u << (_cv & 7)))) lean_cov_first(_cv); } while (0)",
+      {
+       "s": 776,
+       "p": 32,
+       "q": 1,
+       "x": "do { LEAN_COV(va); (fn)(); } while (0"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,10 +1,11 @@
 """Boundary tests for the export gate; never reads or copies game files."""
+import hashlib
 import json
 import sys
 import unittest
 
 sys.dont_write_bytecode = True
-from export_policy import check_text, read_allowlist, relative_name
+from export_policy import apply_rewording, check_text, read_allowlist, relative_name
 
 
 class ExportPolicyTests(unittest.TestCase):
@@ -94,6 +95,50 @@ class ExportPolicyTests(unittest.TestCase):
                 ('releases/Nightfire-PC-Alpha/engine/action/sessions/a/crash.txt', 'release/alpha/engine/action/sessions/a/crash.txt')):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 read_allowlist(data(dict(source=source, path=path, group='release-alpha')))
+
+    def test_reviewed_recomp_manual_paths_only(self):
+        check_text('native/action/src/recomp_manual.c', b'int x;\n')
+        check_text('native/driving/src/recomp_manual.c', b'int x;\n')
+        for name in ('native/action/runtime/recomp_manual.c', 'nightfire-port/src/recomp_manual.c',
+                     'native/action/src/RECOMP_MANUAL.C', 'native/action/regen/own-src/recomp_manual.c'):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                check_text(name, b'int x;\n')
+
+    def test_regen_mapping(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        for path in ('native/regen/regen.py', 'native/action/regen/recipe.json',
+                     'native/driving/regen/ops/recomp_0000_c.json', 'native/setup/build_engines.py'):
+            read_allowlist(data(dict(source=path, path=path, group='regen')))
+        for source, path in (
+                ('native/regen/regen.py', 'native/regen/other.py'),
+                ('native/action/runtime/pcg_menu.c', 'native/action/runtime/pcg_menu.c'),
+                ('native/action/regen/gen/recomp_0001.c', 'native/action/regen/gen/recomp_0001.c'),
+                ('native/driving/regen/own-src/recomp_manual.c', 'native/driving/regen/own-src/recomp_manual.c'),
+                ('nightfire-port-native/regen/recipe.json', 'native/action/regen/recipe.json')):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                read_allowlist(data(dict(source=source, path=path, group='regen')))
+
+    def test_reword(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        old = b'/* named comment */'
+        edit = dict(line=2, sha256=hashlib.sha256(old).hexdigest(), text='/* reworded comment */')
+        row = dict(source='nightfire-port-native/runtime/a.c', path='native/action/runtime/a.c',
+                   group='native-action', reword=[edit])
+        read_allowlist(data(row))
+        self.assertEqual(apply_rewording(row, b'int a;\r\n' + old + b'\r\nint b;\r\n'),
+                         b'int a;\r\n/* reworded comment */\r\nint b;\r\n')
+        with self.assertRaises(ValueError):
+            apply_rewording(row, b'int a;\n/* changed comment */\n')
+        with self.assertRaises(ValueError):
+            apply_rewording(row, b'int a;')
+        for bad in (dict(row, group='regen', source=row['path']),
+                    dict(row, reword=[dict(edit, text='two\nlines')]),
+                    dict(row, reword=[dict(edit, sha256='x')]),
+                    dict(row, reword=[dict(edit, extra=1)]), dict(row, reword=[])):
+            with self.assertRaises(ValueError):
+                read_allowlist(data(bad))
 
 
 if __name__ == '__main__':

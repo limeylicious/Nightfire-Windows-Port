@@ -1,0 +1,141 @@
+{
+ "file": "driving_copy142.c",
+ "edits": [
+  {
+   "file": "driving_copy142.c",
+   "block": "file",
+   "src": "80891123fae7f01b",
+   "dst": "4217eba6db3a6fb3",
+   "note": "reachable-code lift (cfg) with the two offset tables seeded; header, incoming EBP and LEAVE publish as before",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ]
+    },
+    {
+     "at": 3,
+     "del": 1,
+     "ins": []
+    },
+    {
+     "at": 5,
+     "del": 1,
+     "ins": [
+      " * Frame: fpo_leaf"
+     ]
+    },
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "s": 9,
+       "rule": "ebp_from_caller"
+      }
+     ]
+    },
+    {
+     "at": 251,
+     "del": 1,
+     "ins": [
+      {
+       "s": 251,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 261,
+     "del": 1,
+     "ins": [
+      {
+       "s": 261,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 273,
+     "del": 1,
+     "ins": [
+      {
+       "s": 273,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 287,
+     "del": 1,
+     "ins": [
+      {
+       "s": 287,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 513,
+     "del": 1,
+     "ins": [
+      {
+       "s": 513,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 523,
+     "del": 1,
+     "ins": [
+      {
+       "s": 523,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 535,
+     "del": 1,
+     "ins": [
+      {
+       "s": 535,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 549,
+     "del": 1,
+     "ins": [
+      {
+       "s": 549,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

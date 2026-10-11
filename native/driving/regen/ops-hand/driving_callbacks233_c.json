@@ -1,0 +1,76 @@
+{
+ "file": "driving_callbacks233.c",
+ "edits": [
+  {
+   "file": "driving_callbacks233.c",
+   "block": "file",
+   "src": "64e15f3f3894c0a7",
+   "dst": "91a1d9df53a73f7c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 30,
+     "del": 1,
+     "ins": [
+      {
+       "s": 30,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 38,
+     "del": 1,
+     "ins": [
+      {
+       "s": 38,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 43,
+     "del": 1,
+     "ins": [
+      {
+       "s": 43,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 5
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

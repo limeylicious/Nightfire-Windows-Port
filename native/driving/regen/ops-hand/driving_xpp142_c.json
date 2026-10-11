@@ -1,0 +1,54 @@
+{
+ "file": "driving_xpp142.c",
+ "edits": [
+  {
+   "file": "driving_xpp142.c",
+   "block": "file",
+   "src": "c665a66bb4e3591a",
+   "dst": "2853e465dcac2500",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 306,
+     "del": 1,
+     "ins": [
+      {
+       "s": 306,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 2
+    },
+    {
+     "at": 310,
+     "del": 1,
+     "ins": [],
+     "seq": 3
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

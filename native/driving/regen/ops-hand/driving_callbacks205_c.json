@@ -1,0 +1,30 @@
+{
+ "file": "driving_callbacks205.c",
+ "edits": [
+  {
+   "file": "driving_callbacks205.c",
+   "block": "file",
+   "src": "8e98281eb811fa0f",
+   "dst": "6c310a690c055402",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 3,
+     "del": 1,
+     "ins": [],
+     "seq": 1
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

@@ -1,0 +1,868 @@
+[
+ {
+  "va": "0x166330",
+  "name": "",
+  "insns": 57,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1663E0",
+  "name": "D3DDevice_CopyRects",
+  "insns": 216,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1666D0",
+  "name": "D3DDevice_SetViewport",
+  "insns": 117,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x166830",
+  "name": "D3DDevice_SetTexture",
+  "insns": 124,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1669E0",
+  "name": "D3DDevice_SetPalette",
+  "insns": 48,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x166B00",
+  "name": "D3DDevice_IsBusy",
+  "insns": 15,
+  "ran": false,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x166B40",
+  "name": "D3DDevice_BeginVisibilityTest",
+  "insns": 14,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x166BE0",
+  "name": "D3DDevice_EndVisibilityTest",
+  "insns": 29,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x166D10",
+  "name": "D3DDevice_SetScissors",
+  "insns": 118,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167030",
+  "name": "D3DDevice_SetScreenSpaceOffset",
+  "insns": 20,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1673E0",
+  "name": "D3DDevice_SetRenderState_Simple",
+  "insns": 14,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1676E0",
+  "name": "D3DDevice_SetRenderState_EdgeAntiAlias",
+  "insns": 15,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167720",
+  "name": "D3DDevice_SetRenderState_ShadowFunc",
+  "insns": 15,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167760",
+  "name": "D3DDevice_SetRenderState_FogColor",
+  "insns": 24,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1677B0",
+  "name": "D3DDevice_SetRenderState_CullMode",
+  "insns": 31,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167820",
+  "name": "D3DDevice_SetRenderState_FrontFace",
+  "insns": 16,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167860",
+  "name": "D3DDevice_SetRenderState_NormalizeNormals",
+  "insns": 15,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1678A0",
+  "name": "D3DDevice_SetRenderState_TextureFactor",
+  "insns": 26,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167900",
+  "name": "D3DDevice_SetRenderState_LineWidth",
+  "insns": 30,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167970",
+  "name": "D3DDevice_SetRenderState_Dxt1NoiseEnable",
+  "insns": 38,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167A70",
+  "name": "D3DDevice_SetRenderState_LogicOp",
+  "insns": 24,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167AD0",
+  "name": "D3DDevice_SetRenderState_FillMode",
+  "insns": 20,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167B20",
+  "name": "D3DDevice_SetRenderState_BackFillMode",
+  "insns": 24,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167B80",
+  "name": "D3DDevice_SetRenderState_TwoSidedLighting",
+  "insns": 27,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167BF0",
+  "name": "D3DDevice_SetRenderState_VertexBlend",
+  "insns": 17,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x167C40",
+  "name": "D3DDevice_SetTextureState_TexCoordIndex",
+  "insns": 78,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x167D50",
+  "name": "D3DDevice_SetTextureState_BumpEnv",
+  "insns": 35,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x167DC0",
+  "name": "D3DDevice_SetTextureState_BorderColor",
+  "insns": 19,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x167E00",
+  "name": "D3DDevice_SetTextureState_ColorKeyColor",
+  "insns": 17,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1681D0",
+  "name": "D3D_CommonSetDebugRegisters",
+  "insns": 47,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1682A0",
+  "name": "D3D_CommonSetRenderTarget",
+  "insns": 400,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1687F0",
+  "name": "D3DDevice_SetRenderState_ZEnable",
+  "insns": 43,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168880",
+  "name": "D3DDevice_SetRenderState_StencilEnable",
+  "insns": 38,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168910",
+  "name": "D3DDevice_SetRenderState_StencilFail",
+  "insns": 30,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168980",
+  "name": "D3DDevice_SetRenderState_YuvEnable",
+  "insns": 14,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1689B0",
+  "name": "D3DDevice_SetRenderState_OcclusionCullEnable",
+  "insns": 28,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168A20",
+  "name": "D3DDevice_SetRenderState_StencilCullEnable",
+  "insns": 28,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168B70",
+  "name": "D3DDevice_SetRenderState_MultiSampleAntiAlias",
+  "insns": 37,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168BF0",
+  "name": "D3DDevice_SetRenderState_MultiSampleMask",
+  "insns": 27,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168C40",
+  "name": "D3DDevice_SetRenderState_SampleAlpha",
+  "insns": 26,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x168C90",
+  "name": "D3DDevice_Clear",
+  "insns": 263,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x169790",
+  "name": "",
+  "insns": 75,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x1698B0",
+  "name": "",
+  "insns": 126,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x169C80",
+  "name": "",
+  "insns": 138,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x169E60",
+  "name": "",
+  "insns": 81,
+  "ran": false,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16A790",
+  "name": "D3DDevice_SetVertexShaderConstant1",
+  "insns": 31,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16A7F0",
+  "name": "D3DDevice_SetVertexShaderConstant4",
+  "insns": 42,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16A8A0",
+  "name": "D3DDevice_SetVertexShaderConstantNotInlineFast",
+  "insns": 63,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16AA50",
+  "name": "D3DDevice_LoadVertexShader",
+  "insns": 33,
+  "ran": true,
+  "why": [
+   "header"
+  ]
+ },
+ {
+  "va": "0x16AAB0",
+  "name": "D3DDevice_SelectVertexShader",
+  "insns": 36,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16AB30",
+  "name": "D3DDevice_SetShaderConstantMode",
+  "insns": 59,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16AC30",
+  "name": "",
+  "insns": 18,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16AD90",
+  "name": "D3DDevice_SetVertexShader",
+  "insns": 109,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16AF60",
+  "name": "D3DDevice_SetPixelShader",
+  "insns": 124,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16B160",
+  "name": "D3DDevice_SetPixelShaderConstant",
+  "insns": 189,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16B4C0",
+  "name": "D3DVertexBuffer_Lock2",
+  "insns": 24,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16B620",
+  "name": "D3DDevice_DrawVertices",
+  "insns": 49,
+  "ran": true,
+  "why": [
+   "header"
+  ]
+ },
+ {
+  "va": "0x16B6C0",
+  "name": "D3DDevice_DrawIndexedVertices",
+  "insns": 196,
+  "ran": true,
+  "why": [
+   "header"
+  ]
+ },
+ {
+  "va": "0x16B930",
+  "name": "D3DDevice_SetVertexData2f",
+  "insns": 17,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16B970",
+  "name": "D3DDevice_SetVertexData4f",
+  "insns": 27,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16B9D0",
+  "name": "D3DDevice_SetVertexDataColor",
+  "insns": 24,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16BA20",
+  "name": "D3DDevice_Begin",
+  "insns": 15,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16BA60",
+  "name": "D3DDevice_End",
+  "insns": 18,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16BAA0",
+  "name": "D3DDevice_RunPushBuffer",
+  "insns": 156,
+  "ran": false,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16C940",
+  "name": "CDevice_KickOff",
+  "insns": 59,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CA30",
+  "name": "D3D_SetFence",
+  "insns": 63,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header",
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CAE0",
+  "name": "D3D_BlockOnTime",
+  "insns": 104,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CC20",
+  "name": "D3D_MakeRequestedSpace_8",
+  "insns": 128,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CDA0",
+  "name": "D3DDevice_MakeSpace",
+  "insns": 6,
+  "ran": true,
+  "why": [
+   "makespace",
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CDB0",
+  "name": "",
+  "insns": 23,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16CDF0",
+  "name": "D3D_KickOffAndWaitForIdle",
+  "insns": 6,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CE10",
+  "name": "D3D_BlockOnResource",
+  "insns": 43,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CE90",
+  "name": "",
+  "insns": 18,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x16CED0",
+  "name": "",
+  "insns": 53,
+  "ran": false,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16CFC0",
+  "name": "",
+  "insns": 50,
+  "ran": true,
+  "why": [
+   "makespace",
+   "header"
+  ]
+ },
+ {
+  "va": "0x16D2A0",
+  "name": "CDevice_InitializeFrameBuffers",
+  "insns": 415,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x16EC10",
+  "name": "CMiniport_IsFlipPending",
+  "insns": 6,
+  "ran": true,
+  "why": [
+   "gpu-sync"
+  ]
+ },
+ {
+  "va": "0x170320",
+  "name": "D3D_LazySetPointParams",
+  "insns": 99,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x170490",
+  "name": "",
+  "insns": 116,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1705F0",
+  "name": "",
+  "insns": 141,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1707E0",
+  "name": "",
+  "insns": 129,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1709C0",
+  "name": "",
+  "insns": 279,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x170E80",
+  "name": "",
+  "insns": 108,
+  "ran": false,
+  "why": [
+   "header"
+  ]
+ },
+ {
+  "va": "0x171160",
+  "name": "",
+  "insns": 240,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x1714A0",
+  "name": "",
+  "insns": 154,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x171720",
+  "name": "CDevice_SetStateVB",
+  "insns": 127,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x173A00",
+  "name": "",
+  "insns": 381,
+  "ran": true,
+  "why": [
+   "makespace"
+  ]
+ },
+ {
+  "va": "0x165FD0",
+  "name": "D3DDevice_GetVisibilityTestResult",
+  "insns": null,
+  "ran": true,
+  "why": [
+   "added-from-specs"
+  ]
+ },
+ {
+  "va": "0x16D800",
+  "name": "CDevice_Init (verify)",
+  "insns": null,
+  "ran": true,
+  "why": [
+   "added-from-specs"
+  ]
+ },
+ {
+  "va": "0x166030",
+  "name": "D3DDevice_BlockUntilVerticalBlank",
+  "insns": 11,
+  "ran": true,
+  "why": [
+   "vblank-wait"
+  ]
+ },
+ {
+  "va": "0x166C40",
+  "name": "D3D_SetTileNoWait",
+  "insns": 0,
+  "ran": true,
+  "why": [
+   "phase4-miniport"
+  ]
+ }
+]

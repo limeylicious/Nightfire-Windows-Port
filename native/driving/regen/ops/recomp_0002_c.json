@@ -1,0 +1,261 @@
+{
+ "file": "recomp_0002.c",
+ "edits": [
+  {
+   "file": "recomp_0002.c",
+   "block": "0x000402D0",
+   "src": "b642ee9f26ff2317",
+   "dst": "3a186a043b78042a",
+   "lifts": [
+    "0x000402D0"
+   ],
+   "note": "false boundary inside an instruction; lifted over the full range",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 30,
+     "ins": [
+      {
+       "l": "0x000402D0",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x000402D0..0x000402F5; replaces the hand transcription*/",
+      {
+       "l": "0x000402D0",
+       "range": [
+        7,
+        48
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0002.c",
+   "block": "0x00040320",
+   "src": "10daa10f174e24ca",
+   "dst": "6b01344b1fe932cf",
+   "lifts": [
+    "0x00040320"
+   ],
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 3,
+     "ins": [
+      {
+       "l": "0x00040320",
+       "i": 9
+      },
+      {
+       "l": "0x00040320",
+       "i": 10
+      },
+      {
+       "l": "0x00040320",
+       "i": 11
+      },
+      {
+       "l": "0x00040320",
+       "i": 12
+      }
+     ]
+    },
+    {
+     "at": 17,
+     "del": 1,
+     "ins": [
+      {
+       "l": "0x00040320",
+       "i": 18
+      },
+      {
+       "l": "0x00040320",
+       "i": 19
+      },
+      {
+       "l": "0x00040320",
+       "i": 20
+      },
+      {
+       "l": "0x00040320",
+       "i": 21
+      },
+      {
+       "l": "0x00040320",
+       "i": 22
+      },
+      "",
+      {
+       "l": "0x00040320",
+       "i": 24
+      },
+      {
+       "l": "0x00040320",
+       "i": 25
+      },
+      {
+       "l": "0x00040320",
+       "i": 26
+      },
+      {
+       "l": "0x00040320",
+       "i": 27
+      },
+      "",
+      {
+       "l": "0x00040320",
+       "i": 29
+      },
+      {
+       "l": "0x00040320",
+       "i": 30
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0002.c",
+   "block": "0x00041010",
+   "src": "2749d3e7aa9202fe",
+   "dst": "9839205bdb62088b",
+   "lifts": [
+    "0x00041010"
+   ],
+   "note": "false boundary 0x41024 inside the MOV at 41022; lifted to 0x41035",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 33,
+     "ins": [
+      {
+       "l": "0x00041010",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x00041010..0x00041035; replaces the hand transcription*/",
+      {
+       "l": "0x00041010",
+       "range": [
+        7,
+        36
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0002.c",
+   "block": "0x00041410",
+   "src": "287ffba82aa48e2f",
+   "dst": "188b0730650689bc",
+   "lifts": [
+    "0x00041410"
+   ],
+   "note": "false boundary inside an instruction; lifted over the full range",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 33,
+     "ins": [
+      {
+       "l": "0x00041410",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x00041410..0x00041444; replaces the hand transcription*/",
+      {
+       "l": "0x00041410",
+       "range": [
+        7,
+        52
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0002.c",
+   "block": "0x000416A0",
+   "src": "ba5cc11f158ae6bd",
+   "dst": "ef34ad812e25d279",
+   "lifts": [
+    "0x000416A0"
+   ],
+   "note": "false boundary inside an instruction; lifted over the full range",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 49,
+     "ins": [
+      {
+       "l": "0x000416A0",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x000416A0..0x000416D9; replaces the hand transcription*/",
+      {
+       "l": "0x000416A0",
+       "range": [
+        7,
+        56
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0002.c",
+   "block": "0x00041E60",
+   "src": "5ec7b6a2d2e79f13",
+   "dst": "3b441664389d6435",
+   "lifts": [
+    "0x00041E60"
+   ],
+   "note": "false boundary inside an instruction; lifted over the full range",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 18,
+     "ins": [
+      {
+       "l": "0x00041E60",
+       "range": [
+        0,
+        7
+       ]
+      },
+      "/*public: toolkit lift over the corrected range 0x00041E60..0x00041E8B; replaces the hand transcription*/",
+      {
+       "l": "0x00041E60",
+       "range": [
+        7,
+        50
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

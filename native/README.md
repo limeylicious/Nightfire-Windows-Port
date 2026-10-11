@@ -1,4 +1,4 @@
-# Native builds (source snapshot, 2026-10-10)
+# Native builds (source snapshot, 2026-10-11)
 
 This directory holds the hand-written source of the **native** Action and
 Driving builds: the versions that run the recompiled game without emulating
@@ -26,7 +26,8 @@ The launchers and set-up of the first alpha test are in
 - **Sound:** the game's DirectSound calls are answered by the project's own
   mixer instead of an emulated sound chip. Driving's mixer
   (`driving/runtime/lean/lean_dsound.c`) plays through the project's own
-  XAudio2 output, `nf_audio_out.c`. Action uses `native_action/nds_*.c`.
+  XAudio2 output, `nf_audio_out.c`. Action uses `native_action/nds_*.c`, which
+  play through the same `nf_audio_out.c` (`nds_out.c` includes it).
 - **Optional PC settings** (only with `NF_OVERLAY=1`, set by the overlay
   launchers): `runtime/lean/lean_overlay.inc` holds the F10 menu, internal
   resolution, picture shape, widescreen, brightness, scaling, display mode and
@@ -47,7 +48,12 @@ The launchers and set-up of the first alpha test are in
   `action/runtime/native_action/nf_lockstep.c` with
   `show-nightfire-native-lockstep-record.cmd` and `-replay.cmd` records a
   session's inputs, replays them and compares the game memory frame by frame
-  (`action/scripts/nf_state_diff.py`). Online play itself is not implemented.
+  (`action/scripts/nf_state_diff.py`).
+- **Online play** (first version, not yet tried between two PCs):
+  `action/runtime/native_action/nf_net.c` sends only controller presses
+  between PCs over UDP and runs the same match on each, using the lockstep
+  clocks. `action/show-nightfire-native-online.cmd` hosts or joins a match;
+  `-online-two-copies.cmd` runs two copies on one PC.
 - **Fixes applied after code generation:** `driving/scripts/nf_frndint_fix.py`
   makes translated `frndint` honour the x87 rounding mode (the Paris
   grappling-hook fix). `action/scripts/nf_rcr_fix.py` replaces the diagnostic
@@ -60,6 +66,12 @@ The launchers and set-up of the first alpha test are in
 - **Crash capture:** `runtime/lean/lean_session.c` and `lean_hang.c` (Driving)
   and `runtime/nightfire_session242.c` (Action) write a crash report,
   minidump or freeze report per session.
+- **Rebuilding the translated code:** `regen/regen.py` makes both engines'
+  `src/recomp/gen` folders on the player's PC from their own disc files: it
+  runs the pinned toolkit, then each engine's recipe (`action/regen/`,
+  `driving/regen/`: addresses, our names, our own code and hash-guarded edits)
+  and checks every file against the tested build. See
+  [`regen/README.md`](regen/README.md).
 - **Notes:** `launchers/` also keeps the surveys and test write-ups behind
   each step (phase 0 results, the Action audio survey, the in-game menu map,
   widescreen and DPI checks).
@@ -70,12 +82,13 @@ Like the rest of this repository, this is documentary source, not a
 standalone build. The generated game translations (`src/recomp`), any code
 lifted from the game, tables and launch data taken from the game, the
 toolkit checkout, game files, extracted menu data, logs, crash sessions,
-backups and build outputs are all excluded. A few files whose comments name
-the owner are held back, among them `runtime/lean/lean_present.inc`.
+backups and build outputs are all excluded. The public Setup in
+[`setup/`](setup/README.md) builds both engines from these files, the
+translation it makes from the player's own disc and the pinned toolkit.
 
-The Driving build no longer compiles any sound code adapted from xemu
-(LGPL-2.1-or-later). The Action build still does: the toolkit's xemu-derived
-APU core and DirectSound library, plus `runtime/native_action/nds_out.c` and
-the `nightfire_adpcm.h` header, which the project treats as derived. None of
-them are published here; the toolkit's parts come from the pinned toolkit
-checkout. Replacing them in Action is planned.
+Neither build compiles sound code adapted from xemu (LGPL-2.1-or-later) any
+more. Driving dropped it on 2026-10-10 and Action on 2026-10-11, when its
+`runtime/native_action/nds_out.c` became a wrapper around the project's own
+`nf_audio_out.c`; the toolkit's emulated sound chip and DirectSound library
+are neither built nor linked. The older xemu-derived files were never
+published here.

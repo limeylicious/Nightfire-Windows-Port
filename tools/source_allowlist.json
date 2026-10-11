@@ -1,6 +1,6 @@
 {
   "schema": "reviewed-source-export-v2",
-  "reviewed_on": "2026-10-10",
+  "reviewed_on": "2026-10-11",
   "through_checkpoint": 510,
   "files": [
     {
@@ -3211,7 +3211,7 @@
       "path": "native/action/CMakeLists.txt",
       "source": "nightfire-port-native/CMakeLists.txt",
       "group": "native-action",
-      "reviewed_sha256": "785df28068b8aab3ad4c16e76a24cb88df074fd788101f7b53e69e167bdd0555"
+      "reviewed_sha256": "52ab33fec8d5f69aee5fcd1ee4d1d247c7551660d48cbaa4f9166861062d3c77"
     },
     {
       "path": "native/action/build-native.cmd",
@@ -3235,13 +3235,13 @@
       "path": "native/action/runtime/fb_present.c",
       "source": "nightfire-port-native/runtime/fb_present.c",
       "group": "native-action",
-      "reviewed_sha256": "faf7cbb3f32d76b1639b0d66f810b6bc4e3a34b88e65aea5691c6d75e47af7f9"
+      "reviewed_sha256": "b90d4f8f24ba4b8b13ca260465b13d5bc86d87afda37d581b7e03b9b62a22a36"
     },
     {
       "path": "native/action/runtime/kernel_bridge.c",
       "source": "nightfire-port-native/runtime/kernel_bridge.c",
       "group": "native-action",
-      "reviewed_sha256": "358533ab2a5d85a00c548376415745b0d15aea34c410fcca2267859a9c918b19"
+      "reviewed_sha256": "9fbc8c3acf6c84fa51d127fc6624366d08d72c275242123bb5097ae614ca1eee"
     },
     {
       "path": "native/action/runtime/kernel_xbox.c",
@@ -3253,7 +3253,7 @@
       "path": "native/action/runtime/lean/lean_d3d.c",
       "source": "nightfire-port-native/runtime/lean/lean_d3d.c",
       "group": "native-action",
-      "reviewed_sha256": "8f687961cd928ba0f2df0958fbe25f1d9a67f13ee42ac156c24592760e83b6e6"
+      "reviewed_sha256": "621705780180ac62fbfde63d3e33f7cf0a978386cd5aa9a6cfeebbaaded40924"
     },
     {
       "path": "native/action/runtime/lean/lean_d3d.h",
@@ -3385,7 +3385,7 @@
       "path": "native/action/runtime/native_action/nds_action.c",
       "source": "nightfire-port-native/runtime/native_action/nds_action.c",
       "group": "native-action",
-      "reviewed_sha256": "a2325b1992288764a6cef14dc641980bb24613d3e4f3f85d6995e0782e9d0fb3"
+      "reviewed_sha256": "df18a85be0e2e570f49953207e55b61b20183d995d3a12069009414dd2ec8145"
     },
     {
       "path": "native/action/runtime/native_action/nds_action.h",
@@ -3421,7 +3421,7 @@
       "path": "native/action/runtime/native_action/pcg_menu.c",
       "source": "nightfire-port-native/runtime/native_action/pcg_menu.c",
       "group": "native-action",
-      "reviewed_sha256": "1bd80b162b41169da792bcc39fbd7f4478569dee227e4c3dca329b7c0a0796fd"
+      "reviewed_sha256": "6ce4e3c76253bfbdec3f700f1f93d2b550a8e5c38abe1956a43534b0a6b72d12"
     },
     {
       "path": "native/action/runtime/nightfire_camera_recorder.h",
@@ -4003,7 +4003,7 @@
       "path": "native/action/src/main.c",
       "source": "nightfire-port-native/src/main.c",
       "group": "native-action",
-      "reviewed_sha256": "50d899c747d1d269a3620c6f5958951f3fc9a95a7fba37cb0d8069e2dbda4ddb"
+      "reviewed_sha256": "764c25181a9b1fffe2621ba7661793b708fb25a4b3a92b38c2aaa615f22673e5"
     },
     {
       "path": "native/driving/CMakeLists.txt",
@@ -4981,7 +4981,7 @@
       "path": "native/action/runtime/native_action/nf_lockstep.c",
       "source": "nightfire-port-native/runtime/native_action/nf_lockstep.c",
       "group": "native-action",
-      "reviewed_sha256": "907ba851a48a9a53f68a2a80c912d7435f755c7e6cd84f6559db976c7ae92099"
+      "reviewed_sha256": "c8d905f77e6364739aeb26d47f68b7cc6bb475dffe6106b7fb3d72b93f592665"
     },
     {
       "path": "native/action/runtime/nightfire_direct_mouse122.h",
@@ -5119,7 +5119,7 @@
       "path": "release/alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
       "source": "releases/Nightfire-PC-Alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
       "group": "release-alpha",
-      "reviewed_sha256": "0725b1cdf1cc38e0bdb14937960138b97aa7629075d007bcd82798c8c795ffed"
+      "reviewed_sha256": "ac77726974159308bcc6f40a5f0612b8c48b70288f3d60271603f88b77122548"
     },
     {
       "path": "release/alpha/Play Nightfire (Fullscreen).cmd",
@@ -5137,13 +5137,13 @@
       "path": "release/alpha/README.txt",
       "source": "releases/Nightfire-PC-Alpha/README.txt",
       "group": "release-alpha",
-      "reviewed_sha256": "1e886fc7209ee2ccc5c5cf87a815670f204f928815737bee11ed9462eda53f70"
+      "reviewed_sha256": "e10863ba3f254c7ec6ebe1c6d2d82691a79db308aa92823d6eb5b2762ef9c4bf"
     },
     {
       "path": "release/alpha/Setup.cmd",
       "source": "releases/Nightfire-PC-Alpha/Setup.cmd",
       "group": "release-alpha",
-      "reviewed_sha256": "96761a89a81db5125aee2259af0377c689e4f26b7055324335e7b78d606b42b1"
+      "reviewed_sha256": "1d9828e89fd509558fa2ef767b02a3459aa1caa08a2894d7c888c0d96936eb78"
     },
     {
       "path": "release/alpha/Split-screen Multiplayer.cmd",
@@ -5167,7 +5167,7 @@
       "path": "release/alpha/engine/action/start-action.cmd",
       "source": "releases/Nightfire-PC-Alpha/engine/action/start-action.cmd",
       "group": "release-alpha",
-      "reviewed_sha256": "683272663550719cab1a5c4f21286c6f097a3c4048e058d248b6fb96e0993871"
+      "reviewed_sha256": "9e20370026934b5ad78873241f86dff38b4e76328bc58f7777347cf42548751f"
     },
     {
       "path": "release/alpha/engine/driving/base-environment-paris.json",
@@ -5203,7 +5203,7 @@
       "path": "release/alpha/engine/launcher/nightfire.py",
       "source": "releases/Nightfire-PC-Alpha/engine/launcher/nightfire.py",
       "group": "release-alpha",
-      "reviewed_sha256": "7ddacb8598a14eb18c84370fe02da494137926ce3dd91fbfe701ab1f1032a2d5"
+      "reviewed_sha256": "2c502ab10919f609decd2bc3b0b8d3f0e26eb7fa4b78d3d7d5e16259f18ce1d2"
     },
     {
       "path": "release/alpha/engine/launcher/one_window_host.py",
@@ -5215,13 +5215,623 @@
       "path": "release/alpha/engine/setup.py",
       "source": "releases/Nightfire-PC-Alpha/engine/setup.py",
       "group": "release-alpha",
-      "reviewed_sha256": "2cb082d9ec5139c7d761d6b22c10715f401f0b62a38d90c88a90e00da29765a8"
+      "reviewed_sha256": "8182e4842c980dff4ac880291711f182d5d4dfefef0306ce7f991116ad8aa631"
     },
     {
       "path": "release/alpha/engine/tools/nf_state_diff.py",
       "source": "releases/Nightfire-PC-Alpha/engine/tools/nf_state_diff.py",
       "group": "release-alpha",
       "reviewed_sha256": "910fb3c0980fd57b9cc81aae7055e7625ed34c290596ca096af8175e9a1e2a13"
+    },
+    {
+      "path": "native/action/regen/inputs/classification.json",
+      "source": "native/action/regen/inputs/classification.json",
+      "group": "regen",
+      "reviewed_sha256": "cc25809fe7a9c5a19b6f8f679eef4224fa9fd18c70dae4c0cbde7e0211face8c"
+    },
+    {
+      "path": "native/action/regen/inputs/function-list.json",
+      "source": "native/action/regen/inputs/function-list.json",
+      "group": "regen",
+      "reviewed_sha256": "2963555bd64d02345c296013fc019618843162d217668eabf59e1569ea6444c9"
+    },
+    {
+      "path": "native/action/regen/inputs/trace-functions.json",
+      "source": "native/action/regen/inputs/trace-functions.json",
+      "group": "regen",
+      "reviewed_sha256": "e27ae6fb40dd597eb66e27ff7e40b116a4cf863bd030249f8efa894392a2f46e"
+    },
+    {
+      "path": "native/action/regen/manifest.json",
+      "source": "native/action/regen/manifest.json",
+      "group": "regen",
+      "reviewed_sha256": "b56eb4fe87b25b766be25b108f3aea2dc4b68358c3eb775b963e0c1a22047419"
+    },
+    {
+      "path": "native/action/regen/own-src/nightfire_diagnostics.h",
+      "source": "native/action/regen/own-src/nightfire_diagnostics.h",
+      "group": "regen",
+      "reviewed_sha256": "c87f098a34190def0cda5363ab1efc46e2fc034488996289c4fc262f720a76e9"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_ac97.c",
+      "source": "native/action/regen/own/nightfire_ac97.c",
+      "group": "regen",
+      "reviewed_sha256": "d20df61b973ab3282bac669b1feb3dc27fd12afa84fed98e8bb28f2d807005cb"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_dev_start.c",
+      "source": "native/action/regen/own/nightfire_dev_start.c",
+      "group": "regen",
+      "reviewed_sha256": "578e05eff49bccbfb7ee51a5b97826dcc9dd328419def3c3e6bd50320017a5a7"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_dsp_startup.c",
+      "source": "native/action/regen/own/nightfire_dsp_startup.c",
+      "group": "regen",
+      "reviewed_sha256": "8c1c6c291139651924f313bd4aff1f59f14a2036726cd1aaca1128e104279ae6"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_fence_trace.c",
+      "source": "native/action/regen/own/nightfire_fence_trace.c",
+      "group": "regen",
+      "reviewed_sha256": "d196f1304d7647fe22cbddb9f449a3b4d5534114ef2e730b95e858a76747416a"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_memory_order.c",
+      "source": "native/action/regen/own/nightfire_memory_order.c",
+      "group": "regen",
+      "reviewed_sha256": "1346edc3945437e2b4536d1e986d79e06236308230add38664a47131bde430ba"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_memory_trace.c",
+      "source": "native/action/regen/own/nightfire_memory_trace.c",
+      "group": "regen",
+      "reviewed_sha256": "9f1d8721c3863aaed46a767d451d42ba0c535cf59255e3c1b7fdb086dc9f3cf2"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_port_io.c",
+      "source": "native/action/regen/own/nightfire_port_io.c",
+      "group": "regen",
+      "reviewed_sha256": "1344c8341ee9eb1ede97a77ca15455abae8c67ba2100b64cc3b0317a1d3f31b2"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_render_state_dispatch.c",
+      "source": "native/action/regen/own/nightfire_render_state_dispatch.c",
+      "group": "regen",
+      "reviewed_sha256": "e0eb2e30bccbeba26c9732235e4a9d80f96791a97a70a758e1dfbe3b6302e4f3"
+    },
+    {
+      "path": "native/action/regen/own/nightfire_thread_check.c",
+      "source": "native/action/regen/own/nightfire_thread_check.c",
+      "group": "regen",
+      "reviewed_sha256": "a63f0ae46d4d5c5657e7d3cc61c62988fd5c9b87b1975a5aae3b3e163c35b599"
+    },
+    {
+      "path": "native/action/regen/recipe.json",
+      "source": "native/action/regen/recipe.json",
+      "group": "regen",
+      "reviewed_sha256": "1e0fc6d21abc272b1c16683cb8730ca817bbe0eb091567efe7ffd73bdc01cba1"
+    },
+    {
+      "path": "native/driving/regen/hand-files.json",
+      "source": "native/driving/regen/hand-files.json",
+      "group": "regen",
+      "reviewed_sha256": "4f8aba6c112787eeab0e6b7849344231697950e2eedb2a859280635489ae980c"
+    },
+    {
+      "path": "native/driving/regen/inputs/nd3d-replace-set.json",
+      "source": "native/driving/regen/inputs/nd3d-replace-set.json",
+      "group": "regen",
+      "reviewed_sha256": "67e42cb532910052443bbb6082652fe65aee55f2899649f93e78bc05467578ac"
+    },
+    {
+      "path": "native/driving/regen/lifts-aux.json",
+      "source": "native/driving/regen/lifts-aux.json",
+      "group": "regen",
+      "reviewed_sha256": "1b4b2bb891f90949ee5ed95da529a5f26c42230d1100c098a9db93028088a0f3"
+    },
+    {
+      "path": "native/driving/regen/lifts-hand.json",
+      "source": "native/driving/regen/lifts-hand.json",
+      "group": "regen",
+      "reviewed_sha256": "85dc647221aa4e7344afe3c685539d4828776a567b3ef90a0d61111b1eda1df7"
+    },
+    {
+      "path": "native/driving/regen/manifest.json",
+      "source": "native/driving/regen/manifest.json",
+      "group": "regen",
+      "reviewed_sha256": "c314973c3139be7400dc7c3fcbdd21003dfe7180d93212544c0591994f1666ef"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks143_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks143_c.json",
+      "group": "regen",
+      "reviewed_sha256": "39cc0108718c650b8f9e1900257d5929d8d25a807b9467835498f4d93eb5158b"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks144_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks144_c.json",
+      "group": "regen",
+      "reviewed_sha256": "e1bf1825ff6be73d8129834aeca10923b59f0aa34f21cf60aa4943d609013d8b"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks144b_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks144b_c.json",
+      "group": "regen",
+      "reviewed_sha256": "aa70aa72b960521237495d1725c7602ccae9bd5d6325150cc9492bfd91f348ee"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks145_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks145_c.json",
+      "group": "regen",
+      "reviewed_sha256": "82a85a8043717c4d8c1cf6d92eed221f6d2f518419d4edd3ba02455d01475120"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks146_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks146_c.json",
+      "group": "regen",
+      "reviewed_sha256": "144bdce04b0408d0e81823ac3b4d7dcb2ea0192ecebe533e93d964c72a0aa2f3"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks150_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks150_c.json",
+      "group": "regen",
+      "reviewed_sha256": "2e20845e357c5aac604b0b7b6da10270870e9b6d1c9dcf6c9f424ed0aa81d9c1"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks151_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks151_c.json",
+      "group": "regen",
+      "reviewed_sha256": "c5947601fd8d70e4573f7f27ed7d6ab0225fbddb784089ad94f3939479a7bd0b"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks154_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks154_c.json",
+      "group": "regen",
+      "reviewed_sha256": "d3ea0f94c3f39037be733ddf974ec6205eee05d285ce38539db1792fca625fe5"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks159_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks159_c.json",
+      "group": "regen",
+      "reviewed_sha256": "218502d416e3b52aecba70864c75b38fb161aa5669877c668aa444446fc522e1"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks162_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks162_c.json",
+      "group": "regen",
+      "reviewed_sha256": "79b480ac62ddd76156f946d61785dd598e80b8cdcbda7186a017e5e410857998"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks163_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks163_c.json",
+      "group": "regen",
+      "reviewed_sha256": "deef395ac65494a1fa222f1d7463fedcada8d3e3b02be906e55b3c129f974c8e"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks166_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks166_c.json",
+      "group": "regen",
+      "reviewed_sha256": "3ecfba5052592bb5c4695d4b3c64b8b15e8b1b0c36a54d4221c7dc6f0f4a13b7"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks172_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks172_c.json",
+      "group": "regen",
+      "reviewed_sha256": "25cf6dbbf2b6e9642c79cd3f0da7f63fc6fd8dd7bdf8f5bd4ad30cb0ac7cf813"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks177_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks177_c.json",
+      "group": "regen",
+      "reviewed_sha256": "fcc70695001fa252c0f18506cc621189a1a6301e3e577e72d46cfaf4067d811b"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks181_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks181_c.json",
+      "group": "regen",
+      "reviewed_sha256": "bd03edddd730975f4b6360701e39208a27424204e7baaba4e8c719bc5dbaaa42"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks184_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks184_c.json",
+      "group": "regen",
+      "reviewed_sha256": "05d85ff49a7a41c823b146e66b5f54ed311ca4ae004483eea582734c7e466b5a"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks190_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks190_c.json",
+      "group": "regen",
+      "reviewed_sha256": "47d6478bb77dd7301d67a32409d3ad711f1787238e83561710b8613ac0c48e3d"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks205_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks205_c.json",
+      "group": "regen",
+      "reviewed_sha256": "891eebee1630c0c4e645467010812f6eda4049d2248e092b790e5a4c114299ee"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks207_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks207_c.json",
+      "group": "regen",
+      "reviewed_sha256": "c08a45a45c9d339cbb8e1739b3363fe6f7b1ceb7166782de30ab071e15f34c4d"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks210_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks210_c.json",
+      "group": "regen",
+      "reviewed_sha256": "b0dee32538118e5676bad1b418e196391b2311e33ade47a3966c5f7735aef587"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_callbacks233_c.json",
+      "source": "native/driving/regen/ops-hand/driving_callbacks233_c.json",
+      "group": "regen",
+      "reviewed_sha256": "b9bb1c8955ec98ca17d7a17449a9acde014cc77e8cd12105cf799eac53bb7045"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_constructors142_c.json",
+      "source": "native/driving/regen/ops-hand/driving_constructors142_c.json",
+      "group": "regen",
+      "reviewed_sha256": "9b26d422eaf4127b85c3ddd62c698f3a939ffb0783540222a377352c1b0acf8b"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_copy142_c.json",
+      "source": "native/driving/regen/ops-hand/driving_copy142_c.json",
+      "group": "regen",
+      "reviewed_sha256": "ba1fcd4080c3cb26fdb18fd550a0ce302786693165392bda72c8cef850ba09d0"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_graphics_init142_c.json",
+      "source": "native/driving/regen/ops-hand/driving_graphics_init142_c.json",
+      "group": "regen",
+      "reviewed_sha256": "4ef8291558bd9e60e8f694080d6b3b1c6668ca84241ea9eb39ef24756ccec878"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_resampler196_c.json",
+      "source": "native/driving/regen/ops-hand/driving_resampler196_c.json",
+      "group": "regen",
+      "reviewed_sha256": "c9acc2ae1918f3d26b8db19ed6192926f162fe7c90b75397467fcae65cb6f48e"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_static_tail142_c.json",
+      "source": "native/driving/regen/ops-hand/driving_static_tail142_c.json",
+      "group": "regen",
+      "reviewed_sha256": "a800028e6b7c24cd6a19a8c8c146eac45e0664015dd62aca93ae9afa2d9f85fa"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_vblank143_c.json",
+      "source": "native/driving/regen/ops-hand/driving_vblank143_c.json",
+      "group": "regen",
+      "reviewed_sha256": "e145ed007043640427bfb94848462067edad6ebf138a22639a398eeed21d0aa7"
+    },
+    {
+      "path": "native/driving/regen/ops-hand/driving_xpp142_c.json",
+      "source": "native/driving/regen/ops-hand/driving_xpp142_c.json",
+      "group": "regen",
+      "reviewed_sha256": "e6f69e6afd22744a961218e7fef3d755be93f177acd21e33d26a92bc7de0108d"
+    },
+    {
+      "path": "native/driving/regen/ops-types-coverage/recomp_types_h.json",
+      "source": "native/driving/regen/ops-types-coverage/recomp_types_h.json",
+      "group": "regen",
+      "reviewed_sha256": "85f0af0ced4e4832d49ef6e98518ba417fcadb0ce1b24a5c0854e145dbecb8d4"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0000_c.json",
+      "source": "native/driving/regen/ops/recomp_0000_c.json",
+      "group": "regen",
+      "reviewed_sha256": "4e920c88b03515d6b6a675b46e5ab0d20b961adfdfadca0c4f7b3b3d552e6908"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0001_c.json",
+      "source": "native/driving/regen/ops/recomp_0001_c.json",
+      "group": "regen",
+      "reviewed_sha256": "6d64e4073e8535ef2837337c10b438e19b061a078d8a3ba48a941b7e53ede9f3"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0002_c.json",
+      "source": "native/driving/regen/ops/recomp_0002_c.json",
+      "group": "regen",
+      "reviewed_sha256": "4645c9a9c8d5bf3437f17b1f4ebae8595ae7fa842de43d99d0342bcaac657361"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0003_c.json",
+      "source": "native/driving/regen/ops/recomp_0003_c.json",
+      "group": "regen",
+      "reviewed_sha256": "8ba5b0892aaa94315fd798d2f2bdfc2e102852c03396aeb06257dc344a62c8f1"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0004_c.json",
+      "source": "native/driving/regen/ops/recomp_0004_c.json",
+      "group": "regen",
+      "reviewed_sha256": "49ebab655e94eee2ad2ceffbe3209070ed86c6d4d286e69842267b204dbae338"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0005_c.json",
+      "source": "native/driving/regen/ops/recomp_0005_c.json",
+      "group": "regen",
+      "reviewed_sha256": "8aaf0c60e4e6735a2db30c8d871f0e67bd7880237be2438f39413f1faea02dae"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0006_c.json",
+      "source": "native/driving/regen/ops/recomp_0006_c.json",
+      "group": "regen",
+      "reviewed_sha256": "0bec7bc6f4529e4663916fc60f62d84db041e077708fbd72299449d1448dd5bc"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0007_c.json",
+      "source": "native/driving/regen/ops/recomp_0007_c.json",
+      "group": "regen",
+      "reviewed_sha256": "e79a84bfa474e8778d345d38e9cdefd230d65b28fc5e4a97b3859bc3cad00f5a"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0008_c.json",
+      "source": "native/driving/regen/ops/recomp_0008_c.json",
+      "group": "regen",
+      "reviewed_sha256": "b366268b85798c664c8ab9a75ec23f20eac4df7ff50cbaf3ce7b428b8ce5740b"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0009_c.json",
+      "source": "native/driving/regen/ops/recomp_0009_c.json",
+      "group": "regen",
+      "reviewed_sha256": "f47885a4a53c2253f78ae760b0038319292f02881b941ae0e79f8abd7adc99fd"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0010_c.json",
+      "source": "native/driving/regen/ops/recomp_0010_c.json",
+      "group": "regen",
+      "reviewed_sha256": "0955abfb31573e39380c1c88352965572df0942c0319d02a92d3804ea290c947"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0011_c.json",
+      "source": "native/driving/regen/ops/recomp_0011_c.json",
+      "group": "regen",
+      "reviewed_sha256": "eaef71d2993e1f2b86298db9019c01ae5f936e9a662ebdc65b762e850f3aedb8"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0012_c.json",
+      "source": "native/driving/regen/ops/recomp_0012_c.json",
+      "group": "regen",
+      "reviewed_sha256": "a864ff0b4265d3c1db68f0b0d74f0726f87778a846dd25ee32a450b61df1a30e"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0013_c.json",
+      "source": "native/driving/regen/ops/recomp_0013_c.json",
+      "group": "regen",
+      "reviewed_sha256": "2f6ebca71476f7193129b6e4dcef96af82458791bf4de1c2ffc21bb9f2a51c09"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0017_c.json",
+      "source": "native/driving/regen/ops/recomp_0017_c.json",
+      "group": "regen",
+      "reviewed_sha256": "8dea30577417b2a157a4614f4ea3e9440076bed3f6b9f0db2e26cdd1141adecf"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_0018_c.json",
+      "source": "native/driving/regen/ops/recomp_0018_c.json",
+      "group": "regen",
+      "reviewed_sha256": "994e758ee6e3c86aa0608d41b082afb442a76acdba529aa80267c06591813860"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_stubs_unresolved_c.json",
+      "source": "native/driving/regen/ops/recomp_stubs_unresolved_c.json",
+      "group": "regen",
+      "reviewed_sha256": "60b0ee01a805374be014d33bc39f4cb4d4bb88e13b7aaa38e182cd9904973f4b"
+    },
+    {
+      "path": "native/driving/regen/ops/recomp_types_h.json",
+      "source": "native/driving/regen/ops/recomp_types_h.json",
+      "group": "regen",
+      "reviewed_sha256": "02cba509b0f6a5ffff3fbae706591983a9fc6dac1be8534acecf78e3533e3ee5"
+    },
+    {
+      "path": "native/driving/regen/rules.json",
+      "source": "native/driving/regen/rules.json",
+      "group": "regen",
+      "reviewed_sha256": "d70107a0253cf4a820da4d8dd4b48604a28e3fd9d4b6654ae675b7db8f052ea0"
+    },
+    {
+      "path": "native/driving/regen/steps.json",
+      "source": "native/driving/regen/steps.json",
+      "group": "regen",
+      "reviewed_sha256": "d927c7004e9438598c00dce7cba9bd1abde18699a57207f963a992a6faa2c854"
+    },
+    {
+      "path": "native/driving/scripts/hook_probe_patch.py",
+      "source": "nightfire-driving-native/scripts/hook_probe_patch.py",
+      "group": "native-driving",
+      "reviewed_sha256": "0e15bfc30e5437f695a5f15319e7d6cbe046904ec78ebdd0a6f2eb62b3bb9944"
+    },
+    {
+      "path": "native/driving/scripts/lean_hook_probe.c",
+      "source": "nightfire-driving-native/scripts/lean_hook_probe.c",
+      "group": "native-driving",
+      "reviewed_sha256": "33fe12ab3286b813df3683879d6ef8b100a6cfba7ef46cc70159a10b905f4801"
+    },
+    {
+      "path": "native/regen/README.md",
+      "source": "native/regen/README.md",
+      "group": "regen",
+      "reviewed_sha256": "b8d2b44c58f22c45be7733a6c4c10ef3afd30e612fbf228e0a6b150912d40767"
+    },
+    {
+      "path": "native/regen/build_action.py",
+      "source": "native/regen/build_action.py",
+      "group": "regen",
+      "reviewed_sha256": "726b689ff0f8b5f41324ee67902ee6dbebae33bb1a1243fbef7d9be5b54653a7"
+    },
+    {
+      "path": "native/regen/make_manifest.py",
+      "source": "native/regen/make_manifest.py",
+      "group": "regen",
+      "reviewed_sha256": "940d708af9335e82af05e2b1bc73fd7a8613ab8fda51d4bed3cfe4109ecf2217"
+    },
+    {
+      "path": "native/regen/regen.py",
+      "source": "native/regen/regen.py",
+      "group": "regen",
+      "reviewed_sha256": "c1de184c532f7e94ee468ff4ee9621dee7c42b733324f28ecf867b34786228b7"
+    },
+    {
+      "path": "native/regen/relift.py",
+      "source": "native/regen/relift.py",
+      "group": "regen",
+      "reviewed_sha256": "e0b08dd9b0167e21d8faede53166704737764498a538939906e1f8340d43d17f"
+    },
+    {
+      "path": "native/regen/repair_driving.py",
+      "source": "native/regen/repair_driving.py",
+      "group": "regen",
+      "reviewed_sha256": "210f8854f789400826548c00e2aa4ee4c1cf62cc2d2637f837530882f66f229a"
+    },
+    {
+      "path": "native/action/src/recomp_manual.c",
+      "source": "nightfire-port-native/src/recomp_manual.c",
+      "group": "native-action",
+      "reviewed_sha256": "751aba228c4fef6248bc91c49db5fda182e04b334f5480849771d5692b036959"
+    },
+    {
+      "path": "native/driving/src/recomp_manual.c",
+      "source": "nightfire-driving-native/src/recomp_manual.c",
+      "group": "native-driving",
+      "reviewed_sha256": "16b2146fc6e06ba980e91d148c5c5d007937d523c0b034f2a410da7fc623e2d1"
+    },
+    {
+      "path": "native/driving/regen/own/driving_dev_start240.c.txt",
+      "source": "native/driving/regen/own/driving_dev_start240.c.txt",
+      "group": "regen",
+      "reviewed_sha256": "a7e11dd01a6513a8275e40653ea39245188984636cceff3804adcd17da0d07cc"
+    },
+    {
+      "path": "native/action/runtime/lean/lean_present.inc",
+      "source": "nightfire-port-native/runtime/lean/lean_present.inc",
+      "group": "native-action",
+      "reword": [
+        {
+          "line": 143,
+          "sha256": "f3c91b79da1079a123b1f989c3a6cf6d7bd2d483fcde4b1d9df299ea88af1cc3",
+          "text": " * TV/video-capture tone curve of the owner's console reference, where g of about"
+        }
+      ],
+      "reviewed_sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_present.inc",
+      "source": "nightfire-driving-native/runtime/lean/lean_present.inc",
+      "group": "native-driving",
+      "reword": [
+        {
+          "line": 143,
+          "sha256": "f3c91b79da1079a123b1f989c3a6cf6d7bd2d483fcde4b1d9df299ea88af1cc3",
+          "text": " * TV/video-capture tone curve of the owner's console reference, where g of about"
+        }
+      ],
+      "reviewed_sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/action/runtime/nightfire_pacer93.h",
+      "source": "nightfire-port-native/runtime/nightfire_pacer93.h",
+      "group": "native-action",
+      "reword": [
+        {
+          "line": 11,
+          "sha256": "c9c913fef4cd572c40c25be4e95ba5bce0fdab28f35c8a350b74d7514e215e49",
+          "text": "/* 2026-10-08 (the owner approved for all Action builds): a frame that started late only because"
+        }
+      ],
+      "reviewed_sha256": "f52c2d6e2428714fef7076172ca6b0edf117b182247bf8ce1a6ce699954e0b1d"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_gpu.c",
+      "source": "nightfire-driving-native/runtime/lean/lean_gpu.c",
+      "group": "native-driving",
+      "reword": [
+        {
+          "line": 357,
+          "sha256": "2bab785cfd1f55d38fc062b55d54896d9be1a8250a80d70411a1a58eafd0e52a",
+          "text": "static void vis_init(void){if(vis_mode>=0)return;const char*e=getenv(\"LEAN_VIS_TEST\");vis_mode=!e?1:!strcmp(e,\"0\")?0:!strcmp(e,\"visible\")?2:1;   /* default ON (2026-10-07, the owner approved after the vehicle test: 1576 tests answered, level completed) */"
+        }
+      ],
+      "reviewed_sha256": "ba38ca6de5627ba1000ee3cc70b8719923f19ce32555a3e89680661af91bc97d"
+    },
+    {
+      "path": "native/driving/src/driving_copy211.c",
+      "source": "nightfire-driving-native/src/driving_copy211.c",
+      "group": "native-driving",
+      "reviewed_sha256": "78801ceaa5c07a7d711436c1e639479fca168d5796c325e0789cb47ab8922097"
+    },
+    {
+      "path": "native/action/runtime/nightfire_menu_missions139.h",
+      "source": "nightfire-port-native/runtime/nightfire_menu_missions139.h",
+      "group": "native-action",
+      "reviewed_sha256": "a56214ff027ed989bccda02054da828c0b3bc2c44adb64f65520b5b58ecffcf6"
+    },
+    {
+      "path": "native/setup/build_engines.py",
+      "source": "native/setup/build_engines.py",
+      "group": "regen",
+      "reviewed_sha256": "6b27730f1c1a375026911d3f329e8138d37d567b53e3d779a749d92a54563f8c"
+    },
+    {
+      "path": "native/setup/trees.json",
+      "source": "native/setup/trees.json",
+      "group": "regen",
+      "reviewed_sha256": "f667f201e31065c404421a1185c598876e9082f66acb633a178fc181dc354aa6"
+    },
+    {
+      "path": "native/setup/README.md",
+      "source": "native/setup/README.md",
+      "group": "regen",
+      "reviewed_sha256": "2c1e311cc5d53c3f803a6e9ce72b7a863aad66c54d61380634dcb33db89b06a2"
+    },
+    {
+      "path": "native/action/runtime/kernel_path.c",
+      "source": "nightfire-port-native/runtime/kernel_path.c",
+      "group": "native-action",
+      "reviewed_sha256": "80047afc44f0eaabd7125a2ec10deb70b48316364ecd107ed698b0cab840677a"
+    },
+    {
+      "path": "native/action/runtime/native_action/nf_net.c",
+      "source": "nightfire-port-native/runtime/native_action/nf_net.c",
+      "group": "native-action",
+      "reviewed_sha256": "2889138dad9a74089d9a0dcf6813efc16a4fca7c7980bd325341d8897e6ed65c"
+    },
+    {
+      "path": "native/action/runtime/native_action/nf_net.h",
+      "source": "nightfire-port-native/runtime/native_action/nf_net.h",
+      "group": "native-action",
+      "reviewed_sha256": "0ca5f3395d762934d913e8b721c53b052f730d29abb5dc5eff7771814f7f7d4f"
+    },
+    {
+      "path": "native/action/show-nightfire-native-online.cmd",
+      "source": "nightfire-port-native/show-nightfire-native-online.cmd",
+      "group": "native-action",
+      "reviewed_sha256": "1e64b524f8a2e4a5bb1f28ceb2c4ea94cc544d3c2337dc060972675153a08e7a"
+    },
+    {
+      "path": "native/action/show-nightfire-native-online-two-copies.cmd",
+      "source": "nightfire-port-native/show-nightfire-native-online-two-copies.cmd",
+      "group": "native-action",
+      "reviewed_sha256": "21d352a0b11a991b3398da075015b26776f2353e134a58b212756fd657a4f20d"
+    },
+    {
+      "path": "native/action/runtime/native_action/nds_out.c",
+      "source": "nightfire-port-native/runtime/native_action/nds_out.c",
+      "group": "native-action",
+      "reviewed_sha256": "17d1c8e1b233a86bc9f6c36dbf93254fa2bf79e9046bed59f869499c346d06ac"
+    },
+    {
+      "path": "native/action/runtime/lean/nf_audio_out.c",
+      "source": "nightfire-port-native/runtime/lean/nf_audio_out.c",
+      "group": "native-action",
+      "reviewed_sha256": "a9eb621998792f411c43d1ec410b4865593c1c43a3e570e384c5fc31868acd7e"
+    },
+    {
+      "path": "release/alpha/Play Nightfire (All Missions).cmd",
+      "source": "releases/Nightfire-PC-Alpha/Play Nightfire (All Missions).cmd",
+      "group": "release-alpha",
+      "reviewed_sha256": "cf81cf6a269cc4ead8e56f1d3da3435aa1fc6a51e17dfb7f079aa53a7fedada8"
     }
   ]
 }

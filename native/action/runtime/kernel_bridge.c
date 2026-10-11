@@ -1610,6 +1610,8 @@ static void bridge_NtUserIoApcDispatcher(void)
     g_eax = 0;
 }
 
+void nf_lockstep_sleep(int64_t interval);   /* nf_lockstep.c */
+
 /* ── KeDelayExecutionThread (ordinal 99) ─────────────────── */
 /* Unbridged this returned instantly, turning every "sleep and retry" in the
  * title into a hot spin. Halo's cache-partition setup retries this way. */
@@ -1619,6 +1621,9 @@ static void bridge_KeDelayExecutionThread(void)
     uint32_t alertable    = STACK_ARG(1);
     uint32_t interval_ptr = STACK_ARG(2);
 
+    /* NIGHTFIRE_LOCKSTEP=1 / online: on the game thread the sleep moves the game's
+     * clocks by the time asked for (runtime/native_action/nf_lockstep.c). */
+    if (interval_ptr) nf_lockstep_sleep(*(const int64_t *)XBOX_TO_NATIVE(interval_ptr));
 
     g_eax = (uint32_t)xbox_KeDelayExecutionThread(
         (KPROCESSOR_MODE)wait_mode, (BOOLEAN)alertable,
