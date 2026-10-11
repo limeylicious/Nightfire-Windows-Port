@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 956,
+  "file_count": 959,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -5972,8 +5972,8 @@
       "path": "release/alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
       "source": "releases/Nightfire-PC-Alpha/Game Files/PUT YOUR GAME FILES HERE.txt",
       "group": "release-alpha",
-      "bytes": 304,
-      "sha256": "0725b1cdf1cc38e0bdb14937960138b97aa7629075d007bcd82798c8c795ffed"
+      "bytes": 469,
+      "sha256": "ac77726974159308bcc6f40a5f0612b8c48b70288f3d60271603f88b77122548"
     },
     {
       "path": "release/alpha/Play Nightfire (Fullscreen).cmd",
@@ -5993,15 +5993,15 @@
       "path": "release/alpha/README.txt",
       "source": "releases/Nightfire-PC-Alpha/README.txt",
       "group": "release-alpha",
-      "bytes": 4923,
-      "sha256": "1e886fc7209ee2ccc5c5cf87a815670f204f928815737bee11ed9462eda53f70"
+      "bytes": 5650,
+      "sha256": "137574411ffa1d65fa7ad6ca1d63b8ebc8db07f9e9359cb316f22d6b39e8219f"
     },
     {
       "path": "release/alpha/Setup.cmd",
       "source": "releases/Nightfire-PC-Alpha/Setup.cmd",
       "group": "release-alpha",
-      "bytes": 381,
-      "sha256": "96761a89a81db5125aee2259af0377c689e4f26b7055324335e7b78d606b42b1"
+      "bytes": 443,
+      "sha256": "1d9828e89fd509558fa2ef767b02a3459aa1caa08a2894d7c888c0d96936eb78"
     },
     {
       "path": "release/alpha/Split-screen Multiplayer.cmd",
@@ -6084,8 +6084,8 @@
       "path": "release/alpha/engine/setup.py",
       "source": "releases/Nightfire-PC-Alpha/engine/setup.py",
       "group": "release-alpha",
-      "bytes": 8535,
-      "sha256": "2cb082d9ec5139c7d761d6b22c10715f401f0b62a38d90c88a90e00da29765a8"
+      "bytes": 9934,
+      "sha256": "8182e4842c980dff4ac880291711f182d5d4dfefef0306ce7f991116ad8aa631"
     },
     {
       "path": "release/alpha/engine/tools/nf_state_diff.py",
@@ -6695,6 +6695,27 @@
       "group": "native-action",
       "bytes": 1803,
       "sha256": "a56214ff027ed989bccda02054da828c0b3bc2c44adb64f65520b5b58ecffcf6"
+    },
+    {
+      "path": "native/setup/build_engines.py",
+      "source": "native/setup/build_engines.py",
+      "group": "regen",
+      "bytes": 18775,
+      "sha256": "b7076780d8bae52c6df1675b6f75f72c41a5a4b48366ad7fc3b7faeede5456a1"
+    },
+    {
+      "path": "native/setup/trees.json",
+      "source": "native/setup/trees.json",
+      "group": "regen",
+      "bytes": 9924,
+      "sha256": "c9ec4414227d398e661c2ffe4c300b9e3b5e76c38835d4cb2e763eeac27e5fe9"
+    },
+    {
+      "path": "native/setup/README.md",
+      "source": "native/setup/README.md",
+      "group": "regen",
+      "bytes": 3234,
+      "sha256": "4a1967d20b1bf2b8f70f8268ec316ef2a43d4b476bca8118c667727c0f788435"
     }
   ]
 }

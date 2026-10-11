@@ -108,7 +108,7 @@ class ExportPolicyTests(unittest.TestCase):
         def data(row):
             return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
         for path in ('native/regen/regen.py', 'native/action/regen/recipe.json',
-                     'native/driving/regen/ops/recomp_0000_c.json'):
+                     'native/driving/regen/ops/recomp_0000_c.json', 'native/setup/build_engines.py'):
             read_allowlist(data(dict(source=path, path=path, group='regen')))
         for source, path in (
                 ('native/regen/regen.py', 'native/regen/other.py'),

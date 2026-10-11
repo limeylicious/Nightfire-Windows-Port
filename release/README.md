@@ -7,15 +7,17 @@ from the owner's `releases\Nightfire-PC-Alpha` folder (group `release-alpha` in
 the root `SOURCE-MANIFEST.json`).
 
 **It contains no game and no engines.** The two engines are made from the
-game's own code, so they never go in this repository. This alpha's
-`Setup.cmd` (`engine/setup.py`) copies engines that were built locally from
-[`../native/`](../native/README.md), links the player's own extracted PAL game
-files and checks them by hash. Its `README.txt` is written for the person
-running that set-up copy.
+game's own code, so they never go in this repository. In a copy of this
+repository, `Setup.cmd` (`engine/setup.py`) first builds both engines on the
+player's PC from their own extracted PAL game files
+([`../native/setup/`](../native/setup/README.md)), then copies them into
+`engine\`, links the game files and checks them by hash. In the owner's
+workshop it copies the engines the workshop last built instead. Its
+`README.txt` is written for the person running Setup.
 
 | File | What it does |
 | --- | --- |
-| `Setup.cmd` | One-time set-up: copies the locally built engines, links the game files, checks the PAL hashes |
+| `Setup.cmd` | Set-up: builds both engines from the game files (or copies the workshop's), links the game files, checks the PAL hashes |
 | `Play Nightfire.cmd` | The whole game, Action and Driving linked in one window, with the PC settings |
 | `Play Nightfire (Fullscreen).cmd` | The same, borderless fullscreen |
 | `Split-screen Multiplayer.cmd` | Starts at the menus, set up for up to four players on one PC |
@@ -27,7 +29,7 @@ running that set-up copy.
 Play mode keeps the crash and freeze reports but leaves out the sound
 recording, frame counter and picture dumps; debug mode keeps everything.
 
-A public alpha needs one more step first: making the code generation and its
-repairs repeatable, so that Setup can build both engines from each player's
-own disc. The alpha's Setup would then use Microsoft's free C++ Build Tools, and
-a later beta would bundle a portable compiler.
+The public build needs one more change before it can make the Action engine:
+the Action build still compiles a sound file adapted from xemu, which stays off
+GitHub, until its own sound output replaces it. Setup says so and stops before
+building when that file is missing.

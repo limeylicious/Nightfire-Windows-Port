@@ -41,10 +41,11 @@ NATIVE_GROUPS = {
 RELEASE_GROUPS = {
     'release-alpha': ('releases/Nightfire-PC-Alpha/', 'release/alpha/'),
 }
-# Rebuild scripts and recipes kept in this repository itself (addresses, our names, our own
-# code and hashes; never translated code). Source and destination are the same repo path.
+# Rebuild scripts, recipes and the public Setup's build script kept in this repository itself
+# (addresses, our names, our own code and hashes; never translated code). Source and
+# destination are the same repo path.
 REPO_GROUPS = {
-    'regen': ('native/regen/', 'native/action/regen/', 'native/driving/regen/'),
+    'regen': ('native/regen/', 'native/action/regen/', 'native/driving/regen/', 'native/setup/'),
 }
 # Groups whose rows may carry 'reword' (owner's decision, 2026-10-11): a few workspace comments
 # name the owner; the export replaces those whole lines, matched by number and SHA-256, so

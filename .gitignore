@@ -58,6 +58,14 @@
 **/sessions/
 **/extracted/
 **/runs/
+**/linked-sessions/
+**/saves/
+**/lockstep/
+# What the public Setup makes on the player's PC: the workshop (toolkit, translated game code,
+# build folders) and the player's own game files.
+/workshop/
+release/alpha/Game Files/*
+!release/alpha/Game Files/PUT YOUR GAME FILES HERE.txt
 *.ini
 *.d00
 *.d01

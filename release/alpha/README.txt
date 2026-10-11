@@ -6,21 +6,29 @@ engines are recompiled into Windows programs: the Action engine (menus, missions
 and the Driving engine (the car levels, starting with the opening Paris drive). The launcher
 hands over between them the way the Xbox does, inside one window.
 
-THIS IS A PERSONAL TEST BUILD. Setup copies the two engines the workshop last built. Those
-programs are made from the game's own code, so once Setup has run, this folder must not be
-shared or uploaded. The launchers and scripts themselves contain no game code. A public alpha,
-where Setup builds everything from each player's own disc, comes later.
+THIS IS AN ALPHA TEST. Setup makes the two engines on your PC from your own disc (in the
+owner's workshop it copies the engines the workshop last built). Those programs are made from
+the game's own code, so once Setup has run, this folder must not be shared or uploaded. The
+launchers and scripts themselves contain no game code.
 
 
 FIRST TIME
 ----------
-1. Python 3.8 or newer must be installed (https://www.python.org/downloads/, and tick
-   "Add python.exe to PATH" in the installer).
-2. Double-click Setup.cmd. It copies the engines from the workshop, links the game files and
-   checks that they are the PAL disc. On the workshop laptop "Game Files" can stay empty, because
-   Setup links it to the workshop's own game files. Elsewhere, put the extracted disc in
-   "Game Files" first (see the note inside it).
-3. Run Setup.cmd again whenever the workshop builds new engines.
+1. Install, if you do not have them yet:
+   - Python 3.8 or newer (https://www.python.org/downloads/; tick "Add python.exe to PATH").
+   - Git for Windows (https://git-scm.com/download/win).
+   - Build Tools for Visual Studio 2022 (https://visualstudio.microsoft.com/downloads/, under
+     "Tools for Visual Studio") with the "Desktop development with C++" workload. A full
+     Visual Studio 2022 with that workload works too.
+2. Put the contents of your extracted PAL disc in "Game Files" (see the note inside it).
+3. Double-click Setup.cmd. It checks that the game files are the PAL disc, translates the
+   game's code on your PC, applies the port's fixes and compiles both engines into the
+   "workshop" folder at the top of this copy, then sets up this folder. The first run
+   downloads the translator (xboxrecomp) and Capstone into that folder and takes a long time,
+   mostly compiling. Nothing is installed anywhere else.
+4. Run Setup.cmd again after updating this copy: it rebuilds only what changed.
+On the owner's workshop laptop Setup only copies the engines, and "Game Files" can stay empty
+because Setup links it to the workshop's own game files.
 
 
 PLAYING
@@ -90,4 +98,5 @@ NEEDS
 -----
 Windows 10 or 11 (64-bit), a DirectX 11 graphics card, Python 3.8 or newer, and the Microsoft
 Visual C++ 2015-2022 x64 runtime (Setup warns if it is missing). Windows N editions also need
-the Media Feature Pack for the movies.
+the Media Feature Pack for the movies. Building the engines also needs Git, the Visual Studio
+C++ build tools and about 2 GB of free space.
