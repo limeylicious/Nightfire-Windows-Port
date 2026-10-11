@@ -1,5 +1,8 @@
 # Release folders
 
+[`v0.1.0-alpha.md`](v0.1.0-alpha.md) holds the notes for the first public release on GitHub. A
+release carries only the source: each player's Setup builds the engines from their own disc.
+
 ## `alpha/`: first alpha test (2026-10-10)
 
 The launchers and set-up of the owner's first alpha test, copied byte for byte

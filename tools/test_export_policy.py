@@ -40,6 +40,9 @@ class ExportPolicyTests(unittest.TestCase):
     def test_allow_portable_source_and_launchers(self):
         check_text('nightfire-driving/build-windows.cmd', b'@echo off\n')
         check_text('experiments/driving-510/runtime/helper.c', b'int helper(void) { return 1; }\n')
+        check_text('LICENSE', b'MIT License\n')
+        with self.assertRaises(ValueError):
+            check_text('runtime/LICENSE', b'MIT License\n')
 
     def test_reject_redirected_and_duplicate_allowlist(self):
         row = dict(source='nightfire-driving/runtime/helper.c',
