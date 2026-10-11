@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 954,
+  "file_count": 956,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -6681,6 +6681,20 @@
       "group": "native-driving",
       "bytes": 36918,
       "sha256": "ba38ca6de5627ba1000ee3cc70b8719923f19ce32555a3e89680661af91bc97d"
+    },
+    {
+      "path": "native/driving/src/driving_copy211.c",
+      "source": "nightfire-driving-native/src/driving_copy211.c",
+      "group": "native-driving",
+      "bytes": 1855,
+      "sha256": "78801ceaa5c07a7d711436c1e639479fca168d5796c325e0789cb47ab8922097"
+    },
+    {
+      "path": "native/action/runtime/nightfire_menu_missions139.h",
+      "source": "nightfire-port-native/runtime/nightfire_menu_missions139.h",
+      "group": "native-action",
+      "bytes": 1803,
+      "sha256": "a56214ff027ed989bccda02054da828c0b3bc2c44adb64f65520b5b58ecffcf6"
     }
   ]
 }

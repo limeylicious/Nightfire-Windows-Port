@@ -5754,6 +5754,18 @@
         }
       ],
       "reviewed_sha256": "ba38ca6de5627ba1000ee3cc70b8719923f19ce32555a3e89680661af91bc97d"
+    },
+    {
+      "path": "native/driving/src/driving_copy211.c",
+      "source": "nightfire-driving-native/src/driving_copy211.c",
+      "group": "native-driving",
+      "reviewed_sha256": "78801ceaa5c07a7d711436c1e639479fca168d5796c325e0789cb47ab8922097"
+    },
+    {
+      "path": "native/action/runtime/nightfire_menu_missions139.h",
+      "source": "nightfire-port-native/runtime/nightfire_menu_missions139.h",
+      "group": "native-action",
+      "reviewed_sha256": "a56214ff027ed989bccda02054da828c0b3bc2c44adb64f65520b5b58ecffcf6"
     }
   ]
 }
