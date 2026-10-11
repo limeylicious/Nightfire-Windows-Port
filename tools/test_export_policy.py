@@ -95,6 +95,21 @@ class ExportPolicyTests(unittest.TestCase):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 read_allowlist(data(dict(source=source, path=path, group='release-alpha')))
 
+    def test_regen_mapping(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        for path in ('native/regen/regen.py', 'native/action/regen/recipe.json',
+                     'native/driving/regen/ops/recomp_0000_c.json'):
+            read_allowlist(data(dict(source=path, path=path, group='regen')))
+        for source, path in (
+                ('native/regen/regen.py', 'native/regen/other.py'),
+                ('native/action/runtime/pcg_menu.c', 'native/action/runtime/pcg_menu.c'),
+                ('native/action/regen/gen/recomp_0001.c', 'native/action/regen/gen/recomp_0001.c'),
+                ('native/driving/regen/own-src/recomp_manual.c', 'native/driving/regen/own-src/recomp_manual.c'),
+                ('nightfire-port-native/regen/recipe.json', 'native/action/regen/recipe.json')):
+            with self.subTest(source=source), self.assertRaises(ValueError):
+                read_allowlist(data(dict(source=source, path=path, group='regen')))
+
 
 if __name__ == '__main__':
     unittest.main()

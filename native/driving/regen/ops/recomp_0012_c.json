@@ -1,0 +1,100 @@
+{
+ "file": "recomp_0012.c",
+ "edits": [
+  {
+   "file": "recomp_0012.c",
+   "block": "0x0013CB40",
+   "src": "016d5021b0d724ef",
+   "dst": "21e3ffdc5ea5d050",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 63,
+     "del": 0,
+     "ins": [
+      "    { extern void lean_game_vol_note(uint32_t idx, uint32_t vol); lean_game_vol_note(MEM32(esp + 0xC), edi >> 16); }   /* LEAN_AUDIO_GAMEVOL */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0012.c",
+   "block": "0x0013D5E0",
+   "src": "cc0fa20d33fd119e",
+   "dst": "dcd9edfa8b57767a",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 56,
+     "del": 0,
+     "ins": [
+      "    { extern uint32_t lean_audio_lead(uint32_t); MEM32(0x244CBC) = lean_audio_lead(MEM32(0x244CBC)); } /* LEAN_AUDIO_LEAD */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0012.c",
+   "block": "0x0013D820",
+   "src": "eb25dbcbb6ce9f49",
+   "dst": "b4ed3dfda82c8a13",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 7,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_CHECK sound watch: mixer calls and how far its position moves. */",
+      {
+       "s": 7,
+       "x": "static void sub_0013D820_body(void);"
+      },
+      "void sub_0013D820(void){extern int lean_strm_check_on;extern void lean_snd_mix(int);if(lean_strm_check_on)lean_snd_mix(0);sub_0013D820_body();if(lean_strm_check_on)lean_snd_mix(1);}",
+      {
+       "s": 7,
+       "q": 6,
+       "x": "static void sub_0013D820_body"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0012.c",
+   "block": "0x001462B0",
+   "src": "2d5aafcbf2b6cf9c",
+   "dst": "c6c7785fc4a20575",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      {
+       "s": 6,
+       "p": 5,
+       "q": 15,
+       "x": "checkpoint195_fragment"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0012.c",
+   "block": "0x00146930",
+   "src": "0243d82f462b6703",
+   "dst": "d9fc3593330a58ef",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 219,
+     "del": 1,
+     "ins": [
+      "    if (edx != 0) goto loc_00146AF6; /* PAL146AEE: ZF from AND146AD1 or INC146AED; x87 preserves integer flags. */"
+     ]
+    }
+   ]
+  }
+ ]
+}

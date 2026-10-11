@@ -1,0 +1,109 @@
+{
+ "file": "driving_resampler196.c",
+ "edits": [
+  {
+   "file": "driving_resampler196.c",
+   "block": "file",
+   "src": "e86a368faabb6821",
+   "dst": "a7a7603577db8779",
+   "generated_like": 6,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 6,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include <emmintrin.h>",
+      "/* These four original CVTPI2PS instructions have MEMORY operands, not MMX",
+      "   registers. Preserve the high XMM qword, x87/TOP/tag state, and use MXCSR",
+      "   rounding. SSE2 converts zero in its unused lanes (no extra FP exceptions). */",
+      "static RecompXmm driving_cvtpi2ps_mem196(RecompXmm dst, uint32_t va) {",
+      "    __m128i integers = _mm_set_epi32(0, 0, (int32_t)MEM32(va+4), (int32_t)MEM32(va));",
+      "    __m128 converted = _mm_cvtepi32_ps(integers);",
+      "    RecompXmm out; _mm_storeu_ps(out.f, converted);",
+      "    dst.u[0] = out.u[0]; dst.u[1] = out.u[1]; return dst;",
+      "}"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller_noted"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 20,
+     "del": 1,
+     "ins": [
+      "    /* PAL 1462B3 PUSHAD: saved ESP is the pre-PUSHAD value. */",
+      "    { uint32_t original_esp = esp;",
+      "      PUSH32(esp, eax); PUSH32(esp, ecx); PUSH32(esp, edx); PUSH32(esp, ebx);",
+      "      PUSH32(esp, original_esp); PUSH32(esp, ebp); PUSH32(esp, esi); PUSH32(esp, edi); }"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 141,
+     "del": 2,
+     "ins": [
+      "    xmm6 = driving_cvtpi2ps_mem196(xmm6, 0x1da518);",
+      "    xmm5 = driving_cvtpi2ps_mem196(xmm5, 0x1da528);"
+     ],
+     "seq": 3
+    },
+    {
+     "at": 145,
+     "del": 2,
+     "ins": [
+      "    xmm6 = driving_cvtpi2ps_mem196(xmm6, 0x1da510);",
+      "    xmm5 = driving_cvtpi2ps_mem196(xmm5, 0x1da520);"
+     ],
+     "seq": 4
+    },
+    {
+     "at": 180,
+     "del": 1,
+     "ins": [
+      "    { __m128 v = _mm_loadu_ps(xmm6.f); v = _mm_cvtsi32_ss(v, (int32_t)ebx); _mm_storeu_ps(xmm6.f, v); } /* PAL 146475 CVTSI2SS */"
+     ],
+     "seq": 5
+    },
+    {
+     "at": 200,
+     "del": 1,
+     "ins": [
+      "    POP32(esp, ebp); g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */"
+     ],
+     "seq": 6
+    },
+    {
+     "at": 205,
+     "del": 1,
+     "ins": [
+      "    /* PAL 1464AE POPAD skips its saved ESP slot. */",
+      "    POP32(esp, edi); POP32(esp, esi); POP32(esp, ebp);",
+      "    esp += 4; POP32(esp, ebx); POP32(esp, edx); POP32(esp, ecx); POP32(esp, eax);",
+      "    g_ebp = g_seh_ebp = ebp;"
+     ],
+     "seq": 7
+    },
+    {
+     "at": 207,
+     "del": 1,
+     "ins": [
+      "    POP32(esp, ebp); g_ebp = ebp; g_seh_ebp = ebp; /* publish restored register */ /* leave */"
+     ],
+     "seq": 8
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

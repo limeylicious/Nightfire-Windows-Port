@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.dont_write_bytecode = True
-from export_policy import check_text, read_allowlist
+from export_policy import REPO_GROUPS, check_text, read_allowlist
 
 
 def main():
@@ -20,9 +20,11 @@ def main():
     entries = read_allowlist((repo / 'tools/source_allowlist.json').read_bytes())
     prepared = []
     for entry in entries:
-        source = workspace / entry['source']
+        # Repository groups are maintained here; everything else comes from the workspace.
+        base = repo if entry['group'] in REPO_GROUPS else workspace
+        source = base / entry['source']
         output = repo / entry['path']
-        for boundary, path in ((workspace, source), (repo, output)):
+        for boundary, path in ((base, source), (repo, output)):
             if not path.resolve().is_relative_to(boundary):
                 raise ValueError(f'path escapes boundary: {entry["path"]}')
             current = path

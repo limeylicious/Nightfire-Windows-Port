@@ -1,0 +1,45 @@
+#include "recomp_types.h"
+extern void sub_00100550(void);
+extern void sub_001008E0(void);
+extern void sub_00100920(void);
+extern void sub_00100A20(void);
+extern void sub_00100B00(void);
+extern void sub_00100C70(void);
+extern void sub_00100CD0(void);
+extern void sub_00100D20(void);
+extern void sub_00100D80(void);
+extern void sub_00101B20(void);
+extern void sub_00101BB0(void);
+extern void sub_00101C50(void);
+extern void sub_00101CC0(void);
+extern void sub_00101D30(void);
+extern void sub_00101D50(void);
+extern void sub_00101D70(void);
+extern void sub_00101D90(void);
+extern void sub_00101DD0(void);
+extern void sub_00101E10(void);
+extern void sub_00101E90(void);
+extern void sub_00101EE0(void);
+recomp_func_t nightfire_lookup_render_state(uint32_t va) { switch (va) {
+case 0x00100550u: return sub_00100550;
+case 0x001008E0u: return sub_001008E0;
+case 0x00100920u: return sub_00100920;
+case 0x00100A20u: return sub_00100A20;
+case 0x00100B00u: return sub_00100B00;
+case 0x00100C70u: return sub_00100C70;
+case 0x00100CD0u: return sub_00100CD0;
+case 0x00100D20u: return sub_00100D20;
+case 0x00100D80u: return sub_00100D80;
+case 0x00101B20u: return sub_00101B20;
+case 0x00101BB0u: return sub_00101BB0;
+case 0x00101C50u: return sub_00101C50;
+case 0x00101CC0u: return sub_00101CC0;
+case 0x00101D30u: return sub_00101D30;
+case 0x00101D50u: return sub_00101D50;
+case 0x00101D70u: return sub_00101D70;
+case 0x00101D90u: return sub_00101D90;
+case 0x00101DD0u: return sub_00101DD0;
+case 0x00101E10u: return sub_00101E10;
+case 0x00101E90u: return sub_00101E90;
+case 0x00101EE0u: return sub_00101EE0;
+default: return NULL; } }

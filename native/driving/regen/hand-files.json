@@ -1,0 +1,112 @@
+{
+ "driving_callbacks143.c": [
+  "0x0010C110"
+ ],
+ "driving_callbacks144.c": [
+  "0x000EE190",
+  "0x000EE490"
+ ],
+ "driving_callbacks144b.c": [
+  "0x00051770",
+  "0x00051B40"
+ ],
+ "driving_callbacks145.c": [
+  "0x0003C310",
+  "0x0003C790",
+  "0x0003C8B0"
+ ],
+ "driving_callbacks146.c": [
+  "0x0003B630",
+  "0x0003BD50",
+  "0x0003BE90",
+  "0x0003BFB0",
+  "0x0003C0D0",
+  "0x0003C1F0",
+  "0x0003C9D0",
+  "0x0003CDD0"
+ ],
+ "driving_callbacks150.c": [
+  "0x0013BF10"
+ ],
+ "driving_callbacks151.c": [
+  "0x0011AA80"
+ ],
+ "driving_callbacks154.c": [
+  "0x00118220",
+  "0x001184B0",
+  "0x00118750"
+ ],
+ "driving_callbacks159.c": [
+  "0x00091DB0",
+  "0x00092170"
+ ],
+ "driving_callbacks162.c": [
+  "0x000E9410",
+  "0x000EA1D0"
+ ],
+ "driving_callbacks163.c": [
+  "0x000ECBE0",
+  "0x000ED070",
+  "0x000ED2B0",
+  "0x000EF4C0",
+  "0x000EF780"
+ ],
+ "driving_callbacks166.c": [
+  "0x00122580"
+ ],
+ "driving_callbacks172.c": [
+  "0x00128D10"
+ ],
+ "driving_callbacks177.c": [
+  "0x00144710"
+ ],
+ "driving_callbacks181.c": [
+  "0x00145AB0",
+  "0x00145BF0"
+ ],
+ "driving_callbacks184.c": [
+  "0x0013BB20"
+ ],
+ "driving_callbacks190.c": [
+  "0x0013D5C0",
+  "0x001413D0"
+ ],
+ "driving_callbacks205.c": [
+  "0x000964B0"
+ ],
+ "driving_callbacks207.c": [
+  "0x0008CFA0",
+  "0x0008CE50"
+ ],
+ "driving_callbacks210.c": [
+  "0x00037620",
+  "0x00036D10"
+ ],
+ "driving_callbacks233.c": [
+  "0x00123C50"
+ ],
+ "driving_constructors142.c": [
+  "0x0002BD40"
+ ],
+ "driving_copy142.c": [
+  "0x00132270"
+ ],
+ "driving_graphics_init142.c": [
+  "0x0016FCAD"
+ ],
+ "driving_resampler196.c": [
+  "0x001462B0"
+ ],
+ "driving_static_tail142.c": [
+  "0x00158EF0"
+ ],
+ "driving_vblank143.c": [
+  "0x0016EC40",
+  "0x0016EE30",
+  "0x0016F5F0"
+ ],
+ "driving_xpp142.c": [
+  "0x00183BF4",
+  "0x00184502"
+ ]
+}

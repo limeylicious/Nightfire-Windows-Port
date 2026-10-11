@@ -1,0 +1,277 @@
+{
+ "file": "driving_callbacks210.c",
+ "edits": [
+  {
+   "file": "driving_callbacks210.c",
+   "block": "file",
+   "src": "0bdc6bfc685b24b9",
+   "dst": "8bfd0c791cff2cb7",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\"",
+      "#include <xmmintrin.h>",
+      "void sub_00036D10(void);"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 23,
+     "del": 1,
+     "ins": [
+      {
+       "s": 23,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 47,
+     "del": 1,
+     "ins": [
+      {
+       "s": 47,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 60,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 5
+    },
+    {
+     "at": 80,
+     "del": 1,
+     "ins": [
+      {
+       "s": 80,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 84,
+     "del": 1,
+     "ins": [
+      {
+       "s": 84,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 87,
+     "del": 1,
+     "ins": [
+      {
+       "s": 87,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 90,
+     "del": 1,
+     "ins": [
+      {
+       "s": 90,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 9
+    },
+    {
+     "at": 205,
+     "del": 1,
+     "ins": [
+      {
+       "s": 205,
+       "p": 11,
+       "q": 3,
+       "x": "uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x28))); /* original CVTSS2SI"
+      }
+     ],
+     "seq": 10
+    },
+    {
+     "at": 231,
+     "del": 1,
+     "ins": [
+      {
+       "s": 231,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 11
+    },
+    {
+     "at": 251,
+     "del": 1,
+     "ins": [
+      {
+       "s": 251,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 12
+    },
+    {
+     "at": 269,
+     "del": 1,
+     "ins": [
+      {
+       "s": 269,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 13
+    },
+    {
+     "at": 281,
+     "del": 1,
+     "ins": [
+      {
+       "s": 281,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 14
+    },
+    {
+     "at": 294,
+     "del": 1,
+     "ins": [
+      {
+       "s": 294,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 15
+    },
+    {
+     "at": 308,
+     "del": 1,
+     "ins": [
+      {
+       "s": 308,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 16
+    },
+    {
+     "at": 371,
+     "del": 1,
+     "ins": [
+      {
+       "s": 371,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 17
+    },
+    {
+     "at": 387,
+     "del": 1,
+     "ins": [
+      {
+       "s": 387,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 18
+    },
+    {
+     "at": 404,
+     "del": 1,
+     "ins": [
+      {
+       "s": 404,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 19
+    },
+    {
+     "at": 410,
+     "del": 1,
+     "ins": [
+      {
+       "s": 410,
+       "p": 11,
+       "q": 3,
+       "x": "uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 0x40))); /* original CVTSS2SI"
+      }
+     ],
+     "seq": 20
+    },
+    {
+     "at": 423,
+     "del": 1,
+     "ins": [
+      {
+       "s": 423,
+       "rule": "call_bridge"
+      }
+     ],
+     "seq": 21
+    },
+    {
+     "at": 473,
+     "del": 1,
+     "ins": [
+      {
+       "s": 473,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 22
+    },
+    {
+     "at": 489,
+     "del": 1,
+     "ins": [
+      {
+       "s": 489,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 23
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

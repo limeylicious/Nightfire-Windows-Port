@@ -1,0 +1,24 @@
+{
+ "file": "driving_constructors142.c",
+ "edits": [
+  {
+   "file": "driving_constructors142.c",
+   "block": "file",
+   "src": "81b299452e71d53e",
+   "dst": "656aac2073a66d4e",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

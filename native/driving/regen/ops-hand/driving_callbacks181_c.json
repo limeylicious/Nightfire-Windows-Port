@@ -1,0 +1,43 @@
+{
+ "file": "driving_callbacks181.c",
+ "edits": [
+  {
+   "file": "driving_callbacks181.c",
+   "block": "file",
+   "src": "42d15bc481d9ef34",
+   "dst": "1205d5dfeca4d497",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 196,
+     "del": 1,
+     "ins": [
+      {
+       "s": 196,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 202,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

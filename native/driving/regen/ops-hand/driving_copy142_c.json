@@ -1,0 +1,206 @@
+{
+ "file": "driving_copy142.c",
+ "edits": [
+  {
+   "file": "driving_copy142.c",
+   "block": "file",
+   "src": "56459d49911162c5",
+   "dst": "4217eba6db3a6fb3",
+   "generated_like": 45,
+   "payload": "driving_copy142.c:file",
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 2,
+     "del": 2,
+     "ins": [
+      {
+       "s": 2,
+       "p": 50,
+       "q": 7,
+       "x": "31"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 5,
+     "del": 1,
+     "ins": [
+      " * Frame: fpo_leaf"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 9,
+     "del": 1,
+     "ins": [
+      {
+       "s": 9,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 102,
+     "del": 11,
+     "ins": [
+      {
+       "s": 105,
+       "p": 10,
+       "q": 3,
+       "x": "E0"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 125,
+     "del": 2,
+     "ins": [],
+     "seq": 7
+    },
+    {
+     "at": 209,
+     "del": 18,
+     "ins": [],
+     "seq": 10
+    },
+    {
+     "at": 269,
+     "del": 17,
+     "ins": [],
+     "seq": 11
+    },
+    {
+     "at": 291,
+     "del": 1,
+     "ins": [
+      {
+       "s": 291,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 12
+    },
+    {
+     "at": 301,
+     "del": 1,
+     "ins": [
+      {
+       "s": 301,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 13
+    },
+    {
+     "at": 313,
+     "del": 1,
+     "ins": [
+      {
+       "s": 313,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 14
+    },
+    {
+     "at": 327,
+     "del": 1,
+     "ins": [
+      {
+       "s": 327,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 15
+    },
+    {
+     "at": 364,
+     "del": 2,
+     "ins": [],
+     "seq": 16
+    },
+    {
+     "at": 399,
+     "del": 7,
+     "ins": [
+      437
+     ],
+     "seq": 20
+    },
+    {
+     "at": 536,
+     "del": 1,
+     "ins": [
+      {
+       "s": 536,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 24
+    },
+    {
+     "at": 546,
+     "del": 1,
+     "ins": [
+      {
+       "s": 546,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 25
+    },
+    {
+     "at": 558,
+     "del": 1,
+     "ins": [
+      {
+       "s": 558,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 26
+    },
+    {
+     "at": 572,
+     "del": 1,
+     "ins": [
+      {
+       "s": 572,
+       "p": 21,
+       "q": 11,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 27
+    }
+   ],
+   "local_hunks": 10
+  }
+ ]
+}

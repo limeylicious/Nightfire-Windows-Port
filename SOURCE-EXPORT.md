@@ -22,6 +22,8 @@ Current local references: frozen Action241 and normal Driving321; the last verif
 
 On 2026-10-10 `native/` was refreshed from the same workspaces: key binds, frame rate options, Smooth Motion fixes, the grappling-hook and new-profile fixes, four controllers and split-screen, the Multiplayer Local / Online pages, the lockstep record-and-replay test and Driving's own sound output. Files whose comments name the owner stay out, including `lean_present.inc`, and so do the xemu-derived files the Action build still compiles.
 
+`native/regen/`, `native/action/regen/` and `native/driving/regen/` (group `regen`, added 2026-10-11) are maintained in this repository rather than copied from a workspace: the scripts that rebuild each engine's translated code from the player's own disc, and the recipes they apply. A recipe holds addresses, our names, our own code, single-instruction fixes and SHA-256 guards; it holds no translated code, no diffs of it and none of the game's strings. Their source path is their repository path, and they pass the same text, size and hash checks. The parts of the Driving recipe that are hand-checked transcriptions stay on the owner's PC, and `recomp_manual.c` stays on the deny list.
+
 `release/alpha/` (group `release-alpha`) records the launchers and set-up scripts of the owner's first alpha folder, copied byte for byte from `releases/Nightfire-PC-Alpha`. Only text files are listed; the engines that its Setup copies, the game files it links and every output folder (sessions, runs, saves, lockstep) are excluded by the export policy.
 
 Run from this repository using Python3.9 or newer:

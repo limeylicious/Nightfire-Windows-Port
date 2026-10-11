@@ -1,0 +1,21 @@
+{
+ "file": "recomp_0004.c",
+ "edits": [
+  {
+   "file": "recomp_0004.c",
+   "block": "0x0006A840",
+   "src": "0fc18a962a2fa4e3",
+   "dst": "c20c65b3668ef325",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 1058,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_slip_state(uint32_t, uint32_t, uint32_t, uint32_t); if (lean_emit_log_on) lean_slip_state(MEM32(esp + 0xC), esp, eax, ebx); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,168 @@
+{
+ "file": "recomp_stubs_unresolved.c",
+ "edits": [
+  {
+   "file": "recomp_stubs_unresolved.c",
+   "block": "file",
+   "src": "a165f1552c08e9e2",
+   "dst": "552256238a62c179",
+   "lifts": [
+    "0x000182B0",
+    "0x0001A880",
+    "0x0001BE60",
+    "0x00037660",
+    "0x00037AF0",
+    "0x00055F60",
+    "0x000561F0",
+    "0x00058570",
+    "0x00059C30",
+    "0x000903A0",
+    "0x00094FF0",
+    "0x0009AF70",
+    "0x0009D5F0",
+    "0x000B5310",
+    "0x000BD9A0",
+    "0x000F3AB0",
+    "0x000F3BF0",
+    "0x0010B920",
+    "0x0010BAE0",
+    "0x00117350",
+    "0x00119E80",
+    "0x00119EC0",
+    "0x0011A810",
+    "0x0011D580",
+    "0x001235A0",
+    "0x00124750",
+    "0x00125B90",
+    "0x001267F0",
+    "0x0012F820",
+    "0x00144BC0",
+    "0x00144CA0",
+    "0x00144D00",
+    "0x001450B0",
+    "0x0015CD30",
+    "0x0015CDC0"
+   ],
+   "generated_like": 479,
+   "payload": "recomp_stubs_unresolved.c:file",
+   "hunks": [
+    {
+     "at": 20,
+     "del": 2,
+     "ins": [
+      "/*473 complete original routine below; no unresolved stub.*/",
+      "/*473 complete original routine below; no unresolved stub.*/"
+     ],
+     "seq": 0
+    },
+    {
+     "at": 25,
+     "del": 2,
+     "ins": [
+      "/*476 complete original function below.*/"
+     ],
+     "seq": 1
+    },
+    {
+     "at": 38,
+     "del": 3,
+     "ins": [
+      "/*474 complete original resource cleanup below.*/",
+      "/*474 complete original resource cleanup below.*/",
+      "/*474 complete original resource cleanup below.*/"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 46,
+     "del": 1,
+     "ins": [
+      "/*475 complete original function below.*/"
+     ],
+     "seq": 3
+    },
+    {
+     "at": 49,
+     "del": 1,
+     "ins": [
+      "/*475 complete original function below.*/"
+     ],
+     "seq": 4
+    },
+    {
+     "at": 54,
+     "del": 2,
+     "ins": [
+      "/*476 complete original function below.*/",
+      "/*475 complete original function below.*/"
+     ],
+     "seq": 5
+    },
+    {
+     "at": 88,
+     "del": 0,
+     "ins": [
+      ""
+     ],
+     "seq": 19
+    },
+    {
+     "at": 88,
+     "del": 0,
+     "ins": [
+      ""
+     ],
+     "seq": 25
+    },
+    {
+     "at": 88,
+     "del": 0,
+     "ins": [
+      "/*481 Exact original vtable write, reached from registered cleanup entry. */",
+      {
+       "l": "0x0011A810",
+       "i": 6
+      },
+      "{",
+      {
+       "l": "0x0011A810",
+       "i": 9
+      },
+      {
+       "l": "0x0011A810",
+       "s": 10,
+       "p": 14,
+       "q": 1,
+       "x": "=0x001A2238u"
+      },
+      {
+       "l": "0x0011A810",
+       "s": 9,
+       "p": 11,
+       "q": 3,
+       "x": "6"
+      },
+      {
+       "l": "0x0001A880",
+       "s": 72,
+       "p": 7,
+       "x": "+=4;return;"
+      },
+      "}",
+      ""
+     ],
+     "seq": 50
+    },
+    {
+     "at": 88,
+     "del": 0,
+     "ins": [
+      ""
+     ],
+     "seq": 57
+    }
+   ],
+   "local_hunks": 65
+  }
+ ]
+}

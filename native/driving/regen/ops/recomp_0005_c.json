@@ -1,0 +1,128 @@
+{
+ "file": "recomp_0005.c",
+ "edits": [
+  {
+   "file": "recomp_0005.c",
+   "block": "0x00084130",
+   "src": "8d98435adc69d441",
+   "dst": "3c42eae76efb6a11",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 112,
+     "del": 1,
+     "ins": [
+      "    if (CMP_EQ(_fa, _fb)) goto loc_00084674; /* FLAGS: was the never-set _flags fallback */",
+      123
+     ]
+    },
+    {
+     "at": 569,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(22)), TEST_Z(_fa, _fb)) goto loc_00084674; /* je after test FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0005.c",
+   "block": "0x00089E10",
+   "src": "51bc0c76a2a9d1fa",
+   "dst": "2ddbdc40a4da7d3d",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 304,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(23)), eax == 0) goto loc_0008A0B1; /* je after sub eax FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0005.c",
+   "block": "0x00092540",
+   "src": "51d1f1d39e0f21f7",
+   "dst": "4050418c8ee6b111",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 45,
+     "del": 1,
+     "ins": [
+      {
+       "s": 45,
+       "p": 8,
+       "q": 2,
+       "x": "uint8_t _cmps_src237 = MEM8(esi), _cmps_dst237 = MEM8(edi"
+      },
+      "        _flags = (_cmps_src237 == _cmps_dst237);",
+      "        _cf = (_cmps_src237 < _cmps_dst237); /* PAL CMPSB carry consumed by SBB */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0005.c",
+   "block": "0x00092B40",
+   "src": "9144af9c501d0fc5",
+   "dst": "a34a5450f7aaf752",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 52,
+     "del": 1,
+     "ins": [
+      {
+       "s": 52,
+       "p": 8,
+       "q": 2,
+       "x": "uint8_t _cmps_src237 = MEM8(esi), _cmps_dst237 = MEM8(edi"
+      },
+      "        _flags = (_cmps_src237 == _cmps_dst237);",
+      "        _cf = (_cmps_src237 < _cmps_dst237); /* PAL CMPSB carry consumed by SBB */"
+     ]
+    },
+    {
+     "at": 145,
+     "del": 1,
+     "ins": [
+      {
+       "s": 145,
+       "p": 8,
+       "q": 2,
+       "x": "uint8_t _cmps_src237 = MEM8(esi), _cmps_dst237 = MEM8(edi"
+      },
+      "        _flags = (_cmps_src237 == _cmps_dst237);",
+      "        _cf = (_cmps_src237 < _cmps_dst237); /* PAL CMPSB carry consumed by SBB */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0005.c",
+   "block": "0x00092D20",
+   "src": "fa4affa921aff9c5",
+   "dst": "54dbef842d3c0172",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 174,
+     "del": 1,
+     "ins": [
+      {
+       "s": 174,
+       "p": 8,
+       "q": 2,
+       "x": "uint8_t _cmps_src237 = MEM8(esi), _cmps_dst237 = MEM8(edi"
+      },
+      "        _flags = (_cmps_src237 == _cmps_dst237);",
+      "        _cf = (_cmps_src237 < _cmps_dst237); /* PAL CMPSB carry consumed by SBB */"
+     ]
+    }
+   ]
+  }
+ ]
+}

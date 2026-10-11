@@ -60,6 +60,12 @@ The launchers and set-up of the first alpha test are in
 - **Crash capture:** `runtime/lean/lean_session.c` and `lean_hang.c` (Driving)
   and `runtime/nightfire_session242.c` (Action) write a crash report,
   minidump or freeze report per session.
+- **Rebuilding the translated code:** `regen/regen.py` makes both engines'
+  `src/recomp/gen` folders on the player's PC from their own disc files: it
+  runs the pinned toolkit, then each engine's recipe (`action/regen/`,
+  `driving/regen/`: addresses, our names, our own code and hash-guarded edits)
+  and checks every file against the tested build. See
+  [`regen/README.md`](regen/README.md).
 - **Notes:** `launchers/` also keeps the surveys and test write-ups behind
   each step (phase 0 results, the Action audio survey, the in-game menu map,
   widescreen and DPI checks).

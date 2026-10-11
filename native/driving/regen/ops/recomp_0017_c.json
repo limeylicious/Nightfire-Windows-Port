@@ -1,0 +1,590 @@
+{
+ "file": "recomp_0017.c",
+ "edits": [
+  {
+   "file": "recomp_0017.c",
+   "block": "header",
+   "src": "2747a0e0e4e8776f",
+   "dst": "a823e9841051bc66",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      {
+       "s": 0,
+       "p": 24,
+       "q": 2,
+       "x": "drain143(void"
+      },
+      1,
+      "extern void driving_ack457_wake(void); /* ACK457 */",
+      {
+       "s": 0,
+       "p": 20,
+       "q": 14,
+       "x": "cadence204(unsigned,unsigned int,"
+      },
+      {
+       "s": 0,
+       "p": 20,
+       "q": 15,
+       "x": "flip204_scanout"
+      }
+     ]
+    },
+    {
+     "at": 1,
+     "del": 1,
+     "ins": []
+    },
+    {
+     "at": 14,
+     "del": 0,
+     "ins": [
+      "#include \"../../../runtime/driving_ownership309.h\"",
+      "#include \"../../../runtime/driving_submit456.h\" /* PROBE456 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x001682A0",
+   "src": "9e246a794e66a093",
+   "dst": "b378d44f1e06e160",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x001682A0u, OWN309_BIND);"
+     ]
+    },
+    {
+     "at": 660,
+     "del": 1,
+     "ins": [
+      {
+       "s": 660,
+       "p": 15,
+       "q": 20,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016BC80",
+   "src": "9b4c1829f1621739",
+   "dst": "3130e64a9633ae0b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 8,
+     "del": 0,
+     "ins": [
+      "    uint32_t scanout_context152 = ecx;",
+      "    extern void driving_scanout152_capture(uint32_t,uint32_t,uint32_t,uint32_t);"
+     ]
+    },
+    {
+     "at": 15,
+     "del": 0,
+     "ins": [
+      "    driving_cadence204(1,ecx,MEM32(esp+4));"
+     ]
+    },
+    {
+     "at": 88,
+     "del": 0,
+     "ins": [
+      "    driving_flip204_scanout(eax);",
+      "    driving_scanout152_capture(scanout_context152,edi,eax,ebp+8);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016C910",
+   "src": "f02bf203b202e245",
+   "dst": "01031e9a81a2067a",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 20,
+     "del": 0,
+     "ins": [
+      "    driving_ack457_wake(); /* ACK457 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016C940",
+   "src": "5be1d61f16ad26d3",
+   "dst": "2190896783a6527c",
+   "generated_like": 1,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    NFSubmit456 span456 = nf_submit456_begin(); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 37,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_phase(&span456,1); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 43,
+     "del": 0,
+     "ins": [
+      "    driving_ack457_wake(); /* ACK457 */"
+     ]
+    },
+    {
+     "at": 50,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_phase(&span456,2); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 54,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_phase(&span456,3); /* PROBE456 */",
+      "    driving_gpu_drain143(); /* consume published commands before guest reuse */",
+      "    nf_submit456_phase(&span456,4); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 55,
+     "del": 0,
+     "ins": [
+      "    if(span456.on) span456.wait_requested = eax != 0; /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 63,
+     "del": 0,
+     "ins": [
+      "    if(span456.on) ++span456.busy_calls; /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 73,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_end(&span456); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 77,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_phase(&span456,5); /* PROBE456 */"
+     ]
+    },
+    {
+     "at": 102,
+     "del": 0,
+     "ins": [
+      "    nf_submit456_end(&span456); /* PROBE456 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016CAE0",
+   "src": "f698523596048130",
+   "dst": "e4e793a5f7326982",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016CAE0u, OWN309_FENCE);"
+     ]
+    },
+    {
+     "at": 168,
+     "del": 1,
+     "ins": [
+      {
+       "s": 168,
+       "p": 15,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 195,
+     "del": 1,
+     "ins": [
+      {
+       "s": 195,
+       "p": 15,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016CDF0",
+   "src": "8c69df5eb91665ea",
+   "dst": "bb893c2bf809ca88",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016CDF0u, OWN309_IDLE);"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "p": 14,
+       "q": 17,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016CE10",
+   "src": "d38192a1cb78367e",
+   "dst": "04427c52cd95feec",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016CE10u, OWN309_RESOURCE_WAIT);"
+     ]
+    },
+    {
+     "at": 53,
+     "del": 1,
+     "ins": [
+      {
+       "s": 53,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 77,
+     "del": 1,
+     "ins": [
+      {
+       "s": 77,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 93,
+     "del": 1,
+     "ins": [
+      {
+       "s": 93,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016CE90",
+   "src": "0feb6a0be2b17486",
+   "dst": "c69c381530cb2c0a",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016CE90u, OWN309_VERTEX_WAIT);"
+     ]
+    },
+    {
+     "at": 34,
+     "del": 1,
+     "ins": [
+      {
+       "s": 34,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 47,
+     "del": 1,
+     "ins": [
+      {
+       "s": 47,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016D180",
+   "src": "9ba5fa5d348356dc",
+   "dst": "66aaf9e73db88dd0",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016D180u, OWN309_DESTROY);"
+     ]
+    },
+    {
+     "at": 198,
+     "del": 1,
+     "ins": [
+      {
+       "s": 198,
+       "p": 14,
+       "q": 17,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016D2A0",
+   "src": "72ea5205563d93eb",
+   "dst": "37a842377311a097",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016D2A0u, OWN309_CREATE);"
+     ]
+    },
+    {
+     "at": 564,
+     "del": 1,
+     "ins": [
+      {
+       "s": 564,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 671,
+     "del": 1,
+     "ins": [
+      {
+       "s": 671,
+       "p": 14,
+       "q": 19,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016E690",
+   "src": "17e7a696d152510d",
+   "dst": "f46e2875755aa877",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 9,
+     "del": 0,
+     "ins": [
+      "    OwnScope309 own_scope309 = own_enter309(0x0016E690u, OWN309_LOCK);"
+     ]
+    },
+    {
+     "at": 78,
+     "del": 1,
+     "ins": [
+      {
+       "s": 78,
+       "p": 15,
+       "q": 20,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    },
+    {
+     "at": 88,
+     "del": 1,
+     "ins": [
+      {
+       "s": 88,
+       "p": 15,
+       "q": 20,
+       "x": "own_leave309(&own_scope309); "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016ED60",
+   "src": "0790679e646181ac",
+   "dst": "609111eabe9a2b3d",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 18,
+     "del": 0,
+     "ins": [
+      "    driving_cadence204(0,ecx,0);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016EE30",
+   "src": "6ae5c0c7210e6020",
+   "dst": "da03ac9ab4590345",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 7,
+     "del": 1,
+     "ins": [
+      {
+       "s": 7,
+       "p": 17,
+       "q": 6,
+       "x": "_retained143"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016F0F0",
+   "src": "51633641ecdfcb19",
+   "dst": "cb828cb2229c3f47",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 18,
+     "del": 0,
+     "ins": [
+      "    driving_cadence204(2,ecx,MEM32(esp+4));"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016F5F0",
+   "src": "08dd0bf21ba49d38",
+   "dst": "2b4a599be3841b5c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 7,
+     "del": 1,
+     "ins": [
+      {
+       "s": 7,
+       "p": 17,
+       "q": 6,
+       "x": "_retained143"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0016FCAD",
+   "src": "b61ba15395d9eef6",
+   "dst": "bff5ed2deb68f6e2",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 7,
+     "del": 1,
+     "ins": [
+      {
+       "s": 7,
+       "p": 17,
+       "q": 6,
+       "x": "_retained142"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0017.c",
+   "block": "0x0017AD05",
+   "src": "0822e2f4b0e55d0b",
+   "dst": "824bffbb56e4ed74",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 15,
+     "del": 0,
+     "ins": [
+      "    extern void driving_audio_probe147(unsigned int,unsigned int,unsigned int,unsigned int);",
+      "    driving_audio_probe147(0x0017AD05u,ecx,eax,esp);"
+     ]
+    }
+   ]
+  }
+ ]
+}

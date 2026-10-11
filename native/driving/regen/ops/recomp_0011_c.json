@@ -1,0 +1,1055 @@
+{
+ "file": "recomp_0011.c",
+ "edits": [
+  {
+   "file": "recomp_0011.c",
+   "block": "header",
+   "src": "c1f15673c2a3e793",
+   "dst": "3bd87418834d9588",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern void driving_movie_probe144(unsigned int, unsigned int, unsigned int, unsigned int);"
+     ]
+    },
+    {
+     "at": 12,
+     "del": 0,
+     "ins": [
+      {
+       "s": 12,
+       "p": 10,
+       "q": 3,
+       "x": "xmmintrin"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00123A30",
+   "src": "6d772f074c00866b",
+   "dst": "49dfe220901f75a0",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 122,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_emit_play(uint32_t, uint32_t); if (lean_emit_log_on) lean_emit_play(esi, ZX16(MEM16(esp + 0x14))); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    },
+    {
+     "at": 175,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_emit_vol(uint32_t, uint32_t); if (lean_emit_log_on) lean_emit_vol(esi, eax); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x001244D0",
+   "src": "c4cc132cdc3602fd",
+   "dst": "12cc34e74d9b7f3b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 21,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_emit_set(uint32_t, uint32_t); if (lean_emit_log_on) lean_emit_set(ecx, esp); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    },
+    {
+     "at": 45,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 4))); /* PAL CVTSS2SI: preserve MXCSR rounding. */"
+     ]
+    },
+    {
+     "at": 92,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 4))); /* PAL CVTSS2SI: preserve MXCSR rounding. */"
+     ]
+    },
+    {
+     "at": 98,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 4))); /* PAL CVTSS2SI: preserve MXCSR rounding. */"
+     ]
+    },
+    {
+     "at": 144,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 4))); /* PAL CVTSS2SI: preserve MXCSR rounding. */"
+     ]
+    },
+    {
+     "at": 175,
+     "del": 1,
+     "ins": [
+      "    eax = (uint32_t)_mm_cvtss_si32(_mm_set_ss(MEMF(esp + 4))); /* PAL CVTSS2SI: preserve MXCSR rounding. */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x001307D0",
+   "src": "f67fe5ce3aecbb15",
+   "dst": "fe393a5492d5bc44",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 0,
+     "ins": [
+      "    driving_movie_probe144(0x001307D0u, ecx, 0, esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x001308A0",
+   "src": "7ecf10aa4646b798",
+   "dst": "880800747c9bfa3b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 58,
+     "del": 0,
+     "ins": [
+      "    driving_movie_probe144(0x001308F5u, esi, eax, esp);"
+     ]
+    },
+    {
+     "at": 89,
+     "del": 0,
+     "ins": [
+      "    driving_movie_probe144(0x0013092Du, esi, eax, esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130B80",
+   "src": "62aedb69e06b3ae1",
+   "dst": "3172f951334bc636",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 20,
+     "del": 1,
+     "ins": [
+      {
+       "s": 20,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 27,
+     "del": 1,
+     "ins": [
+      {
+       "s": 27,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 34,
+     "del": 1,
+     "ins": [
+      {
+       "s": 34,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130BC0",
+   "src": "cee1c1603d15b9e8",
+   "dst": "03ad455327348b0b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 20,
+     "del": 1,
+     "ins": [
+      {
+       "s": 20,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 27,
+     "del": 1,
+     "ins": [
+      {
+       "s": 27,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 34,
+     "del": 1,
+     "ins": [
+      {
+       "s": 34,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130C99",
+   "src": "752fa7ee6aa3aef7",
+   "dst": "82f840db1414dbd2",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 21,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(37)), (uint32_t)(ecx + 1u) != 0) goto loc_00130CC3; /* jne after lock xadd: sum old+1 FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130E4C",
+   "src": "2ed9f683dfd266c2",
+   "dst": "3942e52bca6f0160",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 31,
+     "del": 1,
+     "ins": [
+      {
+       "s": 31,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 47,
+     "del": 1,
+     "ins": [
+      {
+       "s": 47,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 69,
+     "del": 1,
+     "ins": [
+      {
+       "s": 69,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 75,
+     "del": 1,
+     "ins": [
+      {
+       "s": 75,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 80,
+     "del": 1,
+     "ins": [
+      {
+       "s": 80,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130F3F",
+   "src": "be2ab4764a0e6aaa",
+   "dst": "0c9db82604db5299",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 32,
+     "del": 1,
+     "ins": [
+      {
+       "s": 32,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00130F8F",
+   "src": "312e9868325acbd9",
+   "dst": "d8fe764947d01700",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 29,
+     "del": 1,
+     "ins": [
+      {
+       "s": 29,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 35,
+     "del": 1,
+     "ins": [
+      {
+       "s": 35,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 40,
+     "del": 1,
+     "ins": [
+      {
+       "s": 40,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 46,
+     "del": 1,
+     "ins": [
+      {
+       "s": 46,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 51,
+     "del": 1,
+     "ins": [
+      {
+       "s": 51,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 57,
+     "del": 1,
+     "ins": [
+      {
+       "s": 57,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 64,
+     "del": 1,
+     "ins": [
+      {
+       "s": 64,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 74,
+     "del": 1,
+     "ins": [
+      {
+       "s": 74,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 89,
+     "del": 1,
+     "ins": [
+      {
+       "s": 89,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x0013101D",
+   "src": "02424cdab2690fa4",
+   "dst": "b1be166f9bb615ac",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 33,
+     "del": 1,
+     "ins": [
+      {
+       "s": 33,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 45,
+     "del": 1,
+     "ins": [
+      {
+       "s": 45,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 58,
+     "del": 1,
+     "ins": [
+      {
+       "s": 58,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 70,
+     "del": 1,
+     "ins": [
+      {
+       "s": 70,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 76,
+     "del": 1,
+     "ins": [
+      {
+       "s": 76,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 81,
+     "del": 1,
+     "ins": [
+      {
+       "s": 81,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 90,
+     "del": 1,
+     "ins": [
+      {
+       "s": 90,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131216",
+   "src": "01fe0715f362d453",
+   "dst": "b64473e08f24c1b1",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 11,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 15,
+     "del": 1,
+     "ins": [
+      {
+       "s": 15,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 22,
+     "del": 1,
+     "ins": [
+      {
+       "s": 22,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 29,
+     "del": 1,
+     "ins": [
+      {
+       "s": 29,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131279",
+   "src": "1f84014c7454150f",
+   "dst": "6b0b906cd17783cb",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 48,
+     "del": 1,
+     "ins": [
+      {
+       "s": 48,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 57,
+     "del": 1,
+     "ins": [
+      {
+       "s": 57,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 75,
+     "del": 1,
+     "ins": [
+      {
+       "s": 75,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 84,
+     "del": 1,
+     "ins": [
+      {
+       "s": 84,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 91,
+     "del": 1,
+     "ins": [
+      {
+       "s": 91,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 102,
+     "del": 1,
+     "ins": [
+      {
+       "s": 102,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x0013133F",
+   "src": "6cc0dac00c16605a",
+   "dst": "cc4c3ad4dc7e64bb",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 11,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 15,
+     "del": 1,
+     "ins": [
+      {
+       "s": 15,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 25,
+     "del": 1,
+     "ins": [
+      {
+       "s": 25,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 33,
+     "del": 1,
+     "ins": [
+      {
+       "s": 33,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131A44",
+   "src": "d6531dc2c8dc2360",
+   "dst": "501b8fc9b38b5ba3",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 23,
+     "del": 1,
+     "ins": [
+      {
+       "s": 23,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 28,
+     "del": 1,
+     "ins": [
+      {
+       "s": 28,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131A7C",
+   "src": "ed42cc947aa23bfb",
+   "dst": "830e8d321eb6f826",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 48,
+     "del": 1,
+     "ins": [
+      {
+       "s": 48,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131AE1",
+   "src": "9a4fd67e0081873b",
+   "dst": "b1482fde29cefd2c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 26,
+     "del": 1,
+     "ins": [
+      {
+       "s": 26,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131B27",
+   "src": "49bf2a10c2fdb566",
+   "dst": "7447843653c9d0a7",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 18,
+     "del": 1,
+     "ins": [
+      {
+       "s": 18,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 49,
+     "del": 1,
+     "ins": [
+      {
+       "s": 49,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 90,
+     "del": 1,
+     "ins": [
+      {
+       "s": 90,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00131BBB",
+   "src": "07d65607165dffe7",
+   "dst": "8ad02f0a149ebade",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      {
+       "s": 14,
+       "rule": "call_bridge"
+      },
+      "    ebp = g_ebp; /* Adopt frame established by the original helper. */"
+     ]
+    },
+    {
+     "at": 26,
+     "del": 1,
+     "ins": [
+      {
+       "s": 26,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00132270",
+   "src": "ab97a6f8fa981e02",
+   "dst": "3675f50ba7993fbc",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 7,
+     "del": 1,
+     "ins": [
+      {
+       "s": 7,
+       "p": 17,
+       "q": 6,
+       "x": "_retained142"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00134424",
+   "src": "7aed014f2bac39ac",
+   "dst": "1669a7bd72e7a036",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 31,
+     "del": 1,
+     "ins": [
+      {
+       "s": 31,
+       "p": 6,
+       "q": 3,
+       "x": "ebp = ebp; g_seh_ebp = ebp; esp += 4; return; /* publish new SEH frame"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0011.c",
+   "block": "0x00134770",
+   "src": "3f5399832fadd9d8",
+   "dst": "d6af47d6aba13044",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 10,
+     "del": 1,
+     "ins": [
+      "    /* Incoming EBP is the guest register, not a separate stale frame cache. */"
+     ]
+    },
+    {
+     "at": 21,
+     "del": 0,
+     "ins": [
+      "    g_ebp = g_seh_ebp = ebp; /* Original shared prologue returns its new EBP. */"
+     ]
+    }
+   ]
+  }
+ ]
+}

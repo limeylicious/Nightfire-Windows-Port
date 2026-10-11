@@ -1,0 +1,126 @@
+{
+ "file": "driving_callbacks177.c",
+ "edits": [
+  {
+   "file": "driving_callbacks177.c",
+   "block": "file",
+   "src": "5977030955b315b8",
+   "dst": "b290975eaea7a288",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "#define RECOMP_GENERATED_CODE",
+      "#include \"recomp_funcs.h\""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 8,
+     "del": 1,
+     "ins": [
+      {
+       "s": 8,
+       "rule": "ebp_from_caller"
+      }
+     ],
+     "seq": 1
+    },
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit original caller EBP. */"
+     ],
+     "seq": 2
+    },
+    {
+     "at": 86,
+     "del": 1,
+     "ins": [
+      {
+       "s": 86,
+       "p": 69,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 113,
+     "del": 1,
+     "ins": [
+      {
+       "s": 113,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 145,
+     "del": 1,
+     "ins": [
+      {
+       "s": 145,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 212,
+     "del": 1,
+     "ins": [
+      {
+       "s": 212,
+       "p": 69,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 236,
+     "del": 1,
+     "ins": [
+      {
+       "s": 236,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 7
+    },
+    {
+     "at": 273,
+     "del": 1,
+     "ins": [
+      {
+       "s": 273,
+       "p": 76,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ],
+     "seq": 8
+    },
+    {
+     "at": 300,
+     "del": 1,
+     "ins": [
+      {
+       "s": 300,
+       "rule": "pop_ebp_publish"
+      }
+     ],
+     "seq": 9
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

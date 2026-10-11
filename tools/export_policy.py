@@ -34,6 +34,11 @@ NATIVE_GROUPS = {
 RELEASE_GROUPS = {
     'release-alpha': ('releases/Nightfire-PC-Alpha/', 'release/alpha/'),
 }
+# Rebuild scripts and recipes kept in this repository itself (addresses, our names, our own
+# code and hashes; never translated code). Source and destination are the same repo path.
+REPO_GROUPS = {
+    'regen': ('native/regen/', 'native/action/regen/', 'native/driving/regen/'),
+}
 ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json', '.cmake'}
 SECRET = re.compile(
     rb'[A-Z]:[\\/]+Users[\\/]+|/' rb'Users/[^/\s]+/|/' rb'home/[^/\s]+/|'
@@ -67,7 +72,8 @@ def check_destination(name: str) -> None:
 def check_text(name: str, data: bytes) -> None:
     check_destination(name)
     # 270 kB: native/driving/runtime/kernel_bridge.c (261 kB) was reviewed on 2026-10-09.
-    if len(data) > 270_000 and name != 'SOURCE-MANIFEST.json':
+    # The two index files grow with every reviewed file and carry only paths and hashes.
+    if len(data) > 270_000 and name not in {'SOURCE-MANIFEST.json', 'tools/source_allowlist.json'}:
         raise ValueError(f'oversized text requires separate review: {name}')
     if b'\0' in data or data.startswith((b'MZ', b'XBEH', b'BM', b'PK\x03\x04', b'DDS ', b'\x89PNG')):
         raise ValueError(f'binary content: {name}')
@@ -126,6 +132,9 @@ def read_allowlist(data: bytes) -> list[dict]:
             suffix = source.removeprefix(prefix)
             if not source.startswith(prefix) or destination != target + suffix:
                 raise ValueError(f'invalid release mapping: {destination}')
+        elif group in REPO_GROUPS:
+            if source != destination or not destination.startswith(REPO_GROUPS[group]):
+                raise ValueError(f'invalid repository mapping: {destination}')
         else:
             raise ValueError(f'unknown source group: {group}')
     return config['files']

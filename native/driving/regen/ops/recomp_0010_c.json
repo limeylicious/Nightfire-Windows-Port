@@ -1,0 +1,367 @@
+{
+ "file": "recomp_0010.c",
+ "edits": [
+  {
+   "file": "recomp_0010.c",
+   "block": "header",
+   "src": "28a93c257301cbd7",
+   "dst": "a33a00d900053a18",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern void nightfire_memory_barrier(void);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x0010ECE5",
+   "src": "cd1815e2d416fed8",
+   "dst": "d97154c35e9999c8",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 252,
+     "del": 1,
+     "ins": [
+      "    { /* PAL10EE71 SBB supplies SF/ZF/OF to JS/JG at10EE74/10EE76. */",
+      "        uint32_t _a143 = edx, _b143 = MEM32(esi + 0x38);",
+      "        uint64_t _t143 = (uint64_t)_a143 - (uint64_t)_b143 - (uint64_t)_cf;",
+      "        uint32_t _r143 = (uint32_t)_t143;",
+      "        unsigned _of143 = ((_a143 ^ _b143) & (_a143 ^ _r143)) >> 31;",
+      "        _cf = (int)((_t143 >> 32) & 1);",
+      "        edx = _r143;",
+      "        _flags = _r143 != 0 && ((_r143 >> 31) == _of143); /* exact x86 JG */",
+      "    }"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x00117610",
+   "src": "02bbc22c206a0ed7",
+   "dst": "fa7ac8222c174bc6",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 86,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 00117682 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x001176F0",
+   "src": "0b065c6d12b52b58",
+   "dst": "4df241a8e0cf3b85",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 86,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 00117762 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x00117C10",
+   "src": "dcf7c83330f334fa",
+   "dst": "1562314492834434",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit live original EBP. */"
+     ]
+    },
+    {
+     "at": 26,
+     "del": 1,
+     "ins": [
+      {
+       "s": 26,
+       "p": 69,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 61,
+     "del": 1,
+     "ins": [
+      {
+       "s": 61,
+       "p": 73,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 75,
+     "del": 1,
+     "ins": [
+      {
+       "s": 75,
+       "p": 73,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    },
+    {
+     "at": 113,
+     "del": 1,
+     "ins": [
+      {
+       "s": 113,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 133,
+     "del": 1,
+     "ins": [
+      {
+       "s": 133,
+       "p": 73,
+       "q": 67,
+       "x": "g_ebp = g_seh_ebp = ebp; "
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x00117E50",
+   "src": "d0df84ccaf90888b",
+   "dst": "c2c013b9358d09e1",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 14,
+     "del": 1,
+     "ins": [
+      "    /* Inherit live original EBP. */"
+     ]
+    },
+    {
+     "at": 45,
+     "del": 1,
+     "ins": [
+      {
+       "s": 45,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 50,
+     "del": 1,
+     "ins": [
+      {
+       "s": 50,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 68,
+     "del": 1,
+     "ins": [
+      {
+       "s": 68,
+       "rule": "call_bridge"
+      }
+     ]
+    },
+    {
+     "at": 73,
+     "del": 1,
+     "ins": [
+      {
+       "s": 73,
+       "rule": "call_bridge"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x001186D0",
+   "src": "70116626bff50bf3",
+   "dst": "ab5d4fff3eb633ed",
+   "lifts": [
+    "0x001186D0"
+   ],
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 38,
+     "del": 0,
+     "ins": [
+      {
+       "l": "0x001186D0",
+       "i": 38
+      },
+      "",
+      {
+       "l": "0x001186D0",
+       "i": 40
+      },
+      {
+       "l": "0x001186D0",
+       "i": 41
+      },
+      {
+       "l": "0x001186D0",
+       "i": 42
+      },
+      {
+       "l": "0x001186D0",
+       "i": 43
+      },
+      {
+       "l": "0x001186D0",
+       "i": 44
+      },
+      {
+       "l": "0x001186D0",
+       "i": 45
+      },
+      {
+       "l": "0x001186D0",
+       "i": 46
+      },
+      "",
+      {
+       "l": "0x001186D0",
+       "i": 48
+      },
+      {
+       "l": "0x001186D0",
+       "i": 49
+      },
+      {
+       "l": "0x001186D0",
+       "i": 50
+      },
+      17,
+      {
+       "l": "0x001186D0",
+       "i": 52
+      },
+      {
+       "l": "0x001186D0",
+       "i": 53
+      },
+      "",
+      {
+       "l": "0x001186D0",
+       "i": 55
+      },
+      33,
+      {
+       "l": "0x001186D0",
+       "i": 57
+      },
+      {
+       "l": "0x001186D0",
+       "i": 58
+      },
+      {
+       "l": "0x001186D0",
+       "i": 59
+      },
+      {
+       "l": "0x001186D0",
+       "i": 60
+      },
+      {
+       "l": "0x001186D0",
+       "i": 61
+      },
+      37,
+      {
+       "l": "0x001186D0",
+       "i": 63
+      },
+      "",
+      {
+       "l": "0x001186D0",
+       "i": 65
+      },
+      {
+       "l": "0x001186D0",
+       "i": 66
+      },
+      {
+       "l": "0x001186D0",
+       "i": 67
+      },
+      {
+       "l": "0x001186D0",
+       "i": 68
+      },
+      {
+       "l": "0x001186D0",
+       "i": 69
+      },
+      {
+       "l": "0x001186D0",
+       "i": 70
+      },
+      {
+       "l": "0x001186D0",
+       "i": 71
+      },
+      {
+       "l": "0x001186D0",
+       "i": 72
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0010.c",
+   "block": "0x0011F9B0",
+   "src": "b2f9a8d035fb157e",
+   "dst": "6e8d1bfe1d8cf767",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 702,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_skid_state(uint32_t, int, float); if (lean_emit_log_on) lean_skid_state(esi, 1, MEMF(esp + 0x40)); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    },
+    {
+     "at": 767,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_emit_log_on; extern void lean_skid_state(uint32_t, int, float); if (lean_emit_log_on) lean_skid_state(esi, 2, MEMF(esp + 0x2C)); } /* LEAN_AUDIO_EMIT_LOG */"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,175 @@
+{
+ "file": "recomp_types.h",
+ "edits": [
+  {
+   "file": "recomp_types.h",
+   "block": "file",
+   "src": "0719569a4cf0502e",
+   "dst": "d09e2b6894f27f78",
+   "generated_like": 2,
+   "hunks": [
+    {
+     "at": 337,
+     "del": 0,
+     "ins": [
+      "#ifdef DRIVING_ACCESS321",
+      "#include \"../../../runtime/driving_access321.h\"",
+      "#undef XBOX_PTR",
+      {
+       "s": 336,
+       "p": 23,
+       "q": 1,
+       "x": "driving_access321_pointer((uintptr_t)(uint32_t)(addr)+g_xbox_mem_offset,1,DA321_POINTER_ESCAPE"
+      },
+      "#undef RECOMP_ATOMIC_ADD32",
+      "#undef RECOMP_ATOMIC_CAS32",
+      "#define RECOMP_ATOMIC_ADD32(p,v) ((uint32_t)_InterlockedExchangeAdd((volatile long*)driving_access321_pointer((uintptr_t)(p),4,DA321_ATOMIC),(long)(v)))",
+      "#define RECOMP_ATOMIC_CAS32(p,cmp,val) ((uint32_t)_InterlockedCompareExchange((volatile long*)driving_access321_pointer((uintptr_t)(p),4,DA321_ATOMIC),(long)(val),(long)(cmp)))",
+      300,
+      ""
+     ],
+     "seq": 0
+    },
+    {
+     "at": 337,
+     "del": 0,
+     "ins": [
+      "/*320 diagnostic only: sized scalar/XMM/MMX accesses. XBOX_PTR and escaped",
+      " * pointers keep their original semantics and are not covered by this observer. */",
+      "#ifdef DRIVING_CPU_ACCESS320",
+      "#include \"../../../runtime/driving_cpu320.h\"",
+      "static __forceinline uintptr_t recomp_memory_pointer320(uint32_t address,unsigned bytes){",
+      "    /* Packet236 only admits the contiguous main targets in this64MiB window.",
+      "     * Other CPU backing/alias windows remain explicitly unobserved. */",
+      "    if((uint32_t)(address-0x80000000u)<0x04000000u)",
+      "        driving_cpu320_note_if_possible(address,bytes,0);",
+      {
+       "s": 336,
+       "x": "    return (uintptr_t)address+g_xbox_mem_offset;"
+      },
+      "}",
+      "#define RECOMP_MEMORY_PTR320(addr,bytes) recomp_memory_pointer320((uint32_t)(addr),(bytes))",
+      298,
+      "#define RECOMP_MEMORY_PTR320(addr,bytes) XBOX_PTR(addr)",
+      300,
+      ""
+     ],
+     "seq": 1
+    },
+    {
+     "at": 339,
+     "del": 3,
+     "ins": [
+      {
+       "s": 339,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,1"
+      },
+      {
+       "s": 340,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,2"
+      },
+      {
+       "s": 341,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,4"
+      }
+     ],
+     "seq": 2
+    },
+    {
+     "at": 344,
+     "del": 4,
+     "ins": [
+      {
+       "s": 344,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,1"
+      },
+      {
+       "s": 345,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,2"
+      },
+      {
+       "s": 346,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,4"
+      },
+      {
+       "s": 347,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,8"
+      }
+     ],
+     "seq": 3
+    },
+    {
+     "at": 350,
+     "del": 2,
+     "ins": [
+      {
+       "s": 350,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,4"
+      },
+      {
+       "s": 351,
+       "p": 44,
+       "q": 2,
+       "x": "RECOMP_MEMORY_PTR320(addr,8"
+      }
+     ],
+     "seq": 4
+    },
+    {
+     "at": 949,
+     "del": 1,
+     "ins": [
+      {
+       "s": 949,
+       "p": 29,
+       "q": 6,
+       "x": "RECOMP_MEMORY_PTR320(addr,8"
+      }
+     ],
+     "seq": 5
+    },
+    {
+     "at": 954,
+     "del": 1,
+     "ins": [
+      {
+       "s": 954,
+       "p": 19,
+       "q": 10,
+       "x": "RECOMP_MEMORY_PTR320(addr,8"
+      }
+     ],
+     "seq": 6
+    },
+    {
+     "at": 1155,
+     "del": 0,
+     "ins": [
+      "#if defined(DRIVING_ACCESS321) && defined(RECOMP_GENERATED_CODE)",
+      "#define DRIVING_ACCESS321_KIND DA321_GENERATED_READ",
+      "#include \"../../../runtime/driving_access321_hooks.h\"",
+      1145
+     ],
+     "seq": 7
+    }
+   ],
+   "local_hunks": 0
+  }
+ ]
+}

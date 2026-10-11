@@ -1,0 +1,380 @@
+{
+ "file": "recomp_0013.c",
+ "edits": [
+  {
+   "file": "recomp_0013.c",
+   "block": "header",
+   "src": "71d2eacd4c265e2e",
+   "dst": "69b06996d910de42",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 0,
+     "del": 0,
+     "ins": [
+      "extern void driving_movie_frame178(unsigned int, unsigned int, unsigned int);",
+      "extern void driving_movie_probe144(unsigned int, unsigned int, unsigned int, unsigned int);",
+      "extern void nightfire_memory_barrier(void);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014AD20",
+   "src": "ff15751e30b56174",
+   "dst": "95315116c0875254",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 11,
+     "del": 0,
+     "ins": [
+      "    int lean_pad = 0; uint32_t lean_pad_w1 = 0; /* LEAN_STRM_CHECK / LEAN_STRM_PADFIX */"
+     ]
+    },
+    {
+     "at": 47,
+     "del": 0,
+     "ins": [
+      "    lean_pad = 0; lean_pad_w1 = edi;"
+     ]
+    },
+    {
+     "at": 73,
+     "del": 0,
+     "ins": [
+      "    lean_pad = 1;   /* end/pad packet: advance is rounded to the next 128-byte boundary */"
+     ]
+    },
+    {
+     "at": 132,
+     "del": 0,
+     "ins": [
+      "    if (lean_pad) { extern int lean_strm_check_on; extern void lean_strm_pad(uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,int);",
+      "      if (lean_strm_check_on) lean_strm_pad(edx, MEM32(edx), lean_pad_w1, edi, esi, 0);",
+      "      /* LEAN HAND FIX (LEAN_STRM_PADFIX=1, lean only): with no reader for an end/pad packet the",
+      "       * original marks it consumed (-2) but leaves word1 = 8, while the parser advances by the",
+      "       * 128-byte-rounded size. Walkers stepping by word1 then land inside the padding (a zero",
+      "       * header = the Paris ~91 s endless loop). Store the rounded size as the matched path does. */",
+      "      { extern int lean_strm_padfix_on(void); if (lean_strm_padfix_on()) MEM32(edx + 4) = edi; } }"
+     ]
+    },
+    {
+     "at": 137,
+     "del": 0,
+     "ins": [
+      "    if (lean_pad) { extern int lean_strm_check_on; extern void lean_strm_pad(uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,int);",
+      "      if (lean_strm_check_on) lean_strm_pad(edx, MEM32(edx), lean_pad_w1, edi, esi, 1); }"
+     ]
+    },
+    {
+     "at": 168,
+     "del": 0,
+     "ins": [
+      "    { extern void lean_strm_jitter(void); lean_strm_jitter(); }   /* LEAN_STRM_JITTER=1 (test only): widen the count->pointer window */"
+     ]
+    },
+    {
+     "at": 173,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_credit0(void); if (lean_strm_check_on) lean_strm_credit0(); }   /* credit from count 0 */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014B520",
+   "src": "7484b778b5b60cf5",
+   "dst": "22f7bbd50cc27303",
+   "generated_like": 3,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_LOCK=1 (diagnostic): STRM stream producer/consumer entries run",
+      " * under one host lock, as they never overlap on the single-CPU Xbox. */",
+      {
+       "s": 6,
+       "x": "static void sub_0014B520_body(void);"
+      },
+      "void sub_0014B520(void){extern int lean_strm_lock(void);extern void lean_strm_unlock(int);extern void lean_strm_op(uint32_t,int);int lk=lean_strm_lock();lean_strm_op(0x0014B520,0);sub_0014B520_body();lean_strm_op(0x0014B520,1);lean_strm_unlock(lk);}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0014B520_body"
+      }
+     ]
+    },
+    {
+     "at": 11,
+     "del": 0,
+     "ins": [
+      "    int lean_fix_held = 0; /* LEAN_STRM_FIX */"
+     ]
+    },
+    {
+     "at": 33,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_reader(uint32_t,uint32_t); if (lean_strm_check_on) lean_strm_reader(ebx, ebp); }   /* record reader + STRM object for the freeze dump */",
+      "    /* LEAN HAND FIX (LEAN_STRM_FIX=1, lean only): the original reads the credited",
+      "     * count [r+8] and next-packet pointer [r+0xC] before taking the stream lock.",
+      "     * The I/O worker (0x14B660 -> parser 0x14AD20) stores count, then pointer, under",
+      "     * that lock; on a multi-core PC this thread could see the new count with the",
+      "     * old pointer, return a consumed packet and walk stale ring memory (Paris ~91 s",
+      "     * freeze). Take the game's own lock (0x14A520, obj+4) first and re-check. */",
+      "    { extern int lean_strm_fix_on(void);",
+      "      if (lean_strm_fix_on()) {",
+      "        PUSH32(esp, ebp + 4); PUSH32(esp, 0x0014B53Au); RECOMP_ABI_CALL(0x0014A520u, sub_0014A520); esp += 4;",
+      "        lean_fix_held = 1;",
+      {
+       "s": 33,
+       "p": 4,
+       "x": "    if (MEM32(ebx + 8) == 0) {"
+      },
+      "          PUSH32(esp, ebp + 4); PUSH32(esp, 0x0014B53Au); RECOMP_ABI_CALL(0x0014A530u, sub_0014A530); esp += 4;",
+      "          { extern int lean_strm_check_on; extern void lean_strm_dry(void); if (lean_strm_check_on) lean_strm_dry(); }   /* dry poll, counted in the fix path too */",
+      "          lean_fix_held = 0; goto loc_0014B541; } } }"
+     ]
+    },
+    {
+     "at": 37,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_dry(void); if (lean_strm_check_on) lean_strm_dry(); }   /* dry poll (count 0) */"
+     ]
+    },
+    {
+     "at": 47,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_stale(uint32_t,uint32_t,uint32_t,uint32_t,uint32_t,uint32_t);",
+      "      if (lean_strm_check_on) lean_strm_stale(eax, MEM32(eax), MEM32(eax + 4), MEM32(ebx + 4), MEM32(ebx + 8), MEM32(ebx)); }"
+     ]
+    },
+    {
+     "at": 62,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_negative(int32_t); if (lean_strm_check_on && (int32_t)edi < 0) lean_strm_negative((int32_t)edi); }"
+     ]
+    },
+    {
+     "at": 66,
+     "del": 0,
+     "ins": [
+      "    if (lean_fix_held) { PUSH32(esp, ebp); PUSH32(esp, 0x0014B573u); RECOMP_ABI_CALL(0x0014A530u, sub_0014A530); esp += 4; lean_fix_held = 0; }"
+     ]
+    },
+    {
+     "at": 97,
+     "del": 0,
+     "ins": [
+      "    { /* LEAN loop probe (diagnostic): the Paris ~90 s freeze spins here. Log the block chain once. */",
+      "      static unsigned long long lean_spin; extern void lean_loop_probe(uint32_t,uint32_t,uint32_t,uint32_t);",
+      "      if (++lean_spin == 1000000ull) lean_loop_probe(ecx, edx, ebx, MEM32(esp + 0x18)); }",
+      "    { extern int lean_strm_check_on; extern void lean_strm_check(uint32_t,uint32_t,uint32_t,uint32_t);",
+      "      if (lean_strm_check_on) lean_strm_check(ecx, MEM32(ecx), MEM32(ecx + 4), MEM32(esp + 0x10)); }"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014B660",
+   "src": "133e7740d04bd0e7",
+   "dst": "7a1e8bddfbeac15b",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_LOCK=1 (diagnostic): STRM stream producer/consumer entries run",
+      " * under one host lock, as they never overlap on the single-CPU Xbox. */",
+      {
+       "s": 6,
+       "x": "static void sub_0014B660_body(void);"
+      },
+      "void sub_0014B660(void){extern int lean_strm_lock(void);extern void lean_strm_unlock(int);extern void lean_strm_op(uint32_t,int);int lk=lean_strm_lock();lean_strm_op(0x0014B660,0);sub_0014B660_body();lean_strm_op(0x0014B660,1);lean_strm_unlock(lk);}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0014B660_body"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014B730",
+   "src": "48433e624b56afad",
+   "dst": "88cd119b1c079efd",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 56,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_rdstop(uint32_t,uint32_t); if (lean_strm_check_on) lean_strm_rdstop(esi, MEM32(esi + 0x60)); }   /* where rd stopped */"
+     ]
+    },
+    {
+     "at": 232,
+     "del": 1,
+     "ins": [
+      "    if ((lean_flags_hit(47)), eax == 0) goto loc_0014B88E; /* je after and/inc eax FLAGS: was the never-set _flags fallback */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014B9F0",
+   "src": "a266d145eb75c4f3",
+   "dst": "27779946f8be2c4c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_LOCK=1 (diagnostic): STRM stream producer/consumer entries run",
+      " * under one host lock, as they never overlap on the single-CPU Xbox. */",
+      {
+       "s": 6,
+       "x": "static void sub_0014B9F0_body(void);"
+      },
+      "void sub_0014B9F0(void){extern int lean_strm_lock(void);extern void lean_strm_unlock(int);extern void lean_strm_op(uint32_t,int);int lk=lean_strm_lock();lean_strm_op(0x0014B9F0,0);sub_0014B9F0_body();lean_strm_op(0x0014B9F0,1);lean_strm_unlock(lk);}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0014B9F0_body"
+      }
+     ]
+    },
+    {
+     "at": 50,
+     "del": 0,
+     "ins": [
+      "    { extern int lean_strm_check_on; extern void lean_strm_release(uint32_t,uint32_t); if (lean_strm_check_on) lean_strm_release(eax, MEM32(eax + 4)); }   /* packet released */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014BA80",
+   "src": "4e586bd4c8f79669",
+   "dst": "e4a77aa07a085b07",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_LOCK=1 (diagnostic): STRM stream producer/consumer entries run",
+      " * under one host lock, as they never overlap on the single-CPU Xbox. */",
+      {
+       "s": 6,
+       "x": "static void sub_0014BA80_body(void);"
+      },
+      "void sub_0014BA80(void){extern int lean_strm_lock(void);extern void lean_strm_unlock(int);extern void lean_strm_op(uint32_t,int);int lk=lean_strm_lock();lean_strm_op(0x0014BA80,0);sub_0014BA80_body();lean_strm_op(0x0014BA80,1);lean_strm_unlock(lk);}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0014BA80_body"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014BCB0",
+   "src": "0d46ad6ea16c5b16",
+   "dst": "ac6c12b2bb870437",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 1,
+     "ins": [
+      "/* LEAN_STRM_LOCK=1 (diagnostic): STRM stream producer/consumer entries run",
+      " * under one host lock, as they never overlap on the single-CPU Xbox. */",
+      {
+       "s": 6,
+       "x": "static void sub_0014BCB0_body(void);"
+      },
+      "void sub_0014BCB0(void){extern int lean_strm_lock(void);extern void lean_strm_unlock(int);extern void lean_strm_op(uint32_t,int);int lk=lean_strm_lock();lean_strm_op(0x0014BCB0,0);sub_0014BCB0_body();lean_strm_op(0x0014BCB0,1);lean_strm_unlock(lk);}",
+      {
+       "s": 6,
+       "q": 6,
+       "x": "static void sub_0014BCB0_body"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014C800",
+   "src": "475ed8c5efd075b1",
+   "dst": "98852fff25809f87",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 6,
+     "del": 0,
+     "ins": [
+      "/* 0x14C800 loops until the worker delivers data: not wrapped by LEAN_STRM_LOCK. */"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014D130",
+   "src": "b33c27c2aa5b8f7e",
+   "dst": "7fed58c6dc3c2817",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 91,
+     "del": 0,
+     "ins": [
+      "    driving_movie_frame178(ebp, eax, esp);"
+     ]
+    },
+    {
+     "at": 98,
+     "del": 0,
+     "ins": [
+      "    driving_movie_probe144(0x0014D1C8u, ebp, 0, esp);"
+     ]
+    }
+   ]
+  },
+  {
+   "file": "recomp_0013.c",
+   "block": "0x0014D420",
+   "src": "1e4213f581a3b239",
+   "dst": "3890a1f58727415c",
+   "generated_like": 0,
+   "hunks": [
+    {
+     "at": 40,
+     "del": 1,
+     "ins": [
+      "    nightfire_memory_barrier(); /* PAL 0014D452 WBINVD: host ordering only, not GPU completion */"
+     ]
+    }
+   ]
+  }
+ ]
+}
