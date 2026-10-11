@@ -20,6 +20,7 @@ workshop it copies the engines the workshop last built instead. Its
 | `Setup.cmd` | Set-up: builds both engines from the game files (or copies the workshop's), links the game files, checks the PAL hashes |
 | `Play Nightfire.cmd` | The whole game, Action and Driving linked in one window, with the PC settings |
 | `Play Nightfire (Fullscreen).cmd` | The same, borderless fullscreen |
+| `Play Nightfire (All Missions).cmd` | The same with every mission open in the mission menu (`--all-missions`) |
 | `Split-screen Multiplayer.cmd` | Starts at the menus, set up for up to four players on one PC |
 | `Debug/` | Full logging, the F9 picture recorder, Smooth Motion off, two windows, skipping the opening drive, split-screen variants and the lockstep record/replay test |
 | `engine/launcher/nightfire.py` | The launcher behind all of them (`--mode play` or `--mode debug`) |

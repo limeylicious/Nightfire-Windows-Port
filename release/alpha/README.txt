@@ -35,9 +35,11 @@ PLAYING
 -------
   Play Nightfire.cmd               The whole game in one window, from the opening Paris drive.
   Play Nightfire (Fullscreen).cmd  The same, borderless fullscreen.
+  Play Nightfire (All Missions).cmd
+                                   The whole game with every mission open in the mission menu.
+                                   Without it, missions open in the original order as you finish
+                                   them (Paris Prelude, The Exchange, Alpine Escape, ...).
   Split-screen Multiplayer.cmd     Starts at the menus, set up for up to four players on this PC.
-                                   This is the tested split-screen setup, which uses the older
-                                   sound path.
 
 Close the game window to stop. The black launcher window behind the game then asks for a key
 press to close.
@@ -76,7 +78,10 @@ KNOWN ISSUES
   "Debug\Debug - Smooth Motion Off.cmd" shows the car levels without it.
 - Online multiplayer does NOT work yet. The Online pages are there and Host Game runs on this
   PC only; Find Games and Join by IP are not active yet.
-- Split-screen with the new sound has not been tried yet (it is in the Debug folder).
+- Since 11 October the missions always use the new sound (the emulated sound chip is gone).
+  Split-screen has not been played with it yet.
+- Only Paris Prelude has been played in the Driving engine so far. The other car levels
+  (Alpine Escape, Enemies Vanquished, Deep Descent, Island Infiltration) are untested.
 - On-screen button prompts still show Xbox buttons, even when you use the keyboard.
 - Controller rumble is off.
 - The game runs slower on battery: plug the laptop in.

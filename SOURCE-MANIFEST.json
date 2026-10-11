@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 966,
+  "file_count": 967,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -5993,8 +5993,8 @@
       "path": "release/alpha/README.txt",
       "source": "releases/Nightfire-PC-Alpha/README.txt",
       "group": "release-alpha",
-      "bytes": 5650,
-      "sha256": "137574411ffa1d65fa7ad6ca1d63b8ebc8db07f9e9359cb316f22d6b39e8219f"
+      "bytes": 6061,
+      "sha256": "e10863ba3f254c7ec6ebe1c6d2d82691a79db308aa92823d6eb5b2762ef9c4bf"
     },
     {
       "path": "release/alpha/Setup.cmd",
@@ -6028,8 +6028,8 @@
       "path": "release/alpha/engine/action/start-action.cmd",
       "source": "releases/Nightfire-PC-Alpha/engine/action/start-action.cmd",
       "group": "release-alpha",
-      "bytes": 6664,
-      "sha256": "683272663550719cab1a5c4f21286c6f097a3c4048e058d248b6fb96e0993871"
+      "bytes": 7061,
+      "sha256": "9e20370026934b5ad78873241f86dff38b4e76328bc58f7777347cf42548751f"
     },
     {
       "path": "release/alpha/engine/driving/base-environment-paris.json",
@@ -6070,8 +6070,8 @@
       "path": "release/alpha/engine/launcher/nightfire.py",
       "source": "releases/Nightfire-PC-Alpha/engine/launcher/nightfire.py",
       "group": "release-alpha",
-      "bytes": 11831,
-      "sha256": "7ddacb8598a14eb18c84370fe02da494137926ce3dd91fbfe701ab1f1032a2d5"
+      "bytes": 12245,
+      "sha256": "2c502ab10919f609decd2bc3b0b8d3f0e26eb7fa4b78d3d7d5e16259f18ce1d2"
     },
     {
       "path": "release/alpha/engine/launcher/one_window_host.py",
@@ -6765,6 +6765,13 @@
       "group": "native-action",
       "bytes": 13461,
       "sha256": "a9eb621998792f411c43d1ec410b4865593c1c43a3e570e384c5fc31868acd7e"
+    },
+    {
+      "path": "release/alpha/Play Nightfire (All Missions).cmd",
+      "source": "releases/Nightfire-PC-Alpha/Play Nightfire (All Missions).cmd",
+      "group": "release-alpha",
+      "bytes": 438,
+      "sha256": "cf81cf6a269cc4ead8e56f1d3da3435aa1fc6a51e17dfb7f079aa53a7fedada8"
     }
   ]
 }

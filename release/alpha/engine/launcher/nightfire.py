@@ -16,7 +16,7 @@ One window by default (one_window_host.py): both engines draw inside it.
 
 Usage: python nightfire.py [--mode play|debug] [--fullscreen] [--two-windows]
                            [--skip-opening-drive] [--split-screen | --split-screen-sound]
-                           [--record] [--smooth-off]
+                           [--record] [--smooth-off] [--all-missions]
   --skip-opening-drive  start at the Action menus (the opening Paris drive is bypassed)
   --split-screen        up to four players on this PC (controllers 1-3 = players 2-4;
                         F6 moves keyboard+mouse to the next player, F5 back); implies
@@ -25,6 +25,8 @@ Usage: python nightfire.py [--mode play|debug] [--fullscreen] [--two-windows]
   --split-screen-sound  the same with the Action engine's own new sound (not tried in split-screen yet)
   --record              Driving keeps the last 72 pictures; F9 saves them (debug)
   --smooth-off          Driving's Smooth Motion off (pictures only at game steps)
+  --all-missions        every mission open in the mission menu (default: the original progression
+                        from the player's saves); needs an Action engine built after 10 October 2026
 Writes engine/linked-sessions/<stamp>/steps.txt; each engine keeps its own session folder
 (engine/action/sessions, engine/driving/sessions) with crash.txt / crash.dmp / freeze.txt.
 Old session folders are pruned (newest 10 kept in play mode, 30 in debug mode).
@@ -172,6 +174,7 @@ def main():
     p.add_argument('--split-screen-sound', action='store_true')
     p.add_argument('--record', action='store_true')
     p.add_argument('--smooth-off', action='store_true')
+    p.add_argument('--all-missions', action='store_true')
     a = p.parse_args()
     if not setup_done():
         return 1
@@ -180,6 +183,8 @@ def main():
     os.environ['NF_OVERLAY'] = '1'   # F10 settings, PC Graphics / Options pages, key binds, Local/Online pages
     if a.record:
         os.environ['NF_RECORD'] = '1'
+    if a.all_missions:
+        os.environ['NF_ALPHA_MISSIONS'] = 'all'   # start-action.cmd: NIGHTFIRE_MENU_MISSIONS139=all
     if a.split_screen or a.split_screen_sound:   # the workshop's show-nightfire-native-4pads.cmd settings
         a.skip_opening_drive = True
         os.environ.update(NF_PADS='4', NF_VIRTUAL_PADS='3')
@@ -191,7 +196,7 @@ def main():
     hand.mkdir(parents=True)
     log = (hand / 'steps.txt').open('a', buffering=1)
     log.write(f'mode {a.mode}; options: ' + ' '.join(k for k in ('fullscreen', 'two_windows', 'skip_opening_drive',
-              'split_screen', 'split_screen_sound', 'record', 'smooth_off') if getattr(a, k))
+              'split_screen', 'split_screen_sound', 'record', 'smooth_off', 'all_missions') if getattr(a, k))
               + (f' NF_KEYBOARD_PLAYER={os.environ["NF_KEYBOARD_PLAYER"]}' if os.environ.get('NF_KEYBOARD_PLAYER') else '') + '\n')
     print(f'Nightfire PC alpha ({a.mode} mode). Session notes: {hand}')
     global HOST_HWND
