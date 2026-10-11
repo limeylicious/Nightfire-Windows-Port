@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import PurePosixPath
@@ -45,6 +46,10 @@ RELEASE_GROUPS = {
 REPO_GROUPS = {
     'regen': ('native/regen/', 'native/action/regen/', 'native/driving/regen/'),
 }
+# Groups whose rows may carry 'reword' (owner's decision, 2026-10-11): a few workspace comments
+# name the owner; the export replaces those whole lines, matched by number and SHA-256, so
+# nothing in this repository names anyone.
+REWORD_GROUPS = {'native-action', 'native-driving'}
 ALLOWED_SUFFIXES = {'.c', '.h', '.inc', '.py', '.cmd', '.txt', '.md', '.json', '.cmake'}
 SECRET = re.compile(
     rb'[A-Z]:[\\/]+Users[\\/]+|/' rb'Users/[^/\s]+/|/' rb'home/[^/\s]+/|'
@@ -89,6 +94,24 @@ def check_text(name: str, data: bytes) -> None:
         raise ValueError(f'private path or credential pattern: {name}')
 
 
+def apply_rewording(row: dict, data: bytes) -> bytes:
+    """Replace each listed source line (1-based, matched by SHA-256 without its line ending)."""
+    edits = row.get('reword')
+    if not edits:
+        return data
+    lines = data.split(b'\n')
+    for edit in edits:
+        index = edit['line'] - 1
+        if not 0 <= index < len(lines):
+            raise ValueError(f'reword line out of range: {row["path"]}')
+        old = lines[index]
+        end = b'\r' if old.endswith(b'\r') else b''
+        if hashlib.sha256(old.removesuffix(b'\r')).hexdigest() != edit['sha256']:
+            raise ValueError(f'reworded line changed since review: {row["source"]}')
+        lines[index] = edit['text'].encode('utf-8') + end
+    return b'\n'.join(lines)
+
+
 def read_allowlist(data: bytes) -> list[dict]:
     config = json.loads(data)
     if config.get('schema') != 'reviewed-source-export-v2':
@@ -102,6 +125,14 @@ def read_allowlist(data: bytes) -> list[dict]:
             raise ValueError(f'duplicate/reserved destination: {destination}')
         seen.add(destination)
         group = row['group']
+        if 'reword' in row:
+            edits = row['reword']
+            if (group not in REWORD_GROUPS or not isinstance(edits, list) or not edits
+                    or any(set(edit) != {'line', 'sha256', 'text'} or type(edit['line']) is not int
+                           or not re.fullmatch(r'[0-9a-f]{64}', str(edit['sha256']))
+                           or not isinstance(edit['text'], str) or re.search(r'[\r\n]', edit['text'])
+                           for edit in edits)):
+                raise ValueError(f'invalid reword: {destination}')
         if group == 'normal-source':
             if source != destination or not source.startswith(('nightfire-port/', 'nightfire-driving/')):
                 raise ValueError(f'invalid normal source mapping: {destination}')

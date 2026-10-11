@@ -2,7 +2,7 @@
   "scope": "strict source-only export; no game assets or generated game translations",
   "schema": "reviewed-source-export-v2",
   "through_checkpoint": 510,
-  "file_count": 950,
+  "file_count": 954,
   "files": [
     {
       "path": "experiments/driving-510/runtime/compile_compat.h",
@@ -6653,6 +6653,34 @@
       "group": "regen",
       "bytes": 2506,
       "sha256": "a7e11dd01a6513a8275e40653ea39245188984636cceff3804adcd17da0d07cc"
+    },
+    {
+      "path": "native/action/runtime/lean/lean_present.inc",
+      "source": "nightfire-port-native/runtime/lean/lean_present.inc",
+      "group": "native-action",
+      "bytes": 23589,
+      "sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_present.inc",
+      "source": "nightfire-driving-native/runtime/lean/lean_present.inc",
+      "group": "native-driving",
+      "bytes": 23589,
+      "sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/action/runtime/nightfire_pacer93.h",
+      "source": "nightfire-port-native/runtime/nightfire_pacer93.h",
+      "group": "native-action",
+      "bytes": 1542,
+      "sha256": "f52c2d6e2428714fef7076172ca6b0edf117b182247bf8ce1a6ce699954e0b1d"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_gpu.c",
+      "source": "nightfire-driving-native/runtime/lean/lean_gpu.c",
+      "group": "native-driving",
+      "bytes": 36918,
+      "sha256": "ba38ca6de5627ba1000ee3cc70b8719923f19ce32555a3e89680661af91bc97d"
     }
   ]
 }

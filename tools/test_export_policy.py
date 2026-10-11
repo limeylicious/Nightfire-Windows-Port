@@ -1,10 +1,11 @@
 """Boundary tests for the export gate; never reads or copies game files."""
+import hashlib
 import json
 import sys
 import unittest
 
 sys.dont_write_bytecode = True
-from export_policy import check_text, read_allowlist, relative_name
+from export_policy import apply_rewording, check_text, read_allowlist, relative_name
 
 
 class ExportPolicyTests(unittest.TestCase):
@@ -117,6 +118,27 @@ class ExportPolicyTests(unittest.TestCase):
                 ('nightfire-port-native/regen/recipe.json', 'native/action/regen/recipe.json')):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 read_allowlist(data(dict(source=source, path=path, group='regen')))
+
+    def test_reword(self):
+        def data(row):
+            return json.dumps(dict(schema='reviewed-source-export-v2', files=[row])).encode()
+        old = b'/* named comment */'
+        edit = dict(line=2, sha256=hashlib.sha256(old).hexdigest(), text='/* reworded comment */')
+        row = dict(source='nightfire-port-native/runtime/a.c', path='native/action/runtime/a.c',
+                   group='native-action', reword=[edit])
+        read_allowlist(data(row))
+        self.assertEqual(apply_rewording(row, b'int a;\r\n' + old + b'\r\nint b;\r\n'),
+                         b'int a;\r\n/* reworded comment */\r\nint b;\r\n')
+        with self.assertRaises(ValueError):
+            apply_rewording(row, b'int a;\n/* changed comment */\n')
+        with self.assertRaises(ValueError):
+            apply_rewording(row, b'int a;')
+        for bad in (dict(row, group='regen', source=row['path']),
+                    dict(row, reword=[dict(edit, text='two\nlines')]),
+                    dict(row, reword=[dict(edit, sha256='x')]),
+                    dict(row, reword=[dict(edit, extra=1)]), dict(row, reword=[])):
+            with self.assertRaises(ValueError):
+                read_allowlist(data(bad))
 
 
 if __name__ == '__main__':

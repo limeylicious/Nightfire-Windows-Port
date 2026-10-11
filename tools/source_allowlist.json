@@ -5702,6 +5702,58 @@
       "source": "native/driving/regen/own/driving_dev_start240.c.txt",
       "group": "regen",
       "reviewed_sha256": "a7e11dd01a6513a8275e40653ea39245188984636cceff3804adcd17da0d07cc"
+    },
+    {
+      "path": "native/action/runtime/lean/lean_present.inc",
+      "source": "nightfire-port-native/runtime/lean/lean_present.inc",
+      "group": "native-action",
+      "reword": [
+        {
+          "line": 143,
+          "sha256": "f3c91b79da1079a123b1f989c3a6cf6d7bd2d483fcde4b1d9df299ea88af1cc3",
+          "text": " * TV/video-capture tone curve of the owner's console reference, where g of about"
+        }
+      ],
+      "reviewed_sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_present.inc",
+      "source": "nightfire-driving-native/runtime/lean/lean_present.inc",
+      "group": "native-driving",
+      "reword": [
+        {
+          "line": 143,
+          "sha256": "f3c91b79da1079a123b1f989c3a6cf6d7bd2d483fcde4b1d9df299ea88af1cc3",
+          "text": " * TV/video-capture tone curve of the owner's console reference, where g of about"
+        }
+      ],
+      "reviewed_sha256": "2ed2cbc14a7639e4cabfe5758874dc7ba10a1fde85336efb549c74a4969b0d57"
+    },
+    {
+      "path": "native/action/runtime/nightfire_pacer93.h",
+      "source": "nightfire-port-native/runtime/nightfire_pacer93.h",
+      "group": "native-action",
+      "reword": [
+        {
+          "line": 11,
+          "sha256": "c9c913fef4cd572c40c25be4e95ba5bce0fdab28f35c8a350b74d7514e215e49",
+          "text": "/* 2026-10-08 (the owner approved for all Action builds): a frame that started late only because"
+        }
+      ],
+      "reviewed_sha256": "f52c2d6e2428714fef7076172ca6b0edf117b182247bf8ce1a6ce699954e0b1d"
+    },
+    {
+      "path": "native/driving/runtime/lean/lean_gpu.c",
+      "source": "nightfire-driving-native/runtime/lean/lean_gpu.c",
+      "group": "native-driving",
+      "reword": [
+        {
+          "line": 357,
+          "sha256": "2bab785cfd1f55d38fc062b55d54896d9be1a8250a80d70411a1a58eafd0e52a",
+          "text": "static void vis_init(void){if(vis_mode>=0)return;const char*e=getenv(\"LEAN_VIS_TEST\");vis_mode=!e?1:!strcmp(e,\"0\")?0:!strcmp(e,\"visible\")?2:1;   /* default ON (2026-10-07, the owner approved after the vehicle test: 1576 tests answered, level completed) */"
+        }
+      ],
+      "reviewed_sha256": "ba38ca6de5627ba1000ee3cc70b8719923f19ce32555a3e89680661af91bc97d"
     }
   ]
 }

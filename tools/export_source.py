@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.dont_write_bytecode = True
-from export_policy import REPO_GROUPS, check_text, read_allowlist
+from export_policy import REPO_GROUPS, apply_rewording, check_text, read_allowlist
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
                 if current.is_symlink() or (hasattr(current, 'is_junction') and current.is_junction()):
                     raise ValueError(f'linked path: {entry["path"]}')
                 current = current.parent
-        data = source.read_bytes()
+        data = apply_rewording(entry, source.read_bytes())
         check_text(entry['path'], data)
         digest = hashlib.sha256(data).hexdigest()
         if digest != entry['reviewed_sha256']:
