@@ -48,9 +48,9 @@ repository, which Git ignores):
 The owner's build folders use some files that this repository publishes once, under
 `nightfire-port/`, `nightfire-driving/` or `experiments/driving-510/`. `trees.json` maps each
 of them to its place in the build folder. Every mapping was checked byte for byte against the
-owner's build folders on 2026-10-11. `required` names a file the build cannot do without
-that the source may not have yet: Action's `nds_out.c` is published once the Action build's
-own sound output replaces the xemu-derived one.
+owner's build folders on 2026-10-11. When one of those files changes in a build folder, the
+new version goes under `native/<engine>/` and its mapping is removed (Setup stops if a file is
+in both places).
 
 Nothing generated from the game is ever written outside the workshop, and nothing in this
 folder holds game code.

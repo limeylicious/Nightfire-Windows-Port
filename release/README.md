@@ -29,7 +29,5 @@ workshop it copies the engines the workshop last built instead. Its
 Play mode keeps the crash and freeze reports but leaves out the sound
 recording, frame counter and picture dumps; debug mode keeps everything.
 
-The public build needs one more change before it can make the Action engine:
-the Action build still compiles a sound file adapted from xemu, which stays off
-GitHub, until its own sound output replaces it. Setup says so and stops before
-building when that file is missing.
+Since 2026-10-11 both engines build from this repository alone: the Action
+engine's own sound output replaced the last file that could not be published.

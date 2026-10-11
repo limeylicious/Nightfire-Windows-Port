@@ -49,8 +49,10 @@ static int nds_on(void) { return 0; }
 static void nds_chip_probe_start(void) {}
 static void nightfire_fast_calls_init(void) {}
 #endif
+#ifndef NIGHTFIRE_NO_SOUND_CHIP   /* set for native builds: no emulated sound chip (CMakeLists.txt) */
 extern MCPXAPUState *g_apu_state;
 extern bool apu_hook_handle_mmio(PCONTEXT, uintptr_t, uint32_t, int);
+#endif
 
 /* xboxrecomp runtime headers */
 #include <xbox/xboxrecomp.h>
@@ -181,6 +183,7 @@ static LONG CALLBACK veh_handler(PEXCEPTION_POINTERS ep)
     }
     if (ep->ExceptionRecord->ExceptionCode == EXCEPTION_ACCESS_VIOLATION) {
         uintptr_t fault_addr = ep->ExceptionRecord->ExceptionInformation[1];
+#ifndef NIGHTFIRE_NO_SOUND_CHIP
         uint64_t guest_fault = (uint64_t)fault_addr - (uint64_t)g_xbox_mem_offset;
         if (g_apu_state && guest_fault >= 0xFE800000u && guest_fault < 0xFE880000u) {
             if (apu_hook_handle_mmio(ep->ContextRecord, fault_addr,
@@ -189,6 +192,7 @@ static LONG CALLBACK veh_handler(PEXCEPTION_POINTERS ep)
                 return EXCEPTION_CONTINUE_EXECUTION;
             fprintf(stderr, "[APU] Unsupported host MMIO instruction; preserving fault.\n");
         }
+#endif
 
 
         /*
@@ -331,9 +335,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     }
 
     nightfire_fast_calls_init();   /* before any guest code runs */
+#ifdef NIGHTFIRE_NO_SOUND_CHIP
+    /* No emulated sound chip in this build: our own DirectSound (nds_action.c) answers
+     * every DirectSound call, so the chip's registers stay plain memory, never trapped
+     * (a trap here would have nothing to answer it). */
+    if (getenv("RECOMP_AC97_READY")) {
+        _putenv_s("RECOMP_AC97_READY", "");
+        fprintf(stderr, "[APU] RECOMP_AC97_READY ignored: this build has no emulated sound chip.\n");
+    }
+#else
     /* Enable both codec-ready status and trapped APU registers. Native sound
      * (NIGHTFIRE_NATIVE_SOUND=1) answers DirectSound itself: no APU, no trap. */
     if (!nds_on()) _putenv_s("RECOMP_AC97_READY", "1");
+#endif
     printf("Initializing Xbox memory layout...\n");
     if (!xbox_MemoryLayoutInit(xbe_data, xbe_size)) {
         MessageBoxA(NULL, "Failed to initialize Xbox memory layout.\n"
@@ -346,6 +360,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     g_xbox_mem_offset = xbox_GetMemoryOffset();
     printf("Xbox memory mapped. Offset: 0x%llX\n", (unsigned long long)g_xbox_mem_offset);
 
+#ifdef NIGHTFIRE_NO_SOUND_CHIP
+    fprintf(stderr, "[APU] none: this build has no emulated sound chip; our own DirectSound plays all sound.\n");
+#else
     /* Audio's DMA allocations use the separate contiguous arena. The APU
      * accesses its physical offsets, not the low guest image/heap window. */
     if (nds_on()) fprintf(stderr, "[APU] Not started: native sound answers DirectSound (NIGHTFIRE_NATIVE_SOUND=1).\n");
@@ -359,6 +376,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     }
     if (g_apu_state) nds_chip_probe_start();
     if (g_apu_state) fprintf(stderr, "[APU] Connected MMIO and contiguous DMA memory; DSP programs remain stubbed.\n");
+#endif
 
     /* Step 3: Initialize Xbox kernel */
     printf("Initializing Xbox kernel replacement...\n");
@@ -431,8 +449,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     /* Cleanup */
     xbox_kernel_shutdown();
+#ifndef NIGHTFIRE_NO_SOUND_CHIP
     if (g_apu_state) mcpx_apu_shutdown(g_apu_state);
     g_apu_state = NULL;
+#endif
     xbox_MemoryLayoutShutdown();
     free(xbe_data);
 

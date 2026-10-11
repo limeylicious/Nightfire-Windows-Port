@@ -2,14 +2,12 @@
  "note": [
   "Files each engine's build folder needs beyond native/<engine>/: the same files the owner's",
   "build folders use, published once under nightfire-port/, nightfire-driving/ or",
-  "experiments/driving-510/ (identical bytes, checked 2026-10-11). 'required' names files the",
-  "build cannot do without that this copy of the source may not have yet."
+  "experiments/driving-510/ (identical bytes, checked 2026-10-11)."
  ],
  "action": {
   "shared": {
    "runtime/gpu144/nightfire_vertex_program.h": "nightfire-driving/runtime/gpu144/nightfire_vertex_program.h",
    "runtime/kernel_file.c": "nightfire-port/runtime/kernel_file.c",
-   "runtime/kernel_path.c": "nightfire-port/runtime/kernel_path.c",
    "runtime/kernel_thunks.c": "nightfire-port/runtime/kernel_thunks.c",
    "runtime/nightfire_ack_backoff136.h": "nightfire-port/runtime/nightfire_ack_backoff136.h",
    "runtime/nightfire_audio_spatial.h": "nightfire-port/runtime/nightfire_audio_spatial.h",
@@ -62,10 +60,7 @@
    "runtime/nv2a_pb_scan.c": "nightfire-port/runtime/nv2a_pb_scan.c",
    "runtime/renderer/CMakeLists.txt": "nightfire-port/runtime/renderer/CMakeLists.txt",
    "src/nightfire_diagnostics.h": "nightfire-port/src/nightfire_diagnostics.h"
-  },
-  "required": [
-   "runtime/native_action/nds_out.c"
-  ]
+  }
  },
  "driving": {
   "shared": {

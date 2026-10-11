@@ -1566,6 +1566,14 @@ int lean_d3d_surface_at(uint32_t va,uint32_t *base,unsigned *w,unsigned *h,unsig
 /* NF_OVERLAY=1: F10 settings menu and window-sized presentation (lean_overlay.inc). */
 #include "lean_overlay.inc"
 /* Direct3D presentation into the game window (shares dev, ctx and rts). */
+#define lean_d3d_present lean_d3d_present_shown   /* wrapped below for online play */
 #include "lean_present.inc"
+#undef lean_d3d_present
+/* NIGHTFIRE_LOCKSTEP=1 / online play (runtime/native_action/nf_lockstep.c): every picture the game
+ * shows counts, so a movie or loading loop that only shows pictures moves the game clock the same
+ * way on every PC. nd3d_draw.c calls this once per picture without pixels, then again with pixels
+ * when asked (-1); only the first call counts. nf_lockstep_present returns at once otherwise. */
+void nf_lockstep_present(void);
+int lean_d3d_present(uint32_t va,const uint32_t *pixels){if(!pixels)nf_lockstep_present();return lean_d3d_present_shown(va,pixels);}
 /* In-between frames (LEAN_INTERP=1): recorded here, replayed on its own thread. */
 #include "lean_interp.inc"

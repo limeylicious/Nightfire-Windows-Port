@@ -236,9 +236,6 @@ def tree_files(engine, trees):
             raise SystemExit(f'trees.json lists {rel}, which native/{engine} already has')
         out[rel] = REPO / src
     missing = [rel for rel, src in out.items() if not src.is_file()]
-    for rel in trees[engine].get('required', []):
-        if rel not in out:
-            missing.append(rel)
     if missing:
         raise SystemExit(f'The {engine} build needs files this copy of the source does not have:\n  '
                          + '\n  '.join(sorted(missing)))

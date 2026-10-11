@@ -313,7 +313,9 @@ static DWORD WINAPI frame_thread(LPVOID unused)
         if(now-rate_time>=1000) {
             char title[220];
             const char *preview=getenv("NIGHTFIRE_MENU_PREVIEW");
-            snprintf(title,sizeof title,"Nightfire%s | %.1f FPS | Frame %u | WASD move | %s | Enter pause",
+            const char *label=getenv("NF_WINDOW_LABEL");   /* online launchers: which copy or player this window is */
+            snprintf(title,sizeof title,"Nightfire%s%s%s | %.1f FPS | Frame %u | WASD move | %s | Enter pause",
+                     label && *label ? " - " : "",label && *label ? label : "",
                      preview && !strcmp(preview,"1") ? " MENU PREVIEW (opening drive skipped)" : "",
                      (completed-rate_frames)*1000.0/(now-rate_time),completed,mouse_captured?"Mouse look / Esc release":"Click/F1 mouse look");
             nf_host_title(window,title);rate_frames=completed;rate_time=now;

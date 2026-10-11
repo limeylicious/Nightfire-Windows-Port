@@ -625,6 +625,7 @@ void orig_sub_00095A80(void);
 int nightfire_menu_mouse_take(int *x, int *y, int *w, int *h, int *left, int *right, int *wheel);
 void nightfire_menu_press(unsigned buttons);
 int nf_overlay_client_to_game(int x, int y, int w, int h, int *gx, int *gy);
+int nf_lockstep_on(void);   /* nf_lockstep.c: lockstep test / online play */
 static volatile ULONGLONG g_menu_tick;
 
 int nf_menu_active(void)
@@ -712,7 +713,9 @@ void sub_00095A80(void)
         static uint32_t last; uint32_t pid = G32(page + 0x18u);
         if (pid != last) { last = pid; fprintf(stderr, "[NF-MOUSE] menu page 0x%08X on screen (mouse active)\n", pid); }
         g_menu_tick = GetTickCount64();
-        mouse_step(ms, page);
+        /* Lockstep / online: the pointer would move the menu cursor on this PC only, so the
+         * copies would part; menus go by keyboard and controller there. */
+        if (!nf_lockstep_on()) mouse_step(ms, page);
     } else if (ms && page && G32(ms + 0x1C0u) == page) {   /* the second page slot (pop-ups?): diagnostics only */
         static uint32_t last2; uint32_t pid = G32(page + 0x18u);
         if (pid != last2) { last2 = pid; fprintf(stderr, "[NF-MOUSE] second page 0x%08X updated (pointer not used there yet)\n", pid); }

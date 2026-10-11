@@ -50,11 +50,18 @@ endif()
 set(XBOXRECOMP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../xboxrecomp" CACHE PATH "Pinned xboxrecomp checkout")
 option(NIGHTFIRE_CONSUMER135 "Compile bounded shared-memory consumer census (no ownership changes)" OFF)
 add_subdirectory("${XBOXRECOMP_DIR}" "${CMAKE_BINARY_DIR}/xboxrecomp")
+# Sound in native builds (NIGHTFIRE_NATIVE_D3D): our own DirectSound (runtime/native_action/nds_*.c)
+# and XAudio2 output (runtime/lean/nf_audio_out.c) are the only sound path. The toolkit's emulated
+# sound chip (xbox_apu, from xemu) and the DirectSound layer built on it (xbox_dsound) are neither
+# built nor linked (src/main.c and nds_action.c see NIGHTFIRE_NO_SOUND_CHIP).
+if(NIGHTFIRE_NATIVE_D3D)
+    set_target_properties(xbox_apu xbox_dsound PROPERTIES EXCLUDE_FROM_ALL TRUE)
+endif()
 option(NIGHTFIRE_ACK_BACKOFF136 "Compile opt-in idle backoff for the simulated graphics ACK thread" OFF)
 if(NIGHTFIRE_ACK_BACKOFF136)
     target_compile_definitions(xbox_kernel PRIVATE NIGHTFIRE_ACK_BACKOFF136)
 endif()
-if(NIGHTFIRE_CONSUMER135)
+if(NIGHTFIRE_CONSUMER135 AND NOT NIGHTFIRE_NATIVE_D3D)
     # Keep the pinned checkout untouched. The generated local APU source retains
     # its original LGPL notice; one read-only call is inserted per APU branch.
     set(apu135_original "${XBOXRECOMP_DIR}/src/apu/apu_core.c")
@@ -78,6 +85,8 @@ if(NIGHTFIRE_CONSUMER135)
     target_sources(xbox_apu PRIVATE "${CMAKE_BINARY_DIR}/nightfire_apu_core135.c")
     target_include_directories(xbox_apu PRIVATE "${XBOXRECOMP_DIR}/src/apu" "${CMAKE_CURRENT_SOURCE_DIR}/runtime")
     target_compile_definitions(xbox_apu PRIVATE NIGHTFIRE_CONSUMER135)
+endif()
+if(NIGHTFIRE_CONSUMER135)
     target_compile_definitions(xbox_kernel PRIVATE NIGHTFIRE_CONSUMER135)
 endif()
 # Use the audited local import-scanner correction without editing the toolkit.
@@ -122,7 +131,8 @@ file(GLOB GENERATED CONFIGURE_DEPENDS "src/recomp/gen/*.c")
 list(FILTER GENERATED EXCLUDE REGEX "(^|/)nightfire_thread_check\\.c$")
 add_executable(nightfire_diagnostic src/main.c src/recomp_manual.c runtime/nightfire_video_audio.c runtime/nightfire_input.c $<TARGET_OBJECTS:nightfire_observer_runtime> ${GENERATED})
 # NIGHTFIRE_LOCKSTEP=1 (off by default): frame-counted game clocks, press record/replay, state hashes.
-target_sources(nightfire_diagnostic PRIVATE runtime/native_action/nf_lockstep.c)
+# NF_NET=host|join (off by default): online play over UDP (nf_net.c, Winsock only).
+target_sources(nightfire_diagnostic PRIVATE runtime/native_action/nf_lockstep.c runtime/native_action/nf_net.c)
 target_sources(nightfire_diagnostic PRIVATE runtime/nightfire_flight_recorder116.c runtime/nightfire_flight_host116.c)
 # Checkpoint 242: play-session crash capture (diagnostic; off unless NIGHTFIRE_SESSION242=1).
 target_sources(nightfire_diagnostic PRIVATE runtime/nightfire_session242.c)
@@ -134,7 +144,20 @@ set(NIGHTFIRE_HOST_EXE_NAME "nightfire_diagnostic" CACHE STRING "Executable base
 set_target_properties(nightfire_diagnostic PROPERTIES OUTPUT_NAME "${NIGHTFIRE_HOST_EXE_NAME}")
 target_include_directories(nightfire_diagnostic PRIVATE src src/recomp src/recomp/gen "${XBOXRECOMP_DIR}/include")
 target_compile_definitions(nightfire_diagnostic PRIVATE WIN32_LEAN_AND_MEAN NOMINMAX NIGHTFIRE_CHECK_THREAD_CONTEXT NIGHTFIRE_TRACE_HOST_COPY NIGHTFIRE_VIDEO_MAPPING NIGHTFIRE_NATIVE_VIDEO_AUDIO_HOOKS NIGHTFIRE_NATIVE_INPUT_HOOKS NIGHTFIRE_SYNC_GPU)
-target_link_libraries(nightfire_diagnostic PRIVATE xboxrecomp d3d11 d3dcompiler dxgi dxguid xinput winmm dbghelp user32 gdi32 advapi32)
+if(NIGHTFIRE_NATIVE_D3D)
+    # The toolkit libraries without the emulated sound chip and its DirectSound layer (the umbrella
+    # target would pull both in). src/main.c includes xboxrecomp.h, which still names their headers
+    # (dsound_xbox.h, apu.h): their folders stay on the include path, in the same place, for those
+    # declarations only. XAudio2 for our own output was formerly pulled in with the chip.
+    add_library(nightfire_sound_headers INTERFACE)
+    get_target_property(nightfire_dsound_include xbox_dsound INTERFACE_INCLUDE_DIRECTORIES)
+    get_target_property(nightfire_apu_include xbox_apu INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(nightfire_sound_headers INTERFACE ${nightfire_dsound_include} ${nightfire_apu_include})
+    target_link_libraries(nightfire_diagnostic PRIVATE xbox_kernel xbox_d3d8 nightfire_sound_headers xbox_input xbox_usb xbox_nv2a xbox_video xaudio2 ole32)
+else()
+    target_link_libraries(nightfire_diagnostic PRIVATE xboxrecomp)
+endif()
+target_link_libraries(nightfire_diagnostic PRIVATE d3d11 d3dcompiler dxgi dxguid xinput winmm dbghelp user32 gdi32 advapi32 ws2_32)
 if(MSVC)
     target_compile_options(nightfire_diagnostic PRIVATE /bigobj)
     # Keep incremental host-audio symbols separate from the generated-code PDB.
@@ -151,10 +174,13 @@ option(NIGHTFIRE_NATIVE_D3D "Build the native D3D library and the Direct3D 11 re
 if(NIGHTFIRE_NATIVE_D3D)
     file(GLOB ND3D_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/runtime/native/*.c")
     set(ND3D_RENDERER runtime/lean/lean_d3d.c runtime/lean/lean_sampler.c runtime/native_action/nd3d_action_host.c runtime/native_action/nd3d_action_up.c
-        runtime/native_action/nds_action.c runtime/native_action/nds_action_glue.c runtime/native_action/nds_out.c runtime/native_action/nds_dsp.c runtime/native_action/nds_chip_probe.c runtime/native_action/nf_fast_calls.c
+        runtime/native_action/nds_action.c runtime/native_action/nds_action_glue.c runtime/native_action/nds_out.c runtime/native_action/nds_dsp.c runtime/native_action/nf_fast_calls.c
         runtime/native_action/pcg_menu.c)   # PC Graphics page (NF_OVERLAY=1), scripts/pcg_menu_rename.py
     target_sources(nightfire_diagnostic PRIVATE ${ND3D_SOURCES} ${ND3D_RENDERER})
     target_include_directories(nightfire_diagnostic PRIVATE runtime/native runtime/lean runtime/gpu144 "${XBOXRECOMP_DIR}/src" "${XBOXRECOMP_DIR}/src/d3d")
     target_compile_definitions(nightfire_diagnostic PRIVATE NIGHTFIRE_NATIVE_D3D=1 NIGHTFIRE_NATIVE_SOUND_AVAILABLE=1)
     set_source_files_properties(${ND3D_SOURCES} ${ND3D_RENDERER} PROPERTIES COMPILE_OPTIONS "/O2")
+    # No emulated sound chip (see xbox_apu above). Only the two files that test it get the define,
+    # so the generated code keeps its compile line and is not rebuilt.
+    set_source_files_properties(src/main.c runtime/native_action/nds_action.c PROPERTIES COMPILE_DEFINITIONS NIGHTFIRE_NO_SOUND_CHIP=1)
 endif()
