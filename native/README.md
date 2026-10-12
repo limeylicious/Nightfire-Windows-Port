@@ -52,8 +52,14 @@ The launchers and set-up of the first alpha test are in
 - **Online play** (first version, not yet tried between two PCs):
   `action/runtime/native_action/nf_net.c` sends only controller presses
   between PCs over UDP and runs the same match on each, using the lockstep
-  clocks. `action/show-nightfire-native-online.cmd` hosts or joins a match;
-  `-online-two-copies.cmd` runs two copies on one PC.
+  clocks. `action/show-nightfire-native-online.cmd` opens a lobby (host, or
+  join from the local network list or by IP address); `-online-two-copies.cmd`
+  runs two copies on one PC. Each online copy keeps its saves in its own
+  `online\saves` folder (`action/runtime/kernel_path.c`) and shows only its
+  own player full-screen: the Smooth Motion replay
+  (`action/runtime/lean/lean_interp.inc`) leaves out the other players' views
+  and enlarges this one, so the game's own pictures, and the match, stay
+  identical on every PC.
 - **Fixes applied after code generation:** `driving/scripts/nf_frndint_fix.py`
   makes translated `frndint` honour the x87 rounding mode (the Paris
   grappling-hook fix). `action/scripts/nf_rcr_fix.py` replaces the diagnostic

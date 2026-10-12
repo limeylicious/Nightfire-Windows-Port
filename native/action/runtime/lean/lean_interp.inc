@@ -17,6 +17,12 @@
  * disturbed; only ExecuteCommandList and Present run on the display thread.
  * The game's own surfaces are never written by the replay.
  *
+ * Each draw keeps its split-screen clip (the game's window clip, lean_d3d.c). Online,
+ * when this PC shows one view of a split screen, the replay draws only that view, over
+ * the whole picture (lean_d3d.c ov_place), a 2D draw part by part (ov_split: the game draws
+ * several players' HUD parts in one draw); the game's own picture still has every view,
+ * so every PC's game stays the same.
+ *
  * Interface (portable to another renderer):
  *   interp_rec_draw / interp_rec_clear / interp_rec_blit  - record one op
  *   interp_end_frame(scanout texture)                       - frame finished
@@ -42,6 +48,8 @@ typedef struct IOp {
     UINT topo;ID3D11Texture2D *ct,*dt;UINT vw,vh;
     UINT stride,nverts,nidx;size_t voff,ioff,coff;
     uint64_t key;int match;
+    int sc;D3D11_RECT scr;               /* draw: the split-screen clip (o->rs clips when sc), stored pixels */
+    OVDraw ov;                           /* own view on the whole screen (lean_d3d.c ov_place); clears: ov.pic */
     /* clear */
     float col[4];float zv;UINT sv,flags,cmask;D3D11_RECT rect;int full;
     /* blit */
@@ -148,9 +156,12 @@ static ID3D11ShaderResourceView *if_snapshot(IFrame *f,ID3D11ShaderResourceView 
 static void interp_rec_draw(ID3D11VertexShader *vs,ID3D11InputLayout *il,ID3D11PixelShader *ps,int sprite,
         ID3D11ShaderResourceView *const *srv,ID3D11SamplerState *const *smp,ID3D11BlendState *bs,const float *bf,
         ID3D11DepthStencilState *dss,UINT sref,ID3D11RasterizerState *rs,UINT topo,RT *color,RT *depth,UINT vw,UINT vh,
-        UINT stride,UINT voff,UINT nverts,UINT ioff,UINT nidx,const float *vconst,const float *pconst){
+        UINT stride,UINT voff,UINT nverts,UINT ioff,UINT nidx,const float *vconst,const float *pconst,int sc,D3D11_RECT scr,const OVDraw *ov){
     uint64_t rt0=iqpc();
     IOp *o=if_op();if(!o)return;IFrame *f=&ifr[if_rec];
+    o->sc=sc;o->scr=scr;o->ov=*ov;o->ov.g=NULL;
+    if(ov->ng&&ov->ng!=255){uint8_t *q=if_alloc(f,ov->ng*sizeof(OVGroup));   /* its parts (own view) */
+        if(q){memcpy(q,ov->g,ov->ng*sizeof(OVGroup));o->ov.gofs=(uint32_t)(q-f->mem);}else o->ov.ng=0;}
     o->kind=0;o->crows=interp_cur_cmask;o->prows=interp_cur_prows;o->vs=vs;o->il=il;o->ps=ps;o->sprite=sprite;o->bs=bs;memcpy(o->bf,bf,16);o->dss=dss;o->sref=sref;o->rs=rs;o->topo=topo;
     for(unsigned k=0;k<4;k++){o->srv[k]=if_snapshot(f,srv[k]);o->smp[k]=smp[k];
         }
@@ -167,8 +178,9 @@ static void interp_rec_draw(ID3D11VertexShader *vs,ID3D11InputLayout *il,ID3D11P
     k=hash_words((uint32_t[]){topo,nidx,(uint32_t)sprite},3,k);o->key=k;
     ist.rec_ticks+=iqpc()-rt0;
 }
-static void interp_rec_clear(RT *c,RT *z,UINT flags,const float *col,float zv,UINT sv,UINT cmask,int full,D3D11_RECT r,UINT vw,UINT vh){
+static void interp_rec_clear(RT *c,RT *z,UINT flags,const float *col,float zv,UINT sv,UINT cmask,int full,D3D11_RECT r,UINT vw,UINT vh,int pic){
     IOp *o=if_op();if(!o)return;
+    memset(&o->ov,0,sizeof o->ov);o->ov.pic=(uint8_t)pic;
     o->kind=1;o->ct=c?c->tex:NULL;o->dt=z?z->tex:NULL;
     o->flags=flags;memcpy(o->col,col,16);o->zv=zv;o->sv=sv;o->cmask=cmask;o->full=full;o->rect=r;o->vw=vw;o->vh=vh;
 }
@@ -485,11 +497,16 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
      * empty): consecutive draws mostly share targets, shaders, textures and
      * render states, so only changes are issued. LEAN_INTERP_STATECACHE=0: all. */
     static int sc_on=-1;if(sc_on<0){const char *v=getenv("LEAN_INTERP_STATECACHE");sc_on=!(v&&v[0]=='0');}
-    struct {int valid,srv_bound;void *rtv,*dsv,*il,*vs,*gs,*ps,*bs,*dss,*rs;ID3D11ShaderResourceView *srv[4];ID3D11SamplerState *smp[4];float bf[4];UINT sref,vw,vh,topo;} rc;
+    struct {int valid,srv_bound,scr_ok;void *rtv,*dsv,*il,*vs,*gs,*ps,*bs,*dss,*rs;ID3D11ShaderResourceView *srv[4];ID3D11SamplerState *smp[4];float bf[4];UINT sref,topo;D3D11_VIEWPORT vp;D3D11_RECT scr;} rc;
     memset(&rc,0,sizeof rc);
+    /* Own view on the whole screen (online, lean_d3d.c ov_place): this PC's one view, picture pixels */
+    uint16_t ovR[4]={0,0,0,0};int ovon=0;
+    if(ov_full){LONG64 v=nfo_view_now();if(v){ovR[0]=(uint16_t)(v&0xffff);ovR[1]=(uint16_t)(v>>16&0xffff);ovR[2]=(uint16_t)(v>>32&0xffff);ovR[3]=(uint16_t)(v>>48&0xffff);ovon=1;}}
+    {static int said;if(ovon&&!said){said=1;LOG("[NF-VIEW] replay: this PC's view %u,%u to %u,%u fills the screen; the other views are left out\n",ovR[0],ovR[1],ovR[2],ovR[3]);}}
+    unsigned ovn[8]={0,0,0,0,0,0,0,0};   /* draws into the picture (parts of split draws) by ov_place's answer (0-5); clears left out; split draws */
     #define RC_UNBIND() do{if(rc.srv_bound){ID3D11ShaderResourceView *none_[4]={0};ID3D11DeviceContext_PSSetShaderResources(dc,0,4,none_);memset(rc.srv,0,sizeof rc.srv);rc.srv_bound=0;}}while(0)
     for(unsigned i=0;i<f->nops;i++){IOp *o=&f->ops[i];
-        if(o->kind!=0){RC_UNBIND();rc.valid=0;}
+        if(o->kind!=0){RC_UNBIND();rc.valid=0;rc.scr_ok=0;}
         if(o->kind==0){
             unsigned slot=j++;
             Shadow *cs=o->ct?shadow_for(o->ct,1):NULL,*zs=o->dt?shadow_for(o->dt,1):NULL;
@@ -497,7 +514,19 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
             if(!rtv&&!dsv)continue;
             if(!sc_on)rc.valid=0;
             if(!rc.valid||rc.rtv!=(void*)rtv||rc.dsv!=(void*)dsv){RC_UNBIND();ID3D11DeviceContext_OMSetRenderTargets(dc,1,&rtv,dsv);rc.rtv=rtv;rc.dsv=dsv;}
-            if(!rc.valid||rc.vw!=o->vw||rc.vh!=o->vh){D3D11_VIEWPORT vp={0,0,(float)o->vw,(float)o->vh,0,1};ID3D11DeviceContext_RSSetViewports(dc,1,&vp);rc.vw=o->vw;rc.vh=o->vh;}
+            /* The draw's parts: one (the draw as recorded, or placed whole by ov_place), or, split
+             * for this view (lean_d3d.c ov_split), each with its own viewport, clip and indices. */
+            D3D11_VIEWPORT pvp[OV_GROUPS];D3D11_RECT pscr[OV_GROUPS];UINT pio[OV_GROUPS],pn[OV_GROUPS],np=1;
+            pvp[0]=(D3D11_VIEWPORT){0,0,(float)o->vw,(float)o->vh,0,1};pscr[0]=o->scr;pio[0]=(UINT)o->ioff;pn[0]=o->nidx;
+            if(ovon&&o->ov.ng&&!memcmp(o->ov.R,ovR,sizeof ovR)){
+                if(o->ov.ng==255){ovn[0]++;continue;}   /* none of it this player's */
+                const OVGroup *g=(const OVGroup*)(f->mem+o->ov.gofs);np=o->ov.ng;ovn[7]++;
+                for(unsigned s=0;s<np;s++){if(g[s].kind<6)ovn[g[s].kind]++;ov_vpscr(&o->ov,ovR,g[s].m,o->vw,o->vh,&pvp[s],&pscr[s]);
+                    pio[s]=g[s].ioff==~0u?(UINT)o->ioff:g[s].ioff;pn[s]=g[s].nidx;}}
+            else if(ovon){float m[4],q[4];int cl=0,pl=ov_place(&o->ov,ovR,m,q,&cl);
+                if(o->ov.pic&&pl>=0&&pl<6)ovn[pl]++;
+                if(!pl)continue;   /* another player's view */
+                if(pl>=2)ov_vpscr(&o->ov,ovR,m,o->vw,o->vh,&pvp[0],&pscr[0]);}
             ID3D11ShaderResourceView *srv[4];
             for(unsigned k=0;k<4;k++){srv[k]=o->srv[k];
                 ID3D11Resource *res=srv[k]?srv_resource(srv[k]):NULL;
@@ -535,7 +564,6 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
             UINT vofs=(UINT)o->voff;
             if(!rc.valid||rc.il!=(void*)o->il){ID3D11DeviceContext_IASetInputLayout(dc,o->il);rc.il=o->il;}
             {ID3D11Buffer *vbb=o->vbuf?o->vbuf:vb;ID3D11DeviceContext_IASetVertexBuffers(dc,0,1,&vbb,&o->stride,&vofs);}
-            ID3D11DeviceContext_IASetIndexBuffer(dc,ib,DXGI_FORMAT_R32_UINT,(UINT)o->ioff);
             if(!rc.valid||rc.topo!=o->topo){ID3D11DeviceContext_IASetPrimitiveTopology(dc,o->topo==1?D3D11_PRIMITIVE_TOPOLOGY_LINELIST:o->topo==2?D3D11_PRIMITIVE_TOPOLOGY_POINTLIST:D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);rc.topo=o->topo;}
             if(!rc.valid||rc.vs!=(void*)o->vs){ID3D11DeviceContext_VSSetShader(dc,o->vs,NULL,0);rc.vs=o->vs;}
             {void *gs=o->sprite?(void*)sprite_gs:NULL;if(!rc.valid||rc.gs!=gs){ID3D11DeviceContext_GSSetShader(dc,(ID3D11GeometryShader*)gs,NULL,0);rc.gs=gs;}}
@@ -550,19 +578,32 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
             if(!rc.valid||rc.bs!=(void*)o->bs||memcmp(rc.bf,o->bf,sizeof rc.bf)){ID3D11DeviceContext_OMSetBlendState(dc,o->bs,o->bf,0xffffffffu);rc.bs=o->bs;memcpy(rc.bf,o->bf,sizeof rc.bf);}
             if(!rc.valid||rc.dss!=(void*)o->dss||rc.sref!=o->sref){ID3D11DeviceContext_OMSetDepthStencilState(dc,o->dss,o->sref);rc.dss=o->dss;rc.sref=o->sref;}
             if(!rc.valid||rc.rs!=(void*)o->rs){ID3D11DeviceContext_RSSetState(dc,o->rs);rc.rs=o->rs;}
-            ID3D11DeviceContext_DrawIndexed(dc,o->nidx,0,0);
+            for(unsigned s=0;s<np;s++){
+                if(!rc.valid||memcmp(&rc.vp,&pvp[s],sizeof pvp[s])){ID3D11DeviceContext_RSSetViewports(dc,1,&pvp[s]);rc.vp=pvp[s];}
+                if(o->sc&&(!rc.valid||!rc.scr_ok||memcmp(&rc.scr,&pscr[s],sizeof pscr[s]))){ID3D11DeviceContext_RSSetScissorRects(dc,1,&pscr[s]);rc.scr=pscr[s];rc.scr_ok=1;}   /* the split-screen clip */
+                ID3D11DeviceContext_IASetIndexBuffer(dc,ib,DXGI_FORMAT_R32_UINT,pio[s]);
+                ID3D11DeviceContext_DrawIndexed(dc,pn[s],0,0);}
             rc.valid=1;if(!sc_on)RC_UNBIND();
             if(cs)cs->written=1;if(zs)zs->written=1;ist.draws++;
         }else if(o->kind==1){
+            D3D11_RECT rr=o->rect;int full=o->full;
+            if(ovon&&o->ov.pic&&!full&&o->vw&&o->vh){   /* own view on the whole screen: this view's clears cover it, the others' are left out */
+                uint16_t q[4]={(uint16_t)(rr.left*640/(LONG)o->vw),(uint16_t)(rr.top*480/(LONG)o->vh),(uint16_t)((rr.right*640+(LONG)o->vw-1)/(LONG)o->vw),(uint16_t)((rr.bottom*480+(LONG)o->vh-1)/(LONG)o->vh)};
+                float r[4];int pl=ov_place_clear(q,ovR,r);
+                if(!pl){ovn[6]++;continue;}
+                if(pl==2){float kx=o->vw/640.0f,ky=o->vh/480.0f;
+                    rr.left=(LONG)floorf(r[0]*kx);rr.top=(LONG)floorf(r[1]*ky);rr.right=(LONG)ceilf(r[2]*kx);rr.bottom=(LONG)ceilf(r[3]*ky);
+                    if(rr.left<0)rr.left=0;if(rr.top<0)rr.top=0;if(rr.right>(LONG)o->vw)rr.right=(LONG)o->vw;if(rr.bottom>(LONG)o->vh)rr.bottom=(LONG)o->vh;
+                    full=rr.left==0&&rr.top==0&&rr.right>=(LONG)o->vw&&rr.bottom>=(LONG)o->vh;}}
             Shadow *cs=o->ct?shadow_for(o->ct,1):NULL,*zs=o->dt?shadow_for(o->dt,1):NULL;
-            if(cs&&o->full&&o->cmask==15){ID3D11DeviceContext_ClearRenderTargetView(dc,cs->rtv,o->col);cs->written=1;cs=NULL;}
-            else if(cs&&dc1&&o->cmask==15){ID3D11DeviceContext1_ClearView(dc1,(ID3D11View*)cs->rtv,o->col,&o->rect,1);cs->written=1;cs=NULL;}
-            if(zs&&o->full){UINT fl=((o->flags&1)?D3D11_CLEAR_DEPTH:0)|((o->flags&2)?D3D11_CLEAR_STENCIL:0);ID3D11DeviceContext_ClearDepthStencilView(dc,zs->dsv,fl,o->zv,(UINT8)o->sv);zs->written=1;zs=NULL;}
+            if(cs&&full&&o->cmask==15){ID3D11DeviceContext_ClearRenderTargetView(dc,cs->rtv,o->col);cs->written=1;cs=NULL;}
+            else if(cs&&dc1&&o->cmask==15){ID3D11DeviceContext1_ClearView(dc1,(ID3D11View*)cs->rtv,o->col,&rr,1);cs->written=1;cs=NULL;}
+            if(zs&&full){UINT fl=((o->flags&1)?D3D11_CLEAR_DEPTH:0)|((o->flags&2)?D3D11_CLEAR_STENCIL:0);ID3D11DeviceContext_ClearDepthStencilView(dc,zs->dsv,fl,o->zv,(UINT8)o->sv);zs->written=1;zs=NULL;}
             if(!cs&&!zs)continue;
             ID3D11RenderTargetView *rtv=cs?cs->rtv:NULL;ID3D11DepthStencilView *dsv=zs?zs->dsv:NULL;
             ID3D11DeviceContext_OMSetRenderTargets(dc,1,&rtv,dsv);
             D3D11_VIEWPORT vp={0,0,(float)o->vw,(float)o->vh,0,1};ID3D11DeviceContext_RSSetViewports(dc,1,&vp);
-            ID3D11DeviceContext_RSSetScissorRects(dc,1,&o->rect);
+            ID3D11DeviceContext_RSSetScissorRects(dc,1,&rr);
             float cb[8]={o->col[0],o->col[1],o->col[2],o->col[3],o->zv,0,0,0};ID3D11DeviceContext_UpdateSubresource(dc,(ID3D11Resource*)rclear_cb,0,NULL,cb,0,0);
             ID3D11DeviceContext_IASetInputLayout(dc,NULL);ID3D11DeviceContext_IASetPrimitiveTopology(dc,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             ID3D11DeviceContext_VSSetShader(dc,clear_vs,NULL,0);ID3D11DeviceContext_VSSetConstantBuffers(dc,0,1,&rclear_cb);
@@ -586,6 +627,8 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
     }
     RC_UNBIND();
     #undef RC_UNBIND
+    {static unsigned nl;if(ovon&&nl<8&&(shadow_replays%120)==0){nl++;   /* how the picture's draws were placed (for checking ov_place) */
+        LOG("[NF-VIEW] replay: %u draws moved with the scene, %u as HUD parts, %u 2D parts placed with the scene, %u large 2D stretched, %u as drawn, %u left out (other views); %u clears left out; %u draws split per player\n",ovn[2],ovn[3],ovn[5],ovn[4],ovn[1],ovn[0],ovn[6],ovn[7]);}}
     /* what the window shows: the replayed scanout surface */
     ID3D11Texture2D *scan=f->scanout;Shadow *ss=scan?shadow_for(scan,0):NULL;
     ID3D11ShaderResourceView *ssrv=NULL;
@@ -595,7 +638,7 @@ static void replay_frame(IFrame *f,IFrame *p,float alpha,ID3D11Texture2D *back){
     if(scan&&!ssrv){if(cpu_srv_tex!=scan){if(cpu_srv)ID3D11ShaderResourceView_Release(cpu_srv);cpu_srv=NULL;
         ID3D11Device_CreateShaderResourceView(dev,(ID3D11Resource*)scan,NULL,&cpu_srv);cpu_srv_tex=scan;}ssrv=cpu_srv;}
     if(!scan)return;
-    if(nfo_enabled()){nfo_present(dc,back,ssrv);return;}   /* NF_OVERLAY (lean_overlay.inc) */
+    if(nfo_enabled()){nfo_view_full=ovon;nfo_present(dc,back,ssrv);nfo_view_full=0;return;}   /* NF_OVERLAY (lean_overlay.inc); own view: already on the whole picture */
     if(present_gamma>0&&present_gamma!=1.0f&&gamma_vs&&ssrv){
         ID3D11RenderTargetView *rtv=NULL;
         if(SUCCEEDED(ID3D11Device_CreateRenderTargetView(dev,(ID3D11Resource*)back,NULL,&rtv))){

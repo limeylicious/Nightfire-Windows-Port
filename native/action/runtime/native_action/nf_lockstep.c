@@ -99,7 +99,7 @@ static unsigned s_held_back;
 static int net_wanted(void)
 {
     const char *n = getenv("NF_NET");
-    return n && (!_stricmp(n, "host") || !_stricmp(n, "join"));
+    return n && (!_stricmp(n, "host") || !_stricmp(n, "join") || !_stricmp(n, "lobby"));
 }
 
 int nf_lockstep_on(void)
@@ -179,6 +179,24 @@ void nf_lockstep_present(void)
     s_present_frame = s_frames;
 }
 void nf_lockstep_set_audio_hook(void (*fn)(void)) { s_audio_hook = fn; }
+/* Online: this PC's players' game ports (first .. first + count - 1, counted from 0 as in
+ * nf_net_local_ports) and how many ports the match has (a PC that left keeps its ports), so
+ * the renderer can show only this PC's views of a split screen (lean_d3d.c ov_frame_done;
+ * NF_OWN_VIEW=0 shows the whole split screen). 0 offline, in local play and in a replay. */
+int nf_lockstep_view_ports(unsigned *first, unsigned *count, unsigned *total)
+{
+    static int want = -1;
+    if (want < 0) { const char *v = getenv("NF_OWN_VIEW"); want = !(v && v[0] == '0'); }
+    if (!want || !s_online || !nf_net_on()) return 0;
+    unsigned f0 = 0, n0 = 0, t = 0;
+    nf_net_local_ports(&f0, &n0);
+    for (int i = 0; i < NF_NET_PEERS; i++) {
+        unsigned f = 0, c = 0;
+        if (nf_net_peer(i, NULL, &f, &c, NULL, NULL) && f + c > t) t = f + c;
+    }
+    *first = f0; *count = n0; *total = t;
+    return n0 > 0 && f0 + n0 <= t && t >= 2;
+}
 
 uint64_t nf_lockstep_system_time(void) { return (uint64_t)(LS_FILETIME + ls_time()); }
 uint64_t nf_lockstep_interrupt_time(void) { return (uint64_t)ls_time(); }
@@ -258,7 +276,7 @@ static int local_only(const char *name, const char *value)
 {
     static const char *const names[] = { "NF_INPUT_RECORD", "NF_INPUT_REPLAY", "NF_STATE_HASH", "NF_KEYBOARD_PLAYER",
         "NIGHTFIRE_EXECUTABLE", "NIGHTFIRE_SESSION_STAMP", "NIGHTFIRE_SAVE_DIR", "LEAN_PRESENT_VSYNC", "RECOMP_WATCHDOG_SECS",
-        "NIGHTFIRE_HANG_SECS", "NIGHTFIRE_HANG_ARM", "LEAN_HANG_DUMP", "NF_ONLINE_SEAT", "NF_WINDOW_LABEL", NULL };
+        "NIGHTFIRE_HANG_SECS", "NIGHTFIRE_HANG_ARM", "LEAN_HANG_DUMP", "NF_ONLINE_SEAT", "NF_WINDOW_LABEL", "NF_OWN_VIEW", "LEAN_INTERP", NULL };
     static const char *const ends[] = { "_DIR", "_FILE", "_PATH", "_LOG", NULL };
     if (!_strnicmp(name, "NF_NET", 6)) return 1;
     for (int i = 0; names[i]; i++) if (!_stricmp(name, names[i])) return 1;
@@ -396,9 +414,12 @@ static void net_start(void)
     uint64_t build = ln && ln < sizeof exe ? file_hash(exe) : 0, game = file_hash("game_files\\default.xbe");
     fprintf(stderr, "[NETPLAY] build id %016llx (this exe), game id %016llx (game_files\\default.xbe)\n", (unsigned long long)build, (unsigned long long)game);
     nf_net_set_ids(build, game, settings_id());
-    InterlockedExchange(&s_joining, 1);
+    /* NF_NET=lobby: the lobby window is the joining window; this one is only for waits in the match */
+    const char *role = getenv("NF_NET");
+    int lobby = role && !_stricmp(role, "lobby");
+    if (!lobby) InterlockedExchange(&s_joining, 1);
     InterlockedExchange(&s_net_wait, 1);
-    HANDLE w = CreateThread(NULL, 0, wait_thread, NULL, 0, NULL);
+    HANDLE w = lobby ? NULL : CreateThread(NULL, 0, wait_thread, NULL, 0, NULL);
     int r = nf_net_init();
     s_frame_real = qpc();
     InterlockedExchange(&s_net_wait, 0);
@@ -408,21 +429,30 @@ static void net_start(void)
         fprintf(stderr, "[NETPLAY] match started: %d PCs; this PC's players are players %u-%u; input delay %u frames\n",
                 nf_net_peers(), first + 1, first + count, nf_net_delay());
         atexit(net_exit);
+        const char *lb = getenv("NF_WINDOW_LABEL");
+        if (lobby && !(lb && *lb)) {       /* the game window's title says which players this PC has */
+            char t[64];
+            if (count > 1) snprintf(t, sizeof t, "online, players %u-%u%s", first + 1, first + count, first == 0 ? " (host)" : "");
+            else snprintf(t, sizeof t, "online, player %u%s", first + 1, first == 0 ? " (host)" : "");
+            _putenv_s("NF_WINDOW_LABEL", t);
+        }
+        if (lobby) w = CreateThread(NULL, 0, wait_thread, NULL, 0, NULL);
     }
     InterlockedExchange(&s_joining, 0);
     if (w) { if (r != 1) WaitForSingleObject(w, 2000); CloseHandle(w); }
     if (r == 1) return;
     const char *st = nf_net_status();
-    fprintf(stderr, "[NETPLAY] could not start: %s\n", *st ? st : "see the [NF-NET] lines");
+    if (nf_net_cancelled()) fprintf(stderr, "[NETPLAY] the online lobby was closed, so the game closes\n");
+    else fprintf(stderr, "[NETPLAY] could not start: %s\n", *st ? st : "see the [NF-NET] lines");
     fflush(stderr);
-    if (!s_cancel) {
+    if (!s_cancel && !nf_net_cancelled()) {
         char text[600];
         snprintf(text, sizeof text, "Online play could not start:\n%s\n\nThe game will close. Details are in the log.",
                  *st ? st : "the network could not be opened (see the log).");
         MessageBoxA(NULL, text, "Nightfire Online", MB_OK | MB_ICONERROR | MB_TOPMOST | MB_SETFOREGROUND);
     }
     nf_net_shutdown();
-    ExitProcess(s_cancel ? 0 : 3);
+    ExitProcess(s_cancel || nf_net_cancelled() ? 0 : 3);
 }
 
 /* ---- input record / replay ------------------------------------------------ */

@@ -122,6 +122,19 @@ static volatile LONG nfo_save_due;
 static volatile LONG nfo_loaded;static SRWLOCK nfo_load_lock=SRWLOCK_INIT;
 static volatile float nfo_cur_k=1;      /* internal resolution in use (rt_render_scale), for the menu */
 static volatile LONG nfo_game_frames;   /* game frames shown (lean_d3d_present), for the frame counter */
+/* Own view (online play; Action's lean_d3d.c ov_frame_done sets it, nothing else does): the
+ * part of the 640x480 picture this PC's players see when the game splits the screen, packed
+ * x0 | y0<<16 | x1<<32 | y1<<48 in picture pixels, 0 = the whole picture. nfo_present shows
+ * only that part, as large as the window allows with its proportions kept. Once it has been
+ * set, F7 shows the whole split screen instead, and back (nfo_view_off). The game draws the
+ * same picture either way, at the same internal resolution: what it draws reaches the game
+ * (visibility tests, read-backs) and the PCs compare game memory, so it must not depend on the
+ * part a PC shows. */
+static volatile LONG64 nfo_view;
+static volatile LONG nfo_view_keys,nfo_view_off;
+static volatile LONG nfo_view_full;   /* lean_interp.inc replay_frame: this picture already shows the own view on the whole screen */
+static void nfo_view_set(LONG64 v){InterlockedExchange64(&nfo_view,v);if(!nfo_view_keys)InterlockedExchange(&nfo_view_keys,1);}
+static LONG64 nfo_view_now(void){return nfo_view_off?0:InterlockedCompareExchange64(&nfo_view,0,0);}
 
 static void nfo_path(char *out,size_t n){
     const char *base=getenv("LOCALAPPDATA");
@@ -343,6 +356,11 @@ static int nfo_key(HWND h,UINT m,WPARAM w,LPARAM l){
         return open?1:2;
     }
     if(hot)return 1;   /* the release too: no menu-bar activation, no stray key-up for the game */
+    if(nfo_view_keys&&w==VK_F7&&(m==WM_KEYDOWN||m==WM_KEYUP)){   /* own view or the whole split screen (online) */
+        if(m==WM_KEYDOWN&&!(l&(1<<30))){LONG off=!nfo_view_off;InterlockedExchange(&nfo_view_off,off);
+            LOG("[NF-VIEW] F7: %s\n",off?"the whole split screen":"this PC's own view");}
+        return 1;
+    }
     if(!open)return 0;
     if(nfo_page==1)return nfb_key(h,m,w,l);
     if(m==WM_KEYDOWN){
@@ -391,7 +409,7 @@ static int nfo_init_gpu(void){
     static const char hs[]=
         "cbuffer C:register(b0){float4 rect;float4 p;};Texture2D t:register(t0);SamplerState s:register(s0);\n"
         "struct V{float4 pos:SV_Position;float2 uv:TEXCOORD0;};\n"
-        "V vblit(uint i:SV_VertexID){V o;float2 q=float2((i<<1)&2,i&2);o.pos=float4(q*float2(2,-2)+float2(-1,1),0,1);o.uv=q;return o;}\n"
+        "V vblit(uint i:SV_VertexID){V o;float2 q=float2((i<<1)&2,i&2);o.pos=float4(q*float2(2,-2)+float2(-1,1),0,1);o.uv=rect.xy+q*(rect.zw-rect.xy);return o;}\n"
         "float4 pblit(V i):SV_Target{float3 c=t.Sample(s,i.uv).rgb;return float4(pow(saturate(c),p.x),1);}\n"
         "V vquad(uint i:SV_VertexID){V o;float2 q=float2(i&1,i>>1);o.pos=float4(lerp(rect.xy,rect.zw,q),0,1);o.uv=q;return o;}\n"
         "float4 pquad(V i):SV_Target{return float4(t.Sample(s,i.uv).rgb,p.y);}\n";
@@ -508,11 +526,18 @@ static void nfo_present(ID3D11DeviceContext *c,ID3D11Texture2D *back,ID3D11Shade
         if(W*9>H*16){vp.Width=floorf(H*16/9);vp.TopLeftX=floorf((W-vp.Width)/2);}
         else{vp.Height=floorf(W*9/16);vp.TopLeftY=floorf((H-vp.Height)/2);}
     }
+    float uv[4]={0,0,1,1};   /* the part of the picture drawn: all of it, or the own view (online) */
+    {LONG64 v=nfo_view_full?0:nfo_view_now();
+     if(v){float x0=(float)(v&0xffff),y0=(float)((v>>16)&0xffff),x1=(float)((v>>32)&0xffff),y1=(float)((v>>48)&0xffff);
+        float cw=vp.Width*(x1-x0)/640,ch=vp.Height*(y1-y0)/480;   /* its size in the whole picture as drawn above */
+        if(cw>=1&&ch>=1){float zoom=fminf(W/cw,H/ch);vp.Width=floorf(cw*zoom);vp.Height=floorf(ch*zoom);
+            vp.TopLeftX=floorf((W-vp.Width)/2);vp.TopLeftY=floorf((H-vp.Height)/2);
+            uv[0]=x0/640;uv[1]=y0/480;uv[2]=x1/640;uv[3]=y1/480;}}}
     ID3D11DeviceContext_RSSetViewports(c,1,&vp);ID3D11DeviceContext_RSSetState(c,nfo_rs);
     ID3D11DeviceContext_OMSetBlendState(c,nfo_bs_off,NULL,0xffffffffu);ID3D11DeviceContext_OMSetDepthStencilState(c,nfo_ds,0);
     ID3D11DeviceContext_IASetInputLayout(c,NULL);ID3D11DeviceContext_IASetPrimitiveTopology(c,D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     ID3D11DeviceContext_GSSetShader(c,NULL,NULL,0);
-    float cb[8]={0,0,0,0,nfo_bright_gamma[nfo_bright],1,0,0};
+    float cb[8]={uv[0],uv[1],uv[2],uv[3],nfo_bright_gamma[nfo_bright],1,0,0};
     ID3D11DeviceContext_UpdateSubresource(c,(ID3D11Resource*)nfo_cb,0,NULL,cb,0,0);
     ID3D11DeviceContext_VSSetShader(c,nfo_blit_vs,NULL,0);ID3D11DeviceContext_PSSetShader(c,nfo_blit_ps,NULL,0);
     ID3D11DeviceContext_VSSetConstantBuffers(c,0,1,&nfo_cb);ID3D11DeviceContext_PSSetConstantBuffers(c,0,1,&nfo_cb);

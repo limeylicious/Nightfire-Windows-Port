@@ -1037,8 +1037,9 @@ static void argb4(float *o,uint32_t v){o[0]=u8f(v,16);o[1]=u8f(v,8);o[2]=u8f(v,0
 /* lean_interp.inc (included at the end) */
 static int interp_enabled(void);
 static void interp_end_frame(ID3D11Texture2D *tex,ID3D11ShaderResourceView *srv);
-static void interp_rec_draw(ID3D11VertexShader*,ID3D11InputLayout*,ID3D11PixelShader*,int,ID3D11ShaderResourceView *const*,ID3D11SamplerState *const*,ID3D11BlendState*,const float*,ID3D11DepthStencilState*,UINT,ID3D11RasterizerState*,UINT,RT*,RT*,UINT,UINT,UINT,UINT,UINT,UINT,UINT,const float*,const float*);
-static void interp_rec_clear(RT*,RT*,UINT,const float*,float,UINT,UINT,int,D3D11_RECT,UINT,UINT);
+struct OVDraw;
+static void interp_rec_draw(ID3D11VertexShader*,ID3D11InputLayout*,ID3D11PixelShader*,int,ID3D11ShaderResourceView *const*,ID3D11SamplerState *const*,ID3D11BlendState*,const float*,ID3D11DepthStencilState*,UINT,ID3D11RasterizerState*,UINT,RT*,RT*,UINT,UINT,UINT,UINT,UINT,UINT,UINT,const float*,const float*,int,D3D11_RECT,const struct OVDraw*);
+static void interp_rec_clear(RT*,RT*,UINT,const float*,float,UINT,UINT,int,D3D11_RECT,UINT,UINT,int);
 static void interp_rec_blit(RT*,RT*,D3D11_BOX,UINT,UINT);
 static void interp_rec_stretch(RT*,RT*,D3D11_RECT,float,float,float,float);
 static float interp_vconst[192*4+12],interp_pconst[96];
@@ -1047,6 +1048,393 @@ static const int *interp_cur_prows;        /* its position-transform rows (VSE.p
 static int vis_active_flag(void);          /* a visibility test is counting (diagnostics) */
 static ID3D11Buffer *interp_cur_vb;        /* vertex buffer the current draw used (ring or cache) */
 int lean_d3d_vc_hit;                       /* written by runtime/native/nd3d_draw.c (shared with Driving, where the smooth replay reads it); unused here */
+/* Own view (online play): every PC runs the whole match, split screen included, so every PC
+ * draws every player's view and the PCs stay identical; each shows only its own players' part
+ * (ov_frame_done below, lean_overlay.inc nfo_present). The game's views are the window clips
+ * of the draws into the full-screen picture, collected here in 640x480 picture pixels for the
+ * frame being drawn (game thread). */
+static struct {unsigned n;uint16_t r[8][4];} ov_cur;
+static int ov_pic(const LeanTarget *t){return t->width>=640&&t->width*3==t->height*4;}   /* the full-screen picture */
+static int ov_note(const LeanTarget *t,LONG x0,LONG y0,LONG x1,LONG y1,uint16_t q[4]){
+    if(!ov_pic(t))return 0;
+    LONG sw=(LONG)(t->width*(t->aa_x?t->aa_x:1)),sh=(LONG)(t->height*(t->aa_y?t->aa_y:1));
+    LONG a=x0*640/sw,b=y0*480/sh,c=(x1*640+sw-1)/sw,e=(y1*480+sh-1)/sh;
+    if(c>640)c=640;if(e>480)e=480;if(a<0||b<0||c<=a||e<=b)return 0;
+    q[0]=(uint16_t)a;q[1]=(uint16_t)b;q[2]=(uint16_t)c;q[3]=(uint16_t)e;
+    for(unsigned i=0;i<ov_cur.n;i++)if(!memcmp(ov_cur.r[i],q,4*sizeof q[0]))return 1;
+    if(ov_cur.n<8)memcpy(ov_cur.r[ov_cur.n++],q,4*sizeof q[0]);
+    return 1;
+}
+/* Own view on the whole screen (online, Smooth Motion: lean_interp.inc replay_frame, which
+ * draws into its own copies of the surfaces, never the game's). When this PC shows one view,
+ * the replay leaves out the other players' views and draws this one over the whole picture:
+ * the 3D scene enlarged evenly about the view's centre to fill the screen, so a 2-player strip
+ * shows its middle part at the single-player shape; small 2D parts (HUD, text) moved to where
+ * the whole screen has them at their own size (ov_hud_map); large 2D parts (a full-view tint,
+ * blood) stretched with the view to the whole screen. Each draw into the picture records its
+ * clip and the box its vertices cover, in 640x480 picture pixels, and whether it is 3D;
+ * ov_place decides from these. 2D is told from the positions, not the depth test (the game
+ * draws its whole HUD with the depth test on): every vertex at w 1 (screen positions), or one
+ * w of 2^24 or more for the whole draw (this game's HUD: 16777216; its 3D stays below 2e6), or,
+ * without the depth test, one w for the whole draw. The game puts several players' HUD parts
+ * in one draw (both health bars, both crosshairs, both radars), so a 2D draw of triangles is
+ * split into its parts (ov_split): each part is placed on its own and the other players'
+ * parts are left out, drawn from index lists of their own (OVGroup). */
+typedef struct OVGroup {float m[4];uint32_t ioff,nidx;uint8_t kind;} OVGroup;   /* kind: ov_place's 1, 3, 4 or 5; ioff: bytes into the index ring, ~0u: the draw's own indices */
+#define OV_SCENE 4   /* runs of a draw placed with the scene, each where its own centre goes */
+#define OV_GROUPS (11+OV_SCENE)   /* the 9 thirds of the HUD area, stretched, as drawn, with the scene */
+typedef struct OVDraw {uint8_t pic,clip,bb,depth,ng;uint16_t c[4],b[4],R[4];uint32_t gofs;const OVGroup *g;} OVDraw;   /* depth: 3D; ng: parts placed for view R (255: none of them in it), at gofs in the recorded frame */
+static LONG64 nfo_view_now(void);   /* lean_overlay.inc: this PC's view (0: the whole picture) */
+static volatile LONG ov_full;   /* ov_frame_done: this PC has one view and it is shown */
+/* Vertices of draws from the vertex cache (d->gpu_vb; d->verts then holds another draw's): a
+ * copy of the small ones (lean_d3d_vcache_put, dropped in vc_drop; at most 8 MB). */
+#define OV_VC_SLOTS 4096
+static struct {const void *buf;void *data;unsigned bytes;} ov_vc[OV_VC_SLOTS];
+static unsigned ov_vc_slot(const void *buf){return (unsigned)(((uintptr_t)buf>>4)*2654435761u)%OV_VC_SLOTS;}
+static void ov_vc_drop(const void *buf){unsigned i=ov_vc_slot(buf);if(buf&&ov_vc[i].buf==buf){free(ov_vc[i].data);memset(&ov_vc[i],0,sizeof ov_vc[i]);}}
+static void ov_vc_keep(const void *buf,const void *data,unsigned bytes){
+    if(!buf||!data||!bytes||bytes>2048)return;
+    unsigned i=ov_vc_slot(buf);void *c=malloc(bytes);if(!c)return;memcpy(c,data,bytes);
+    free(ov_vc[i].data);ov_vc[i].buf=buf;ov_vc[i].data=c;ov_vc[i].bytes=bytes;
+}
+/* What ov_box found (for the [NF-VIEW-DRAW] lines). */
+typedef struct {int st;unsigned pc,cst,run;float w0,w1;} OVBox;   /* st: 0 box, 1 no vertices, 2 from the cache without a copy, 3 the program did not run, 4 not a number */
+#define OV_POS 1024
+static float ov_pos[OV_POS][2];static unsigned ov_npos;   /* each vertex's position (picture pixels) of the last 2D draw ov_box ran whole */
+static float ov_z[OV_POS];static uint32_t ov_col[OV_POS];   /* and its depth and its input colour (v3, 0 without one), for [NF-VIEW-TEXT] */
+/* The box the vertices cover, from the vertex program run on the CPU, and whether the draw is
+ * 3D. A clipped draw stops at the first vertex that shows it is 3D (its box is not needed). */
+static void ov_box(const LeanDraw *d,OVDraw *o,int ztest,OVBox *r){
+    memset(r,0,sizeof *r);ov_npos=0;
+    o->depth=(uint8_t)(ztest!=0);   /* until the positions say otherwise */
+    const float *verts=d->verts;
+    if(d->gpu_vb){unsigned i=ov_vc_slot(d->gpu_vb);verts=ov_vc[i].buf==d->gpu_vb?(const float*)ov_vc[i].data:NULL;
+        unsigned na=0;for(unsigned k=0;k<16;k++)if(d->mask&(1u<<k))na++;
+        if(verts&&ov_vc[i].bytes!=d->nverts*na*16u)verts=NULL;
+        if(!verts){r->st=2;return;}}
+    if(!verts||!d->nverts||!d->vp||!d->t.width||!d->t.height){r->st=1;return;}
+    /* Run as the GPU runs it (vp_hlsl): the program whatever the execution mode, every constant
+     * as it stands. nf_vp_run checks both, so they are set for the run and put back (game thread,
+     * which owns this state); it also writes its error fields and decode cache. */
+    NFVertexProgram *vp=(NFVertexProgram*)d->vp;unsigned mode=vp->mode;static uint32_t cv[192];
+    memcpy(cv,vp->constant_valid,sizeof cv);vp->mode=(mode&~3u)|2u;for(unsigned i=0;i<192;i++)vp->constant_valid[i]=15;
+    unsigned na=0;for(unsigned i=0;i<16;i++)if(d->mask&(1u<<i))na++;
+    /* Every vertex of a draw of up to OV_POS (its parts are placed one by one); of a longer one
+     * about 512 (every n-th, n not a multiple of 2 or 3, so the samples go round each quad's and
+     * triangle's corners), and the last one. */
+    unsigned step=d->nverts<=OV_POS?1:(d->nverts+511)/512;while(step>1&&(step%2==0||step%3==0))step++;
+    float in[16][4],out[16][4],x0=1e30f,y0=1e30f,x1=-1e30f,y1=-1e30f,w0=1e30f,w1=-1e30f;int ok=1,flat=1,onew=1,big=1;memset(in,0,sizeof in);
+    for(unsigned v=0;;v=v+step<d->nverts?v+step:d->nverts-1){const float *p=verts+(size_t)v*na*4;unsigned k=0;
+        for(unsigned i=0;i<16;i++)if(d->mask&(1u<<i)){memcpy(in[i],p+(size_t)k*4,16);k++;}
+        r->run++;
+        if(!nf_vp_run(vp,(const float(*)[4])in,out)){ok=0;r->st=3;r->pc=vp->error_pc;r->cst=vp->error_constant;break;}
+        float x=out[0][0],y=out[0][1],w=out[0][3];if(!(x==x&&y==y&&w==w)){ok=0;r->st=4;break;}
+        if(w<w0)w0=w;if(w>w1)w1=w;
+        if(fabsf(w-1.0f)>1e-3f)flat=0;   /* x, y are already on the screen; w is the perspective one */
+        if(w1-w0>1e-3f*fabsf(w1))onew=0;
+        if(w<1e7f)big=0;
+        if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;
+        if(step==1){ov_pos[v][0]=x*640/d->t.width;ov_pos[v][1]=y*480/d->t.height;ov_z[v]=out[0][2];uint32_t c=0;
+            if(d->mask&8u)for(int j=0;j<4;j++){float e=in[3][j]<0?0:in[3][j]>1?1:in[3][j];c|=(uint32_t)(e*255+0.5f)<<(j*8);}
+            ov_col[v]=c;}
+        if(o->clip&&!(flat||(big&&onew)||(!ztest&&onew)))break;   /* 3D: the box is not needed */
+        if(v==d->nverts-1)break;}
+    vp->mode=mode;memcpy(vp->constant_valid,cv,sizeof cv);
+    r->w0=w0;r->w1=w1;
+    if(!ok)return;
+    o->depth=(uint8_t)!(flat||(big&&onew)||(!ztest&&onew));
+    if(o->clip&&o->depth)return;
+    if(step==1&&r->run==d->nverts&&!o->depth)ov_npos=d->nverts;
+    float u0=x0*640/d->t.width,u1=x1*640/d->t.width,v0=y0*480/d->t.height,v1=y1*480/d->t.height;
+    if(u0<0)u0=0;if(v0<0)v0=0;if(u1>640)u1=640;if(v1>480)v1=480;if(u1<u0)u1=u0;if(v1<v0)v1=v0;
+    o->b[0]=(uint16_t)u0;o->b[1]=(uint16_t)v0;o->b[2]=(uint16_t)ceilf(u1);o->b[3]=(uint16_t)ceilf(v1);o->bb=1;
+}
+#define OV_IN(q,R) ((q)[0]+1>=(R)[0]&&(q)[1]+1>=(R)[1]&&(q)[2]<=(R)[2]+1&&(q)[3]<=(R)[3]+1)   /* inside, to a pixel */
+#define OV_SAME(q,R) (OV_IN(q,R)&&(q)[0]<=(R)[0]+1&&(q)[1]<=(R)[1]+1&&(q)[2]+1>=(R)[2]&&(q)[3]+1>=(R)[3])
+/* Where the whole screen has a split view's HUD parts. The game keeps its HUD inside the TV-safe
+ * area of the picture, 48 and 40 picture pixels in from its edges, and a split view's HUD inside
+ * the part of that area in the view: its edges on the screen's edges keep their margin, its edges
+ * between views have none (2 players: the top view's HUD in 40-240, the bottom one's in 240-440,
+ * every part of the bottom player's 200 lower). Per axis, a part in the first third of the
+ * view's HUD area keeps its distance from that area's low edge, one in the last third from its
+ * high edge, one in the middle from the view's centre (which goes to the screen's centre with
+ * the scene, so the crosshair stays on it), at size k (1 for a 2-player strip, 2 for a quarter).
+ * 2 players, top view: the top third stays, the middle moves down 120, the bottom third 200. */
+static const float ov_safe[4]={48,40,592,440};
+static void ov_area(float r0,float r1,float s0,float s1,float *h0,float *h1){*h0=r0>s0?r0:s0;*h1=r1<s1?r1:s1;if(*h1-*h0<8){*h0=r0;*h1=r1;}}
+static int ov_band(float c,float r0,float r1,float s0,float s1){float h0,h1;ov_area(r0,r1,s0,s1,&h0,&h1);float t=(c-h0)/(h1-h0);return t<1.0f/3?0:t>2.0f/3?2:1;}
+static void ov_hud_mapb(const uint16_t R[4],int bx,int by,float m[4]){   /* bx, by: the third, 0-2, per axis */
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]),sx=640/w,sy=480/h,k=sx<sy?sx:sy;
+    for(int a=0;a<2;a++){float r0=R[a],r1=R[a+2],s0=ov_safe[a],s1=ov_safe[a+2],P=a?480.0f:640.0f,h0,h1;int b=a?by:bx;
+        ov_area(r0,r1,s0,s1,&h0,&h1);
+        m[2*a]=k;m[2*a+1]=b==0?s0-h0*k:b==2?s1-h1*k:P*0.5f-(r0+r1)*0.5f*k;}
+}
+static void ov_hud_map(const uint16_t R[4],float cx,float cy,float m[4]){   /* a part with its centre at cx, cy */
+    ov_hud_mapb(R,ov_band(cx,R[0],R[2],ov_safe[0],ov_safe[2]),ov_band(cy,R[1],R[3],ov_safe[1],ov_safe[3]),m);
+}
+/* A draw's clip moved with it (picture pixels, into q): 1, or 0 when the draw is not clipped
+ * inside view R (then the whole picture). */
+static int ov_mapclip(const OVDraw *o,const uint16_t R[4],const float m[4],float q[4]){
+    if(!o->clip||OV_SAME(o->c,R))return 0;
+    q[0]=m[0]*o->c[0]+m[1];q[1]=m[2]*o->c[1]+m[3];q[2]=m[0]*o->c[2]+m[1];q[3]=m[2]*o->c[3]+m[3];return 1;
+}
+/* The replay's viewport and clip (stored pixels of a vw x vh surface) for a draw moved by m. */
+static void ov_vpscr(const OVDraw *o,const uint16_t R[4],const float m[4],UINT vw,UINT vh,D3D11_VIEWPORT *vp,D3D11_RECT *scr){
+    float kx=vw/640.0f,ky=vh/480.0f,q[4];
+    vp->TopLeftX=m[1]*kx;vp->Width=m[0]*(float)vw;vp->TopLeftY=m[3]*ky;vp->Height=m[2]*(float)vh;vp->MinDepth=0;vp->MaxDepth=1;
+    if(ov_mapclip(o,R,m,q)){scr->left=(LONG)floorf(q[0]*kx);scr->top=(LONG)floorf(q[1]*ky);scr->right=(LONG)ceilf(q[2]*kx);scr->bottom=(LONG)ceilf(q[3]*ky);
+        if(scr->left<0)scr->left=0;if(scr->top<0)scr->top=0;if(scr->right>(LONG)vw)scr->right=(LONG)vw;if(scr->bottom>(LONG)vh)scr->bottom=(LONG)vh;}
+    else{scr->left=0;scr->top=0;scr->right=(LONG)vw;scr->bottom=(LONG)vh;}
+}
+/* A small 2D part drawn in the view's own pass (clipped to the view: the crosshair, nametags over
+ * players, messages in the view), or without a clip in the middle of the view's HUD area (where
+ * the HUD has no parts of its own: a nametag over the player in the crosshair, a message), goes
+ * where the scene takes its centre (cx, cy), at its own size (k), so a nametag stays over its
+ * player. */
+static void ov_scene_map(const uint16_t R[4],float cx,float cy,float m[4]){
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]),sx=640/w,sy=480/h,s=sx>sy?sx:sy,k=sx<sy?sx:sy;
+    m[0]=k;m[1]=320+(cx-(R[0]+R[2])*0.5f)*s-cx*k;m[2]=k;m[3]=240+(cy-(R[1]+R[3])*0.5f)*s-cy*k;
+}
+static int ov_mid(const uint16_t R[4],float cx,float cy){   /* in the middle third of the view's HUD area, both ways */
+    return ov_band(cx,R[0],R[2],ov_safe[0],ov_safe[2])==1&&ov_band(cy,R[1],R[3],ov_safe[1],ov_safe[3])==1;
+}
+/* How the replay draws an op when view R (picture pixels) fills the screen. 0: not at all
+ * (another player's view), 1: as the game drew it (not the picture, over the whole picture, or
+ * across views), 2: moved with the scene, 3: a small 2D part moved, 4: a large 2D part stretched
+ * with the view, 5: a small 2D part of the view's own pass placed with the scene (ov_scene_map);
+ * moved: u -> m[0]*u+m[1], v -> m[2]*v+m[3], and *clip: also clipped to sc
+ * (picture pixels, already moved), else to the whole picture. A draw without a clip is placed
+ * by its box: inside this view it is part of this player's HUD (the ammo count), only in
+ * another view it is left out. A draw split into parts (o->ng) is placed part by part instead
+ * (ov_split; this is for one that could not be). */
+static int ov_place(const OVDraw *o,const uint16_t R[4],float m[4],float sc[4],int *clip){
+    *clip=0;
+    if(!o->pic)return 1;
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]);if(w<8||h<8)return 1;
+    float sx=640/w,sy=480/h,s=sx>sy?sx:sy,ba=o->bb?(float)(o->b[2]-o->b[0])*(float)(o->b[3]-o->b[1]):0;
+    int twod;
+    if(o->clip){if(!OV_IN(o->c,R))return 0;twod=!o->depth;}
+    else{if(!o->bb||ba>=640.0f*480.0f*0.8f)return 1;   /* area not known; a fade, a menu */
+        if(!OV_IN(o->b,R))return o->b[2]<=R[0]||o->b[0]>=R[2]||o->b[3]<=R[1]||o->b[1]>=R[3]?0:1;   /* in another view only: left out; across views: as drawn */
+        twod=1;}
+    int r;
+    float bw=o->bb?(float)(o->b[2]-o->b[0]):0,bh=o->bb?(float)(o->b[3]-o->b[1]):0;
+    int over=ba>=0.4f*w*h||bw>=0.9f*w||bh>=0.9f*h;   /* an overlay of the view: blood, a tint, the death curtain */
+    float bcx=(o->b[0]+o->b[2])*0.5f,bcy=(o->b[1]+o->b[3])*0.5f;
+    if(twod&&o->bb&&!over&&(o->clip?OV_SAME(o->c,R):ov_mid(R,bcx,bcy))){ov_scene_map(R,bcx,bcy,m);r=5;}
+    else if(twod&&o->bb&&!over){ov_hud_map(R,(o->b[0]+o->b[2])*0.5f,(o->b[1]+o->b[3])*0.5f,m);r=3;}   /* a small 2D part: where the whole screen has it, at its own size */
+    else if(twod&&o->bb){m[0]=sx;m[1]=-R[0]*sx;m[2]=sy;m[3]=-R[1]*sy;r=4;}   /* a large 2D part: with the view, onto the whole screen */
+    else{m[0]=s;m[1]=320-(R[0]+R[2])*0.5f*s;m[2]=s;m[3]=240-(R[1]+R[3])*0.5f*s;r=2;}
+    *clip=ov_mapclip(o,R,m,sc);
+    return r;
+}
+/* A 2D draw of triangles split into its parts for view R: the triangles whose boxes touch (to a
+ * pixel) and whose centres are on the same side of the view's edge make one part (two players'
+ * overlays that meet at the middle stay apart); each part is judged by the box it can show in
+ * (inside the draw's clip, or the picture). Over 80% of the picture (unclipped: a fade, a menu):
+ * as drawn; at most a quarter of it in view R: another player's, left out (but the match timer,
+ * drawn once at the top of the top view, is everyone's: as drawn); up to three quarters
+ * (unclipped): across views, as drawn; else this player's: 40% of the view or more, or 90% of its
+ * width or height (an overlay: blood, a tint, the death curtain's strips), stretched with the
+ * view. The rest are placed by runs (ov_place_run): small parts in one row close together
+ * (glyphs and words) and rows right under one another make one run, so a line of text never
+ * comes apart. Parts placed the same way are drawn together, in the draw's order, from index
+ * lists written to out (indices into the draw's vertices; g[].ioff counts indices into out).
+ * Returns the number of groups, 0 when the draw cannot be split (then ov_place decides for the
+ * whole of it), -1 when none of it is this player's. */
+typedef struct {unsigned tris,parts,hud,stretched,drawn,other,scene,nmid;float big,mb[3][4];uint8_t why[3],np[3];uint32_t mv[3];} OVSplit;   /* for the log lines; big: the largest part's size in views; mb, why, np, mv: runs of text (and parts with the scene but the crosshair): box, how placed (ov_place_run), parts, first vertex */
+static OVSplit ov_si;
+#define OV_TRIS 256
+static unsigned ov_root(uint16_t *par,unsigned t){while(par[t]!=t){par[t]=par[par[t]];t=par[t];}return t;}
+/* The match timer: drawn once, centred at the top of the top view's HUD area, when the views are
+ * full-width strips (2 players) and view R is not the top one. */
+static int ov_shared(float b0,float b1,float b2,float b3,const uint16_t R[4]){
+    return R[0]==0&&R[2]==640&&R[1]>0&&b1>=ov_safe[1]-4&&b3<=ov_safe[1]+(R[1]-ov_safe[1])/3&&fabsf((b0+b2)*0.5f-320)<=8;
+}
+/* HUD rows of text: a run of text at the HUD's edge (ov_place_run) marks its row for two frames,
+ * so the rest of the line, drawn in another colour by another draw (the death message: "Killed"
+ * then the player's name), is placed with it. */
+#define OV_ROWS 16
+static struct {uint16_t R[4];float b[4];uint8_t bx,by;unsigned frame;} ov_rows[OV_ROWS];static unsigned ov_nrows;
+static int ov_row_find(const uint16_t R[4],const float b[4],int *bx,int *by){
+    float h=b[3]-b[1];unsigned now=lean_frame_no+1;
+    for(unsigned i=0;i<OV_ROWS;i++){float *e=ov_rows[i].b;if(!ov_rows[i].frame||ov_rows[i].frame+2<now||memcmp(ov_rows[i].R,R,8))continue;
+        float eh=e[3]-e[1],mh=h<eh?h:eh,xh=h>eh?h:eh,oy=(b[3]<e[3]?b[3]:e[3])-(b[1]>e[1]?b[1]:e[1]);
+        if(oy<0.5f*mh||b[0]>e[2]+2*xh||b[2]<e[0]-2*xh)continue;
+        *bx=ov_rows[i].bx;*by=ov_rows[i].by;ov_rows[i].frame=now;if(b[0]<e[0])e[0]=b[0];if(b[2]>e[2])e[2]=b[2];return 1;}
+    return 0;
+}
+static void ov_row_add(const uint16_t R[4],const float b[4],int bx,int by){
+    unsigned now=lean_frame_no+1,at=OV_ROWS;
+    for(unsigned i=0;i<OV_ROWS;i++){const float *e=ov_rows[i].b;
+        if(ov_rows[i].frame&&!memcmp(ov_rows[i].R,R,8)&&ov_rows[i].bx==bx&&ov_rows[i].by==by&&b[1]<e[3]&&b[3]>e[1]&&b[0]<=e[2]&&b[2]>=e[0]){at=i;break;}}
+    if(at==OV_ROWS)at=ov_nrows++%OV_ROWS;
+    memcpy(ov_rows[at].R,R,8);memcpy(ov_rows[at].b,b,16);ov_rows[at].bx=(uint8_t)bx;ov_rows[at].by=(uint8_t)by;ov_rows[at].frame=now;
+}
+/* How a run (box e, n parts) of view R is placed: *G the HUD third (by*3+bx, ov_hud_mapb), or -1
+ * with the scene (ov_scene_map, by its own centre); returns why (for [NF-VIEW-TEXT]). Clipped to
+ * the view (its own pass: crosshair, messages): with the scene; clipped to a part of it (the
+ * radar): a HUD part. Text (a run wider than tall, at most 40 high) without a clip is the HUD's
+ * when it is at the edge of the view's HUD area (0 left, 1 right, 2 top: kept that far from that
+ * edge, and from the top or bottom by the half it is in; the timer, the score, the death message,
+ * the ammo count) or on the row of such text (3); else it floats in the view: a nametag over a
+ * player (5; 4: outside the HUD area, which the HUD never is), placed with the scene. Anything
+ * else is a HUD part by the third its centre is in (7), but in the middle third both ways with
+ * the scene (8). */
+static int ov_place_run(const OVDraw *o,const uint16_t R[4],const float e[4],unsigned n,int *G){
+    float bw=e[2]-e[0],bh=e[3]-e[1],cx=(e[0]+e[2])*0.5f,cy=(e[1]+e[3])*0.5f,hx0,hx1,hy0,hy1;
+    int bx=ov_band(cx,R[0],R[2],ov_safe[0],ov_safe[2]),by=ov_band(cy,R[1],R[3],ov_safe[1],ov_safe[3]);
+    *G=by*3+bx;
+    if(o->clip){if(OV_SAME(o->c,R)){*G=-1;return 6;}return 7;}
+    if(!(bh<=40&&bw>=1.5f*bh&&(n>=2||bh<=24))){if(bx==1&&by==1){*G=-1;return 8;}return 7;}
+    ov_area(R[0],R[2],ov_safe[0],ov_safe[2],&hx0,&hx1);ov_area(R[1],R[3],ov_safe[1],ov_safe[3],&hy0,&hy1);
+    if(e[0]<hx0-2||e[2]>hx1+2||e[1]<hy0-2||e[3]>hy1+2){*G=-1;return 4;}
+    int l=e[0]<=hx0+6,r=e[2]>=hx1-6,t=e[1]<=hy0+4;
+    if(l||r||t){bx=l?0:r?2:bx;by=t||cy<(R[1]+R[3])*0.5f?0:2;*G=by*3+bx;ov_row_add(R,e,bx,by);return l?0:r?1:2;}
+    if(ov_row_find(R,e,&bx,&by)){*G=by*3+bx;return 3;}
+    *G=-1;return 5;
+}
+static int ov_split(const float (*p)[2],unsigned nv,const uint32_t *ix,unsigned ni,const OVDraw *o,const uint16_t R[4],OVGroup *g,uint32_t *out){
+    memset(&ov_si,0,sizeof ov_si);
+    unsigned T=ni/3;if(!T||ni%3||T>OV_TRIS)return 0;
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]),sx=640/w,sy=480/h;if(w<8||h<8)return 0;
+    static float tb[OV_TRIS][4];static uint16_t par[OV_TRIS];static int8_t side[OV_TRIS];
+    for(unsigned t=0;t<T;t++){const uint32_t *q=ix+3*t;if(q[0]>=nv||q[1]>=nv||q[2]>=nv)return 0;
+        float *b=tb[t];b[0]=b[2]=p[q[0]][0];b[1]=b[3]=p[q[0]][1];
+        for(int k=1;k<3;k++){float x=p[q[k]][0],y=p[q[k]][1];if(x<b[0])b[0]=x;if(x>b[2])b[2]=x;if(y<b[1])b[1]=y;if(y>b[3])b[3]=y;}
+        float cx=(p[q[0]][0]+p[q[1]][0]+p[q[2]][0])/3,cy=(p[q[0]][1]+p[q[1]][1]+p[q[2]][1])/3;
+        side[t]=(int8_t)(cx>=R[0]&&cx<R[2]&&cy>=R[1]&&cy<R[3]);par[t]=(uint16_t)t;}
+    for(unsigned t=1;t<T;t++)for(unsigned u=0;u<t;u++){const float *a=tb[t],*b=tb[u];   /* a part's root is its first triangle */
+        if(side[t]==side[u]&&a[0]<=b[2]+1&&b[0]<=a[2]+1&&a[1]<=b[3]+1&&b[1]<=a[3]+1){unsigned x=ov_root(par,t),y=ov_root(par,u);if(x!=y)par[x>y?x:y]=(uint16_t)(x<y?x:y);}}
+    for(unsigned t=0;t<T;t++){unsigned r=ov_root(par,t);if(r==t)continue;float *a=tb[r];const float *b=tb[t];   /* the part's box, in its root */
+        if(b[0]<a[0])a[0]=b[0];if(b[1]<a[1])a[1]=b[1];if(b[2]>a[2])a[2]=b[2];if(b[3]>a[3])a[3]=b[3];}
+    float vx0=0,vy0=0,vx1=640,vy1=480;if(o->clip){vx0=o->c[0];vy0=o->c[1];vx1=o->c[2];vy1=o->c[3];}
+    /* each part (P of them): the box it shows in inside view R (pb), its first triangle (pt), its
+     * run (rp), and how it is placed (pg: -1 left out, 9 stretched, 10 as drawn, -2 by its run) */
+    static float pb[OV_TRIS][4],rb[OV_TRIS][4];static uint16_t pt[OV_TRIS],rp[OV_TRIS],tp[OV_TRIS],rn[OV_TRIS];static int8_t pg[OV_TRIS],rg[OV_TRIS];
+    unsigned P=0;ov_si.tris=T;
+    for(unsigned t=0;t<T;t++){if(par[t]!=t)continue;const float *a=tb[t];int G;ov_si.parts++;float *q=pb[P];
+        float b0=a[0]>vx0?a[0]:vx0,b1=a[1]>vy0?a[1]:vy0,b2=a[2]<vx1?a[2]:vx1,b3=a[3]<vy1?a[3]:vy1;
+        q[0]=b0;q[1]=b1;q[2]=b2;q[3]=b3;
+        if(b2<b0||b3<b1)G=-1;   /* outside its clip: never shows */
+        else{float ar=(b2-b0)*(b3-b1),r0=b0>R[0]?b0:R[0],r1=b1>R[1]?b1:R[1],r2=b2<R[2]?b2:R[2],r3=b3<R[3]?b3:R[3];
+            float in=r2>r0&&r3>r1?(r2-r0)*(r3-r1):0,cx=(b0+b2)*0.5f,cy=(b1+b3)*0.5f;
+            float f=ar>0?in/ar:(cx>=R[0]&&cx<R[2]&&cy>=R[1]&&cy<R[3]?1.0f:0.0f);
+            if(ar/(w*h)>ov_si.big)ov_si.big=ar/(w*h);
+            float iw=r2>r0?r2-r0:0,ih=r3>r1?r3-r1:0;
+            if(in>0){q[0]=r0;q[1]=r1;q[2]=r2;q[3]=r3;}
+            if(!o->clip&&ar>=640.0f*480.0f*0.8f)G=10;
+            else if(f<0.25f)G=!o->clip&&ov_shared(b0,b1,b2,b3,R)?10:-1;
+            else if(f<0.75f&&!o->clip)G=10;
+            else if(in>=0.4f*w*h||iw>=0.9f*w||ih>=0.9f*h)G=9;
+            else G=-2;}
+        pg[P]=(int8_t)G;pt[P]=(uint16_t)t;rp[P]=(uint16_t)P;tp[t]=(uint16_t)P;P++;}
+    /* runs: small parts in one row with a gap under the taller one's height, or one right under
+     * the other (a gap under 0.6 of the lower height) and overlapping across */
+    for(unsigned i=1;i<P;i++){if(pg[i]!=-2)continue;const float *a=pb[i];float ha=a[3]-a[1];if(ha>32||a[2]-a[0]>400)continue;
+        for(unsigned j=0;j<i;j++){if(pg[j]!=-2)continue;const float *b=pb[j];float hb=b[3]-b[1];if(hb>32||b[2]-b[0]>400)continue;
+            float mh=ha<hb?ha:hb,xh=ha>hb?ha:hb,oy=(a[3]<b[3]?a[3]:b[3])-(a[1]>b[1]?a[1]:b[1]),ox=(a[2]<b[2]?a[2]:b[2])-(a[0]>b[0]?a[0]:b[0]);
+            if((oy>=0.5f*mh&&-ox<=xh)||(ox>0&&-oy<=0.6f*mh)){unsigned x=ov_root(rp,i),y=ov_root(rp,j);if(x!=y)rp[x>y?x:y]=(uint16_t)(x<y?x:y);}}}
+    for(unsigned i=0;i<P;i++)if(pg[i]==-2&&rp[i]==i){memcpy(rb[i],pb[i],16);rn[i]=0;}
+    for(unsigned i=0;i<P;i++)if(pg[i]==-2){unsigned r=ov_root(rp,i);float *e=rb[r];const float *b=pb[i];rn[r]++;
+        if(b[0]<e[0])e[0]=b[0];if(b[1]<e[1])e[1]=b[1];if(b[2]>e[2])e[2]=b[2];if(b[3]>e[3])e[3]=b[3];}
+    float sbx[OV_SCENE][4];unsigned ns=0;
+    float vcx=(R[0]+R[2])*0.5f,vcy=(R[1]+R[3])*0.5f;
+    for(unsigned i=0;i<P;i++){if(pg[i]!=-2||rp[i]!=i)continue;const float *e=rb[i];int G,why=ov_place_run(o,R,e,rn[i],&G);
+        if(G<0){if(ns<OV_SCENE){memcpy(sbx[ns],e,16);G=11+(int)ns++;}
+            else G=ov_band((e[1]+e[3])*0.5f,R[1],R[3],ov_safe[1],ov_safe[3])*3+ov_band((e[0]+e[2])*0.5f,R[0],R[2],ov_safe[0],ov_safe[2]);}   /* no room left: a HUD part */
+        rg[i]=(int8_t)G;
+        if(why<=5||(G>=11&&(fabsf((e[0]+e[2])*0.5f-vcx)>10||fabsf((e[1]+e[3])*0.5f-vcy)>10))){unsigned k=ov_si.nmid++;   /* for the log: text, and parts with the scene but the crosshair */
+            if(k<3){memcpy(ov_si.mb[k],e,16);ov_si.why[k]=(uint8_t)why;ov_si.np[k]=(uint8_t)(rn[i]>255?255:rn[i]);ov_si.mv[k]=ix[3*pt[i]];}}}
+    for(unsigned i=0;i<P;i++)if(pg[i]==-2)pg[i]=rg[ov_root(rp,i)];
+    for(unsigned i=0;i<P;i++){int G=pg[i];if(G<0)ov_si.other++;else if(G==10)ov_si.drawn++;else if(G==9)ov_si.stretched++;else if(G>=11)ov_si.scene++;else ov_si.hud++;}
+    int slot[OV_GROUPS],kind[OV_GROUPS];unsigned ng=0,cnt[OV_GROUPS]={0};
+    for(unsigned i=0;i<OV_GROUPS;i++)slot[i]=-1;
+    for(unsigned t=0;t<T;t++){int G=pg[tp[ov_root(par,t)]];if(G<0)continue;
+        if(slot[G]<0){slot[G]=(int)ng;kind[ng]=G;ng++;}
+        cnt[slot[G]]++;}
+    if(!ng)return -1;
+    unsigned at[OV_GROUPS],n=0;
+    for(unsigned s=0;s<ng;s++){OVGroup *e=&g[s];int G=kind[s];at[s]=n;e->ioff=n;e->nidx=cnt[s]*3;n+=cnt[s]*3;
+        if(G==10){e->kind=1;e->m[0]=1;e->m[1]=0;e->m[2]=1;e->m[3]=0;}
+        else if(G==9){e->kind=4;e->m[0]=sx;e->m[1]=-R[0]*sx;e->m[2]=sy;e->m[3]=-R[1]*sy;}
+        else if(G>=11){const float *b=sbx[G-11];e->kind=5;ov_scene_map(R,(b[0]+b[2])*0.5f,(b[1]+b[3])*0.5f,e->m);}
+        else{e->kind=3;ov_hud_mapb(R,G%3,G/3,e->m);}}
+    for(unsigned t=0;t<T;t++){int G=pg[tp[ov_root(par,t)]];if(G<0)continue;unsigned s=(unsigned)slot[G];memcpy(out+at[s],ix+3*t,12);at[s]+=3;}
+    return (int)ng;
+}
+/* A clear of the picture (rectangle q, picture pixels): 0 skip (another view), 1 as recorded,
+ * 2 moved to r (picture pixels; the whole picture when it was the view itself). */
+static int ov_place_clear(const uint16_t q[4],const uint16_t R[4],float r[4]){
+    if(!OV_IN(q,R))return OV_IN(R,q)?1:0;   /* a clear around this view (the whole picture) stays */
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]);if(w<8||h<8)return 1;
+    float sx=640/w,sy=480/h,s=sx>sy?sx:sy,cx=(R[0]+R[2])*0.5f,cy=(R[1]+R[3])*0.5f;
+    if(OV_SAME(q,R)){r[0]=0;r[1]=0;r[2]=640;r[3]=480;return 2;}
+    r[0]=320+(q[0]-cx)*s;r[1]=240+(q[1]-cy)*s;r[2]=320+(q[2]-cx)*s;r[3]=240+(q[3]-cy)*s;
+    return 2;
+}
+/* [NF-VIEW-DRAW]: every draw into the picture of three frames (the first own-view frame, then
+ * 10 s and 60 s of game frames later): clip, depth test, where the vertices came from, what
+ * ov_box found and what the replay does with it. For checking the placing on the real game. */
+static void ov_dump(const LeanDraw *d,const OVDraw *o,const OVBox *b,int ztest){
+    static unsigned first=0,dumps=0,cur=~0u,lines=0;
+    if(dumps>=3&&cur!=lean_frame_no)return;
+    if(!first)first=lean_frame_no?lean_frame_no:1;
+    if(cur!=lean_frame_no){unsigned at[3]={first,first+600,first+3600};
+        if(dumps>=3||lean_frame_no<at[dumps])return;   /* the first frame with picture draws at or after it */
+        cur=lean_frame_no;dumps++;lines=0;LOG("[NF-VIEW-DRAW] frame %u: the draws into the picture (dump %u of 3)\n",cur,dumps);}
+    if(++lines>1200)return;
+    LONG64 v=nfo_view_now();uint16_t R[4]={(uint16_t)(v&0xffff),(uint16_t)(v>>16&0xffff),(uint16_t)(v>>32&0xffff),(uint16_t)(v>>48&0xffff)};
+    float m[4],q[4];int cl=0,pl=v?ov_place(o,R,m,q,&cl):1;
+    static const char *const nm[6]={"left out","as drawn","with the scene","HUD part","stretched (large 2D)","2D with the scene"};
+    static const char *const st[5]={"box","no vertices","cached, no copy","program stopped","not a number"};
+    char cbuf[40]="none",bbuf[40]="-",pbuf[120];
+    if(o->clip)snprintf(cbuf,sizeof cbuf,"%u,%u-%u,%u",o->c[0],o->c[1],o->c[2],o->c[3]);
+    if(o->bb)snprintf(bbuf,sizeof bbuf,"%u,%u-%u,%u",o->b[0],o->b[1],o->b[2],o->b[3]);
+    if(o->ng)snprintf(pbuf,sizeof pbuf,"split: %u parts: %u HUD, %u with the scene, %u stretched, %u as drawn, %u left out",ov_si.parts,ov_si.hud,ov_si.scene,ov_si.stretched,ov_si.drawn,ov_si.other);
+    else snprintf(pbuf,sizeof pbuf,"%s",nm[pl>=0&&pl<6?pl:1]);
+    char why[48]="";if(b->st==3)snprintf(why,sizeof why," (pc %u, constant %u)",b->pc,b->cst);
+    LOG("[NF-VIEW-DRAW] clip %s ztest %d %s n=%u ran %u: %s%s, w %.4g..%.4g, %s, over %s -> %s\n",cbuf,ztest,d->gpu_vb?"cached":"direct",d->nverts,b->run,
+        st[b->st<5?b->st:0],why,b->run?b->w0:0.0f,b->run?b->w1:0.0f,o->depth?"3D":"2D",bbuf,pbuf);
+}
+/* [NF-VIEW-2D]: 2D draws with a part the size of a quarter of a view or more (blood, a tint), or
+ * a part left as drawn, all through the match: at most 80 lines, each kind of draw once. */
+static void ov_log2d(const LeanDraw *d,const OVDraw *o,const uint16_t R[4],int split){
+    float w=(float)(R[2]-R[0]),h=(float)(R[3]-R[1]),ba=o->bb?(float)(o->b[2]-o->b[0])*(float)(o->b[3]-o->b[1]):0;
+    if(split?!(ov_si.big>=0.25f||ov_si.drawn):!(ba>=0.25f*w*h))return;
+    static unsigned lines;static uint64_t seen[32];static unsigned ns;if(lines>=80)return;
+    uint64_t k=((uint64_t)d->nverts<<40)^((uint64_t)o->clip<<39)^((uint64_t)(o->c[1]>>3)<<32)^((uint64_t)(o->b[0]>>3)<<24)^((uint64_t)(o->b[1]>>3)<<16)^((uint64_t)(o->b[2]>>3)<<8)^(uint64_t)(o->b[3]>>3)^((uint64_t)(split&255)<<48);
+    for(unsigned i=0;i<32;i++)if(seen[i]==k)return;
+    seen[ns++%32]=k;lines++;
+    char cbuf[40]="none",bbuf[40]="-";
+    if(o->clip)snprintf(cbuf,sizeof cbuf,"%u,%u-%u,%u",o->c[0],o->c[1],o->c[2],o->c[3]);
+    if(o->bb)snprintf(bbuf,sizeof bbuf,"%u,%u-%u,%u",o->b[0],o->b[1],o->b[2],o->b[3]);
+    if(split)LOG("[NF-VIEW-2D] frame %u: clip %s n=%u over %s: %u parts, the largest the size of %.0f%% of a view: %u HUD, %u with the scene, %u stretched, %u as drawn, %u left out\n",
+        lean_frame_no,cbuf,d->nverts,bbuf,ov_si.parts,ov_si.big*100,ov_si.hud,ov_si.scene,ov_si.stretched,ov_si.drawn,ov_si.other);
+    else{float m[4],q[4];int cl,pl=ov_place(o,R,m,q,&cl);static const char *const nm[6]={"left out","as drawn","with the scene","HUD part","stretched","2D with the scene"};
+        LOG("[NF-VIEW-2D] frame %u: clip %s n=%u over %s (%.0f%% of this view), not split (%s) -> %s\n",lean_frame_no,cbuf,d->nverts,bbuf,ba*100/(w*h),
+            d->topo!=0?"not triangles":ov_npos!=d->nverts?"vertices not known":"too many triangles",nm[pl>=0&&pl<6?pl:1]);}
+}
+/* [NF-VIEW-TEXT]: 2D draws with runs of text, or parts with the scene other than the crosshair
+ * (up to 3 per line: box, parts, how placed, the first vertex's depth and input colour), all
+ * through the match: each kind of draw once, at most 40 lines for each way the first run was
+ * placed. */
+static void ov_logtext(const LeanDraw *d,const OVDraw *o){
+    if(!ov_si.nmid)return;
+    static unsigned lines[9];static uint64_t seen[64];static unsigned ns;unsigned c=ov_si.why[0]<9?ov_si.why[0]:8;if(lines[c]>=40)return;
+    const float *b=ov_si.mb[0];
+    uint64_t k=((uint64_t)d->nverts<<40)^((uint64_t)o->clip<<39)^((uint64_t)c<<36)^((uint64_t)((unsigned)b[0]>>3)<<24)^((uint64_t)((unsigned)b[1]>>3)<<16)^((uint64_t)((unsigned)b[2]>>3)<<8)^(uint64_t)((unsigned)b[3]>>3);
+    for(unsigned i=0;i<64;i++)if(seen[i]==k)return;
+    seen[ns++%64]=k;lines[c]++;
+    static const char *const wn[9]={"HUD (left edge)","HUD (right edge)","HUD (top edge)","HUD (on a HUD row)","scene (outside the HUD area)","scene (floating: a nametag)","scene (clipped to the view)","HUD part","scene (middle)"};
+    char cbuf[40]="none",pb[3][120]={"","",""};
+    if(o->clip)snprintf(cbuf,sizeof cbuf,"%u,%u-%u,%u",o->c[0],o->c[1],o->c[2],o->c[3]);
+    for(unsigned i=0;i<3&&i<ov_si.nmid;i++){unsigned v=ov_si.mv[i];
+        snprintf(pb[i],sizeof pb[i],"; %.0f,%.0f-%.0f,%.0f (%u parts, z %.4g, colour %08X) -> %s",ov_si.mb[i][0],ov_si.mb[i][1],ov_si.mb[i][2],ov_si.mb[i][3],ov_si.np[i],
+            v<ov_npos?ov_z[v]:0.0f,v<ov_npos?ov_col[v]:0u,wn[ov_si.why[i]<9?ov_si.why[i]:7]);}
+    LOG("[NF-VIEW-TEXT] frame %u: clip %s n=%u over %u,%u-%u,%u: %u parts, %u runs%s%s%s; totals %u HUD, %u with the scene, %u stretched, %u as drawn, %u left out\n",
+        lean_frame_no,cbuf,d->nverts,o->b[0],o->b[1],o->b[2],o->b[3],ov_si.parts,ov_si.nmid,pb[0],pb[1],pb[2],ov_si.hud,ov_si.scene,ov_si.stretched,ov_si.drawn,ov_si.other);
+}
 static void lean_d3d_draw_impl(const LeanDraw *d){
     if(!ready||!d->nidx)return;
     const uint32_t *K=d->K;const NFVertexProgram *vp=(const NFVertexProgram*)d->vp;
@@ -1170,14 +1558,28 @@ static void lean_d3d_draw_impl(const LeanDraw *d){
      * (SetScissors/SetViewport, methods 0x2B4/0x2C0/0x2E0, inclusive ends in
      * multisampled pixels). Apply it as the D3D11 scissor, scaled to the stored
      * target. Unset, inverted or exclusive clips draw unclipped as before. */
-    int sc=0;
+    int sc=0;D3D11_RECT scr={0,0,0,0};OVDraw od;memset(&od,0,sizeof od);
     if(!K[0x2b4/4]){uint32_t h=K[0x2c0/4],v=K[0x2e0/4];
         LONG x0=(LONG)(h&0xffff),x1=(LONG)(h>>16)+1,y0=(LONG)(v&0xffff),y1=(LONG)(v>>16)+1;
         if(x1>x0+1&&y1>y0+1){
             D3D11_RECT r={(LONG)rt_scaled((unsigned)x0,bt_k),(LONG)rt_scaled((unsigned)y0,bt_k),(LONG)rt_scaled((unsigned)x1,bt_k),(LONG)rt_scaled((unsigned)y1,bt_k)};
             if(r.right>(LONG)bt_vw)r.right=(LONG)bt_vw;if(r.bottom>(LONG)bt_vh)r.bottom=(LONG)bt_vh;
             /* Only clip when it is smaller than the target: full-screen views keep today's state. */
-            if(r.left>0||r.top>0||r.right<(LONG)bt_vw||r.bottom<(LONG)bt_vh){sc=1;ID3D11DeviceContext_RSSetScissorRects(ctx,1,&r);}}}
+            if(r.left>0||r.top>0||r.right<(LONG)bt_vw||r.bottom<(LONG)bt_vh){sc=1;scr=r;ID3D11DeviceContext_RSSetScissorRects(ctx,1,&r);od.clip=(uint8_t)ov_note(&d->t,x0,y0,x1,y1,od.c);}}}
+    if(ov_full&&interp_enabled()&&ov_pic(&d->t)){od.pic=1;OVBox bx;   /* own view on the whole screen */
+        LONG64 v=nfo_view_now();uint16_t R[4]={(uint16_t)(v&0xffff),(uint16_t)(v>>16&0xffff),(uint16_t)(v>>32&0xffff),(uint16_t)(v>>48&0xffff)};
+        if(od.clip&&v&&!OV_IN(od.c,R)){memset(&bx,0,sizeof bx);od.depth=K[0x30c/4]!=0;ov_npos=0;}   /* another player's view: left out, nothing to find */
+        else ov_box(d,&od,K[0x30c/4]!=0,&bx);
+        if(v&&!od.depth&&!(od.clip&&!OV_IN(od.c,R))){   /* 2D in this view or unclipped: placed part by part (ov_split) */
+            static OVGroup g[OV_GROUPS];static uint32_t out[OV_TRIS*3];int split=0;
+            if(d->topo==0&&ov_npos==d->nverts)split=ov_split((const float(*)[2])ov_pos,d->nverts,d->idx,d->nidx,&od,R,g,out);
+            if(split==1&&g[0].nidx==d->nidx)g[0].ioff=~0u;   /* all of it one way: its own indices */
+            else if(split>0){UINT at,n=g[split-1].ioff+g[split-1].nidx;void *gm=ring(ib,ib_size,&ib_at,n*4,&at);
+                if(gm){memcpy(gm,out,(size_t)n*4);ID3D11DeviceContext_Unmap(ctx,(ID3D11Resource*)ib,0);for(int s=0;s<split;s++)g[s].ioff=at+g[s].ioff*4;}
+                else split=0;}
+            if(split){od.ng=(uint8_t)(split>0?split:255);od.g=g;memcpy(od.R,R,sizeof R);}
+            ov_log2d(d,&od,R,split);if(split)ov_logtext(d,&od);}
+        ov_dump(d,&od,&bx,K[0x30c/4]!=0);}
     ID3D11DepthStencilState *dss=depth_state(K,depth!=NULL);ID3D11RasterizerState *rss=raster_state(K,sc,d->topo,d->t.zeta_fmt==1?256u:1u);
     ID3D11DeviceContext_OMSetDepthStencilState(ctx,dss,K[0x368/4]&255);
     ID3D11DeviceContext_RSSetState(ctx,rss);
@@ -1234,8 +1636,8 @@ static void lean_d3d_draw_impl(const LeanDraw *d){
     }
     ID3D11DeviceContext_DrawIndexed(ctx,d->nidx,0,0);
     interp_cur_cmask=vs->cmask;interp_cur_prows=vs->prows;interp_cur_vb=vbuf;
-    if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,sc?raster_state(K,0,d->topo,d->t.zeta_fmt==1?256u:1u):rss,d->topo,color,depth,
-        bt_vw,bt_vh,stride,voff,d->nverts,ioff,d->nidx,interp_vconst,interp_pconst);
+    if(interp_enabled())interp_rec_draw(vs->vs,vs->il,ps,sprite_bound,srv,smp,bs,bf,dss,K[0x368/4]&255,rss,d->topo,color,depth,
+        bt_vw,bt_vh,stride,voff,d->nverts,ioff,d->nidx,interp_vconst,interp_pconst,sc,scr,&od);   /* with its split-screen clip */
     if(sprite_bound){ID3D11DeviceContext_GSSetShader(ctx,NULL,NULL,0);sprite_bound=0;}
     if(color){color->gpu_written=1;color->gen++;color->gen_frame=lean_frame_no;}if(depth)depth->gpu_written=1;
     st.draws++;st.prims+=d->nidx;
@@ -1261,7 +1663,7 @@ static void lean_d3d_clear_impl(const LeanTarget *t,uint32_t flags,unsigned x0,u
     unsigned cmask=((flags>>4)&1?1:0)|((flags>>5)&1?2:0)|((flags>>6)&1?4:0)|((flags>>7)&1?8:0); /* R,G,B,A */
     float zv=t->zeta_fmt==1?(zs>>16)/65535.0f:(zs>>8)/16777215.0f;unsigned sv=zs&255;
     st.clears++;if(c){c->gen++;c->gen_frame=lean_frame_no;}
-    if(interp_enabled()){D3D11_RECT ir={rx0,ry0,rx1,ry1};interp_rec_clear(c,z,flags,col,zv,sv,cmask,full,ir,sw,sh);}
+    if(interp_enabled()){D3D11_RECT ir={rx0,ry0,rx1,ry1};interp_rec_clear(c,z,flags,col,zv,sv,cmask,full,ir,sw,sh,ov_pic(t));}
     if(c&&full&&cmask==15){ID3D11DeviceContext_ClearRenderTargetView(ctx,c->rtv,col);c->gpu_written=1;c=NULL;}
     else if(c&&ctx1&&cmask==15){D3D11_RECT r={rx0,ry0,rx1,ry1};ID3D11DeviceContext1_ClearView(ctx1,(ID3D11View*)c->rtv,col,&r,1);c->gpu_written=1;c=NULL;}
     if(z&&full){UINT f=((flags&1)?D3D11_CLEAR_DEPTH:0)|((flags&2)?D3D11_CLEAR_STENCIL:0);ID3D11DeviceContext_ClearDepthStencilView(ctx,z->dsv,f,zv,(UINT8)sv);z->gpu_written=1;z=NULL;}
@@ -1294,6 +1696,12 @@ static int lean_d3d_blit_impl(uint32_t src,unsigned spitch,uint32_t dst,unsigned
     if(!s->tex||s->addr!=src||s->depth||s->pitch!=spitch){   /* rt_get replaced or moved it */
         s=NULL;for(unsigned i=0;i<MAX_RT;i++){RT *r=&rts[i];if(r->tex&&!r->depth&&r->gpu_written&&r->addr==src&&r->pitch==spitch){s=r;break;}}
         if(!s||sx+w>s->w||sy+h>s->h)return 0;}
+    if(ov_full&&interp_enabled()&&s->w>=640&&s->w*3==s->h*4){   /* [NF-VIEW-BLIT]: copies out of the picture in the own view (at most 20 lines, each kind once) */
+        static unsigned lines;static uint64_t seen[16];static unsigned ns;
+        uint64_t key=((uint64_t)sx<<52)^((uint64_t)sy<<42)^((uint64_t)w<<32)^((uint64_t)h<<22)^((uint64_t)dw<<12)^((uint64_t)dx<<4)^dy;int known=0;
+        for(unsigned i=0;i<16;i++)if(seen[i]==key)known=1;
+        if(!known&&lines<20){seen[ns++%16]=key;lines++;
+            LOG("[NF-VIEW-BLIT] frame %u: the picture's %u,%u %ux%u copied to a %ux%u surface at %u,%u\n",lean_frame_no,sx,sy,w,h,d->w,d->h,dx,dy);}}
     if(s->k==d->k){   /* same internal resolution: a plain copy, in stored pixels */
         float k=s->k;D3D11_BOX box={rt_scaled(sx,k),rt_scaled(sy,k),0,rt_scaled(sx+w,k),rt_scaled(sy+h,k),1};
         if(box.right>s->tw)box.right=s->tw;if(box.bottom>s->th)box.bottom=s->th;
@@ -1507,7 +1915,7 @@ static void vc_report(void){
     if(!(++vcst.lookups%200000))LOG("[LEAN-VCACHE] lookups=%llu hits=%llu uploads=%llu (%.1f MB) per-draw=%llu resident=%.1f MB\n",(unsigned long long)vcst.lookups,
         (unsigned long long)vcst.hits,(unsigned long long)vcst.puts,vcst.bytes_up/1048576.0,(unsigned long long)vcst.skips,vc_bytes/1048576.0);
 }
-static void vc_drop(VCE *e){if(e->buf){GAME_LOCK();defer_release(e->buf);CTX_UNLOCK();vc_bytes-=e->bytes;e->buf=NULL;e->bytes=0;}}
+static void vc_drop(VCE *e){if(e->buf){ov_vc_drop(e->buf);GAME_LOCK();defer_release(e->buf);CTX_UNLOCK();vc_bytes-=e->bytes;e->buf=NULL;e->bytes=0;}}
 /* 1: hit (*buf set); 0: decode, then lean_d3d_vcache_put; -1: decode, do not cache. */
 int lean_d3d_vcache_find(uint64_t key,uint64_t hash,void **buf){
     vc_report();
@@ -1536,6 +1944,7 @@ void *lean_d3d_vcache_put(uint64_t key,uint64_t hash,const void *data,unsigned b
     if(FAILED(ID3D11Device_CreateBuffer(dev,&bd,&sd,&b)))return NULL;
     vc_drop(slot);
     slot->hash=hash;slot->buf=b;slot->bytes=bytes;slot->state=VC_CACHED;vc_bytes+=bytes;
+    ov_vc_keep(b,data,bytes);   /* the vertices for ov_box (own view) */
     vcst.puts++;vcst.bytes_up+=bytes;
     return b;
 }
@@ -1574,6 +1983,56 @@ int lean_d3d_surface_at(uint32_t va,uint32_t *base,unsigned *w,unsigned *h,unsig
  * way on every PC. nd3d_draw.c calls this once per picture without pixels, then again with pixels
  * when asked (-1); only the first call counts. nf_lockstep_present returns at once otherwise. */
 void nf_lockstep_present(void);
-int lean_d3d_present(uint32_t va,const uint32_t *pixels){if(!pixels)nf_lockstep_present();return lean_d3d_present_shown(va,pixels);}
+/* Own view (online play, see ov_note): at the end of each game frame, the views it was split
+ * into, in reading order (top to bottom, left to right: player 1 at the top or top left), are
+ * matched to the match's game ports, and this PC's are shown (lean_overlay.inc nfo_view_set).
+ * Clips smaller than an eighth of the picture or inside another one (a HUD part clipped on
+ * its own) are not views. Only when the views tile the picture and there is one per port; a
+ * frame that is not split (a fade, a pause screen) keeps the last view for 20 frames, then
+ * the whole picture. Local
+ * play and replays never get here past nf_lockstep_view_ports, so they always show it all. */
+int nf_lockstep_view_ports(unsigned *first,unsigned *count,unsigned *total);   /* nf_lockstep.c */
+#define OV_AREA(q) ((unsigned)((q)[2]-(q)[0])*((q)[3]-(q)[1]))
+static LONG64 ov_pick(uint16_t (*r)[4],unsigned n,unsigned first,unsigned count,unsigned total){
+    int keep[8];unsigned k=0;
+    for(unsigned i=0;i<n;i++){keep[i]=OV_AREA(r[i])>=640u*480u/8;
+        for(unsigned j=0;j<n&&keep[i];j++)if(j!=i&&r[j][0]<=r[i][0]&&r[j][1]<=r[i][1]&&r[j][2]>=r[i][2]&&r[j][3]>=r[i][3])keep[i]=0;}   /* inside another clip */
+    for(unsigned i=0;i<n;i++)if(keep[i]){if(k!=i)memcpy(r[k],r[i],sizeof r[0]);k++;}
+    n=k;
+    if(n<2||n!=total||first+count>n)return 0;
+    for(unsigned i=1;i<n;i++)for(unsigned j=i;j>0&&(r[j][1]<r[j-1][1]||(r[j][1]==r[j-1][1]&&r[j][0]<r[j-1][0]));j--){
+        uint16_t t[4];memcpy(t,r[j],sizeof t);memcpy(r[j],r[j-1],sizeof t);memcpy(r[j-1],t,sizeof t);}
+    unsigned sum=0;
+    for(unsigned i=0;i<n;i++){sum+=OV_AREA(r[i]);
+        for(unsigned j=0;j<i;j++){int ox=(int)(r[i][2]<r[j][2]?r[i][2]:r[j][2])-(int)(r[i][0]>r[j][0]?r[i][0]:r[j][0]);
+            int oy=(int)(r[i][3]<r[j][3]?r[i][3]:r[j][3])-(int)(r[i][1]>r[j][1]?r[i][1]:r[j][1]);
+            if(ox>0&&oy>0&&(unsigned)(ox*oy)>640u*480u/100)return 0;}}   /* views do not overlap */
+    if(sum<640u*480u*7/10)return 0;   /* and cover most of the picture */
+    unsigned x0=640,y0=480,x1=0,y1=0,mine=0;
+    for(unsigned i=first;i<first+count;i++){if(r[i][0]<x0)x0=r[i][0];if(r[i][1]<y0)y0=r[i][1];if(r[i][2]>x1)x1=r[i][2];if(r[i][3]>y1)y1=r[i][3];
+        mine+=OV_AREA(r[i]);}
+    if(mine*100<(x1-x0)*(y1-y0)*98)return 0;   /* this PC's views must make one rectangle */
+    return (LONG64)x0|(LONG64)y0<<16|(LONG64)x1<<32|(LONG64)y1<<48;
+}
+static void ov_frame_done(void){
+    static LONG64 shown;static unsigned misses,logs,odd;
+    unsigned n=ov_cur.n,first=0,count=0,total=0;ov_cur.n=0;
+    LONG64 v=0;
+    if(nf_lockstep_view_ports(&first,&count,&total)){
+        char seen[200]="";   /* the clips as drawn, for the log when they are not a split screen */
+        for(unsigned i=0;i<n&&odd<12;i++){size_t l=strlen(seen);snprintf(seen+l,sizeof seen-l,"%s%u,%u-%u,%u",i?" ":"",ov_cur.r[i][0],ov_cur.r[i][1],ov_cur.r[i][2],ov_cur.r[i][3]);}
+        v=ov_pick(ov_cur.r,n,first,count,total);
+        if(!v&&n&&odd<12){odd++;LOG("[NF-VIEW] this frame's clips give no own view for ports %u-%u of %u: %s\n",first+1,first+count,total,seen);}}
+    else if(!shown)return;   /* offline, local play, a replay: nothing set, the whole picture */
+    if(v)misses=0;else if(shown&&++misses<20)v=shown;
+    if(v!=shown&&logs<40){logs++;
+        if(v)LOG("[NF-VIEW] this PC's own view: %u,%u to %u,%u of the 640x480 picture (ports %u-%u of %u; F7 shows the whole split screen)\n",
+                 (unsigned)(v&0xffff),(unsigned)(v>>16&0xffff),(unsigned)(v>>32&0xffff),(unsigned)(v>>48&0xffff),first+1,first+count,total);
+        else LOG("[NF-VIEW] the whole picture (%u views this frame, %u ports)\n",n,total);}
+    shown=v;nfo_view_set(v);
+    {LONG one=v&&count==1;if(one!=ov_full){InterlockedExchange(&ov_full,one);
+        if(one&&logs<40){logs++;LOG("[NF-VIEW] with Smooth Motion this view fills the whole screen (lean_interp.inc); otherwise it is shown as it is in the split\n");}}}
+}
+int lean_d3d_present(uint32_t va,const uint32_t *pixels){if(!pixels){nf_lockstep_present();ov_frame_done();}return lean_d3d_present_shown(va,pixels);}
 /* In-between frames (LEAN_INTERP=1): recorded here, replayed on its own thread. */
 #include "lean_interp.inc"

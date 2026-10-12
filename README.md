@@ -25,9 +25,9 @@ Both of the game's engines now run as native Windows code, without emulating the
 - **Driving engine** (vehicle levels, such as the Paris chase): uses the same native renderer. Its sound now runs entirely on the project's own mixer and output, with no emulated sound chip. Its game logic steps on the game's own timer, so it plays at the original speed.
 - **One game, one window:** Action hands over to Driving for the Paris chase and back again in a single window, as it does on the console.
 - **Local multiplayer:** up to four players in split-screen on one PC, with controllers or one shared keyboard and mouse (F6 and F5 pass it between players).
-- **Fixes:** the Paris grappling hook now reaches its target (translated code ignored the x87 rounding mode). A fix for the game closing when a new profile is created is built and waiting for a play test.
+- **Fixes:** the Paris grappling hook now reaches its target (translated code ignored the x87 rounding mode). With Smooth Motion on, split-screen players' views no longer draw over each other in the in-between pictures. A fix for the game closing when a new profile is created is built and waiting for a play test.
 - **Crash capture:** every native launcher writes a crash report, minidump or freeze report to a per-session folder.
-- **Online play (first version):** PCs exchange only controller presses and run the same match. Two copies on one PC stayed identical frame for frame through a split-screen match. It is started from the Action launchers `show-nightfire-native-online.cmd` and `-online-two-copies.cmd`, and has not been tried between two PCs yet.
+- **Online play (first version):** PCs exchange only controller presses and run the same match. A lobby window lets one player host (listed on the local network) and others join from that list or by IP address; the host presses Start. Each PC shows only its own player, full-screen, with the HUD placed as on a one-player screen, and keeps its own saves apart from the normal game profile. Two copies on one PC stayed identical frame for frame through a match. It is started from the Action workshop test launchers `show-nightfire-native-online.cmd` and `-online-two-copies.cmd`, not from the alpha, and has not been tried between two PCs yet.
 - **Build from your own disc:** the alpha's Setup translates both engines from the player's PAL disc and compiles them. It was tested end to end on the owner's PC on October 11.
 
 ### Optional PC settings
@@ -46,7 +46,7 @@ These are switched on only by the "overlay" launchers and the alpha launchers. T
 
 ### Known gaps
 
-- Online play is a first version: the in-game Online pages don't connect yet, it is started from test launchers, and it has not been tried between two PCs.
+- Online play is a first version: the in-game Online pages don't connect yet, it is started from test launchers, and it has not been tried between two PCs. It always uses Smooth Motion, which in the Action engine does not yet have the Driving engine's fixes for repeated objects and glows.
 - Smooth Motion is experimental: in Paris a car's front tyre can lean in for a moment, and lamp glows can sit one step ahead.
 - On-screen button prompts still show Xbox buttons when the keyboard is used.
 - Sound plays without the console's reverb and other audio effects.
