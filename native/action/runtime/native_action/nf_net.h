@@ -12,7 +12,9 @@
 void nf_net_set_ids(uint64_t build, uint64_t game, uint64_t settings);
 
 /* Reads the NF_NET switches. 0 = netplay off; 1 = the match has started (this
- * blocks until every PC has joined); -1 = could not start (logged). */
+ * blocks until every PC has joined, or with NF_NET=lobby until the player has
+ * hosted or joined a match in the lobby window and it started); -1 = could not
+ * start (logged) or the player closed the lobby (nf_net_cancelled). */
 int nf_net_init(void);
 int nf_net_on(void);
 
@@ -42,6 +44,7 @@ int nf_net_peer(int i, char name[17], unsigned *first_port, unsigned *count, int
 const char *nf_net_status(void);                         /* "" while all is well */
 uint32_t nf_net_delay(void);
 int nf_net_joined(void);                                 /* guest: the host has let this PC in */
+int nf_net_cancelled(void);                              /* the player closed the lobby (NF_NET=lobby): quit quietly */
 
 /* This PC leaves: the others are told at once (its players stand still there),
  * and nf_net_init / nf_net_frame return as for an ended session. */

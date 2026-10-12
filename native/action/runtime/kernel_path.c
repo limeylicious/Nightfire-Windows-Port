@@ -164,6 +164,8 @@ static int resolve_symlink(const char* xbox_path, char* out, size_t out_size)
 static WCHAR s_game_dir[MAX_PATH];
 static WCHAR s_save_dir[MAX_PATH];
 static BOOL  s_initialized = FALSE;
+/* NIGHTFIRE_SAVE_DIR chose s_save_dir: the title's E: drive goes there too (below). */
+static BOOL  s_save_env = FALSE;
 
 /*
  * The raw disk device, \Device\Harddisk0\Partition0.
@@ -279,7 +281,9 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
         const char *env = getenv("NIGHTFIRE_SAVE_DIR");
         if (env && *env) {
             save_dir = env;
-            fprintf(stderr, "[PATH] saves in %s (NIGHTFIRE_SAVE_DIR)\n", env);
+            s_save_env = TRUE;
+            fprintf(stderr, "[PATH] saves in %s (NIGHTFIRE_SAVE_DIR), title data and profiles"
+                    " in its Partition1 folder\n", env);
         }
     }
     if (save_dir) {
@@ -319,6 +323,10 @@ void xbox_path_init(const char* game_dir, const char* save_dir)
         SHCreateDirectoryExW(NULL, s_save_dir, NULL);
         for (int i = 0; i < (int)(sizeof(subs) / sizeof(subs[0])); i++) {
             swprintf_s(dir, MAX_PATH, L"%s\\%s", s_save_dir, subs[i]);
+            SHCreateDirectoryExW(NULL, dir, NULL);
+        }
+        if (s_save_env) {
+            swprintf_s(dir, MAX_PATH, L"%s\\Partition1", s_save_dir);
             SHCreateDirectoryExW(NULL, dir, NULL);
         }
         swprintf_s(image, MAX_PATH, L"%s\\%s", s_save_dir, XBOX_DISK_IMAGE_NAME);
@@ -421,6 +429,17 @@ BOOL xbox_translate_path(const char* xbox_path, xbox_host_char* host_path_buf, D
             remainder = xbox_path + skip;
             base_dir  = s_rules[i].to_save ? s_save_dir : s_game_dir;
             sub_dir   = s_rules[i].sub_win;
+            /* Partition1 is E:, where XAPI keeps every title's TDATA and UDATA --
+             * the profiles and saved games. It normally sits in the game dir
+             * beside the disc files. A save folder named by NIGHTFIRE_SAVE_DIR
+             * (online play) holds it instead, so a match starts from that
+             * folder's own profiles: two copies on one PC each opened the one
+             * game_files\UDATA\...\TitleMeta.xbx at boot, and the second
+             * stopped on ERROR_SHARING_VIOLATION. */
+            if (s_save_env && !strcmp(s_rules[i].prefix, "\\Device\\Harddisk0\\Partition1\\")) {
+                base_dir = s_save_dir;
+                sub_dir  = "\\Partition1";
+            }
             goto translate;
         }
     }
